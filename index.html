@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6f2">
+  <meta name="description" content="Konfigurieren Sie Ihre Website von pimentaGROUP: Projekt auswählen, Funktionen ergänzen und Preisübersicht direkt sehen.">
+  <title>Website-Konfigurator | pimentaGROUP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/configurator.js" defer></script>
+</head>
+<body>
+  <div class="site-shell" id="top">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="pimentaGROUP Startseite">
+        <span class="brand-symbol">p<span>.</span></span>
+        <span class="brand-wordmark">pimenta<span>GROUP</span></span>
+      </a>
+      <div class="topbar-right">
+        <span class="topbar-note"><span class="live-dot"></span> Ihr Projekt beginnt hier</span>
+        <a class="topbar-link" href="#how-it-works">So funktioniert's <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> DER WEBSITE-KONFIGURATOR</div>
+          <h1>Ihre Website.<br><em>Ihr Bauplan.</em></h1>
+          <p class="hero-lead">Stellen Sie sich Ihren digitalen Auftritt selbst zusammen. Sie sehen direkt, welche Möglichkeiten es gibt und wie sich Ihre Auswahl auf den Preis auswirkt.</p>
+          <div class="hero-points">
+            <span><span class="point-check">✓</span> Schritt für Schritt</span>
+            <span><span class="point-check">✓</span> Preise transparent sehen</span>
+            <span><span class="point-check">✓</span> Unverbindlich anfragen</span>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Vorschau einer individuell gestalteten Website">
+          <div class="visual-glow"></div>
+          <div class="browser-card">
+            <div class="browser-top"><div class="browser-dots"><i></i><i></i><i></i></div><span>ihre-website.de</span><span class="browser-menu">•••</span></div>
+            <div class="browser-content">
+              <div class="mock-brand"><span></span><b>STUDIO / BRAND</b><i>MENÜ</i></div>
+              <div class="mock-hero-copy"><small>WILLKOMMEN BEI UNS</small><strong>Ein Auftritt,<br>der <em>bleibt.</em></strong><span></span></div>
+              <div class="mock-photo-row"><div class="mock-photo photo-one"></div><div class="mock-photo photo-two"></div><div class="mock-photo photo-three"></div></div>
+              <div class="mock-bottom"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="floating-price"><span class="floating-check">✓</span><div><b>Volle Übersicht</b><small>Preis live kalkuliert</small></div></div>
+          <div class="visual-caption">VON DER IDEE ZUM KONZEPT <span>✳</span></div>
+        </div>
+      </section>
+
+      <section class="builder-section" id="konfigurator">
+        <div class="builder-intro">
+          <div><span class="eyebrow"><span class="eyebrow-line"></span> IHR PROJEKT IN 4 SCHRITTEN</span><h2>Konfigurieren Sie Ihren<br><em>Wunsch-Auftritt.</em></h2></div>
+          <p>Es gibt kein richtig oder falsch. Wählen Sie aus, was für Ihr Unternehmen sinnvoll ist. Wir besprechen anschließend die Details gemeinsam.</p>
+        </div>
+
+        <div class="builder-grid">
+          <div class="builder-main">
+            <div class="stepper" aria-label="Fortschritt">
+              <div class="stepper-item active" data-step-indicator="0"><span>01</span><b>Projekt</b></div>
+              <div class="stepper-connector"></div>
+              <div class="stepper-item" data-step-indicator="1"><span>02</span><b>Design</b></div>
+              <div class="stepper-connector"></div>
+              <div class="stepper-item" data-step-indicator="2"><span>03</span><b>Funktionen</b></div>
+              <div class="stepper-connector"></div>
+              <div class="stepper-item" data-step-indicator="3"><span>04</span><b>Anfrage</b></div>
+            </div>
+            <div class="mobile-progress"><div class="mobile-progress-top"><span id="mobileStepName">Schritt 1 von 4 · Projekt</span><b id="mobileProgressPercent">25 %</b></div><div class="progress-track"><span id="mobileProgressFill"></span></div></div>
+
+            <form id="configForm" novalidate>
+              <!-- STEP 1: PROJECT -->
+              <section class="step-panel active" data-step="0" aria-labelledby="step1-title">
+                <div class="step-heading">
+                  <span class="step-index">01 / PROJEKT</span>
+                  <h3 id="step1-title">Was möchten Sie erstellen lassen?</h3>
+                  <p>Starten Sie mit der passenden Grundlage. Der Basispreis enthält bereits die wichtigsten Bausteine für einen professionellen Auftritt.</p>
+                </div>
+                <div class="package-grid" id="packageGrid">
+                  <label class="package-card" data-package="landing">
+                    <input type="radio" name="projectType" value="landing" required>
+                    <span class="package-top"><span class="package-icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h5M8 16h8"></path></svg></span><span class="package-select">✓</span></span>
+                    <span class="package-name">Landingpage</span>
+                    <span class="package-desc">Eine starke Seite für ein Angebot, Produkt oder eine Kampagne.</span>
+                    <span class="package-includes"><i>✓</i> 1 individuelle Seite</span>
+                    <span class="package-price"><b>490 €</b><small>einmalig</small></span>
+                  </label>
+                  <label class="package-card selected" data-package="business">
+                    <input type="radio" name="projectType" value="business" checked>
+                    <span class="popular-tag">BELIEBTE WAHL</span>
+                    <span class="package-top"><span class="package-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 6.5h.01M11 6.5h.01M7 13h4M7 16h7"></path></svg></span><span class="package-select">✓</span></span>
+                    <span class="package-name">Unternehmenswebsite</span>
+                    <span class="package-desc">Der komplette digitale Auftritt für Ihr Unternehmen.</span>
+                    <span class="package-includes"><i>✓</i> Bis zu 5 Inhaltsseiten</span>
+                    <span class="package-price"><b>890 €</b><small>einmalig</small></span>
+                  </label>
+                  <label class="package-card" data-package="shop">
+                    <input type="radio" name="projectType" value="shop">
+                    <span class="package-top"><span class="package-icon"><svg viewBox="0 0 24 24"><path d="M4 5h2l2.1 10.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L22 8H7"></path><circle cx="10" cy="20" r="1"></circle><circle cx="18" cy="20" r="1"></circle></svg></span><span class="package-select">✓</span></span>
+                    <span class="package-name">Online-Shop</span>
+                    <span class="package-desc">Produkte präsentieren, Warenkörbe füllen und online verkaufen.</span>
+                    <span class="package-includes"><i>✓</i> Shop-Grundlage + 10 Produkte</span>
+                    <span class="package-price"><b>1.490 €</b><small>einmalig</small></span>
+                  </label>
+                  <label class="package-card" data-package="relaunch">
+                    <input type="radio" name="projectType" value="relaunch">
+                    <span class="package-top"><span class="package-icon"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"></path><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"></path></svg></span><span class="package-select">✓</span></span>
+                    <span class="package-name">Website-Relaunch</span>
+                    <span class="package-desc">Ihre bestehende Website modernisieren und neu strukturieren.</span>
+                    <span class="package-includes"><i>✓</i> Überarbeitung bis 5 Seiten</span>
+                    <span class="package-price"><b>690 €</b><small>einmalig</small></span>
+                  </label>
+                </div>
+                <div class="included-box">
+                  <div class="included-icon"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></div>
+                  <div><b>In jedem Paket bereits enthalten</b><p>Individuelles Layout · Für Smartphone, Tablet und Desktop optimiert · Kontaktmöglichkeit · Technische SEO-Grundlagen</p></div>
+                </div>
+                <div class="field-grid">
+                  <label class="field"><span>In welcher Branche sind Sie tätig? <b>*</b></span><input type="text" name="industry" placeholder="z. B. Friseursalon, Handwerk, Beratung" maxlength="100" required></label>
+                  <label class="field"><span>Wie heißt Ihr Unternehmen?</span><input type="text" name="businessName" placeholder="Unternehmensname" maxlength="100"></label>
+                </div>
+                <label class="field field-wide"><span>Was ist Ihr wichtigstes Ziel?</span>
+                  <select name="mainGoal"><option value="">Bitte auswählen</option><option>Mehr Kundenanfragen erhalten</option><option>Online-Termine ermöglichen</option><option>Produkte online verkaufen</option><option>Professioneller auftreten</option><option>Zeit durch Automatisierung sparen</option><option>Bestehende Website verbessern</option><option>Mehrere dieser Ziele</option></select>
+                </label>
+              </section>
+
+              <!-- STEP 2: DESIGN -->
+              <section class="step-panel" data-step="1" aria-labelledby="step2-title">
+                <div class="step-heading">
+                  <span class="step-index">02 / DESIGN & INHALTE</span>
+                  <h3>Wie soll Ihre Website aussehen?</h3>
+                  <p>Wählen Sie eine gestalterische Richtung und markieren Sie die Inhalte, die Besucher auf Ihrer Website finden sollen.</p>
+                </div>
+                <div class="subsection-head"><div><h4>Designrichtung</h4><p>Welcher Stil passt am besten zu Ihrem Unternehmen?</p></div><span class="selection-hint">1 AUSWAHL</span></div>
+                <div class="style-grid">
+                  <label class="style-card"><input type="radio" name="designStyle" value="Modern & klar" required><span class="style-art art-modern"><i></i><i></i><i></i><b></b></span><span class="style-card-text"><b>Modern & klar</b><small>Offen, strukturiert und zeitgemäß.</small></span><span class="style-check">✓</span></label>
+                  <label class="style-card"><input type="radio" name="designStyle" value="Minimalistisch"><span class="style-art art-minimal"><i></i><i></i><i></i><b></b></span><span class="style-card-text"><b>Minimalistisch</b><small>Reduziert, ruhig und aufgeräumt.</small></span><span class="style-check">✓</span></label>
+                  <label class="style-card"><input type="radio" name="designStyle" value="Elegant & hochwertig"><span class="style-art art-elegant"><i></i><i></i><i></i><b></b></span><span class="style-card-text"><b>Elegant & hochwertig</b><small>Edle Typografie und feine Details.</small></span><span class="style-check">✓</span></label>
+                  <label class="style-card"><input type="radio" name="designStyle" value="Kreativ & ausdrucksstark"><span class="style-art art-creative"><i></i><i></i><i></i><b></b></span><span class="style-card-text"><b>Kreativ & ausdrucksstark</b><small>Mutig, individuell und lebendig.</small></span><span class="style-check">✓</span></label>
+                </div>
+
+                <div class="subsection-head pages-head"><div><h4>Welche Inhalte brauchen Sie?</h4><p>Wählen Sie alle passenden Seiten. Die ersten Seiten sind bereits im Paket enthalten.</p></div><span class="selection-hint">MEHRFACHAUSWAHL</span></div>
+                <div class="pages-grid" id="pagesGrid">
+                  <label class="page-option"><input type="checkbox" name="pages" value="Startseite" checked><span class="page-check">✓</span><span><b>Startseite</b><small>Der erste Eindruck</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Über uns"><span class="page-check">✓</span><span><b>Über uns</b><small>Ihr Unternehmen</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Leistungen / Services" checked><span class="page-check">✓</span><span><b>Leistungen / Services</b><small>Was Sie anbieten</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Preise"><span class="page-check">✓</span><span><b>Preise</b><small>Ihre Angebote</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Team"><span class="page-check">✓</span><span><b>Team</b><small>Menschen zeigen</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Galerie / Portfolio"><span class="page-check">✓</span><span><b>Galerie / Portfolio</b><small>Arbeiten präsentieren</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Kontakt" checked><span class="page-check">✓</span><span><b>Kontakt</b><small>So erreichen Kunden Sie</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Häufige Fragen"><span class="page-check">✓</span><span><b>Häufige Fragen</b><small>Antworten auf einen Blick</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Blog / Aktuelles"><span class="page-check">✓</span><span><b>Blog / Aktuelles</b><small>Neuigkeiten teilen</small></span></label>
+                  <label class="page-option"><input type="checkbox" name="pages" value="Impressum & Datenschutz"><span class="page-check">✓</span><span><b>Impressum & Datenschutz</b><small>Seitenstruktur vorbereiten</small></span></label>
+                </div>
+                <div class="page-counter"><span id="pageCountText">3 Seiten ausgewählt</span><span id="pageIncludedText">Im Paket enthalten: 5 Seiten</span></div>
+                <div class="info-note"><span>i</span><p>Jede weitere Inhaltsseite über dem Paketumfang wird mit <b>49 € einmalig</b> kalkuliert. Impressum & Datenschutz werden nicht als zusätzliche Inhaltsseite berechnet; Rechtstexte müssen vom Auftraggeber bereitgestellt oder separat rechtlich geprüft werden.</p></div>
+              </section>
+
+              <!-- STEP 3: FEATURES -->
+              <section class="step-panel" data-step="2" aria-labelledby="step3-title">
+                <div class="step-heading">
+                  <span class="step-index">03 / FUNKTIONEN & AUTOMATISIERUNG</span>
+                  <h3>Was soll Ihre Website können?</h3>
+                  <p>Ergänzen Sie nur das, was Sie wirklich brauchen. Jede Funktion ist einzeln erklärt und wird direkt in Ihrer Preisübersicht berücksichtigt.</p>
+                </div>
+                <div class="feature-section">
+                  <div class="feature-section-title"><div class="feature-title-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h10M7 12h4M7 16h7"></path></svg></div><div><h4>Website-Funktionen</h4><p>Praktische Extras für Ihre Besucher und Kunden.</p></div><span class="feature-count" id="webFeatureCount">0 ausgewählt</span></div>
+                  <div class="feature-grid" id="webFeatures"></div>
+                </div>
+                <div class="feature-section ai-section">
+                  <div class="feature-section-title"><div class="feature-title-icon ai-icon"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"></path><circle cx="12" cy="12" r="4"></circle></svg></div><div><h4>KI & Automatisierung</h4><p>Digitale Assistenten, die wiederkehrende Aufgaben übernehmen.</p></div><span class="feature-count" id="aiFeatureCount">0 ausgewählt</span></div>
+                  <div class="ai-explainer"><span class="ai-sparkle">✳</span><p><b>Was bedeutet das konkret?</b> Wir richten die ausgewählte KI-Lösung ein und passen sie an Ihre Abläufe an. Laufende Gebühren für externe KI- und Plattformanbieter sind nicht im Einrichtungspreis enthalten.</p></div>
+                  <div class="feature-grid" id="aiFeatures"></div>
+                </div>
+                <div class="feature-section care-section">
+                  <div class="feature-section-title"><div class="feature-title-icon care-icon"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.4 8.3-8 10-4.6-1.7-8-5-8-10V6z"></path><path d="m9 12 2 2 4-4"></path></svg></div><div><h4>Betreuung nach dem Start</h4><p>Optionaler monatlicher Service für Updates und Unterstützung.</p></div></div>
+                  <div class="care-options" id="careOptions">
+                    <label class="care-option selected"><input type="radio" name="carePlan" value="none" checked><span class="care-radio"></span><span class="care-copy"><b>Keine laufende Betreuung</b><small>Sie verwalten die Website selbst.</small></span><span class="care-price">0 €<small>/ Monat</small></span></label>
+                    <label class="care-option"><input type="radio" name="carePlan" value="basic"><span class="care-radio"></span><span class="care-copy"><b>Care Basic</b><small>Technische Updates und regelmäßige Funktionskontrolle.</small></span><span class="care-price">19 €<small>/ Monat</small></span></label>
+                    <label class="care-option"><input type="radio" name="carePlan" value="plus"><span class="care-radio"></span><span class="care-copy"><b>Care Plus</b><small>Updates, Backups und priorisierte Unterstützung.</small></span><span class="care-price">39 €<small>/ Monat</small></span></label>
+                  </div>
+                </div>
+              </section>
+
+              <!-- STEP 4: CONTACT / SUMMARY -->
+              <section class="step-panel" data-step="3" aria-labelledby="step4-title">
+                <div class="step-heading">
+                  <span class="step-index">04 / FAST GESCHAFFT</span>
+                  <h3>Prüfen Sie Ihre Konfiguration.</h3>
+                  <p>Hier sehen Sie Ihre Auswahl und den aktuellen Richtpreis. Senden Sie uns anschließend Ihre Anfrage – wir melden uns mit den nächsten Schritten.</p>
+                </div>
+                <div class="final-quote" id="finalQuote"></div>
+                <div class="contact-heading"><span>DER LETZTE SCHRITT</span><h4>Wie können wir Sie erreichen?</h4><p>Wir nutzen Ihre Angaben ausschließlich, um Ihre Anfrage zu bearbeiten.</p></div>
+                <div class="contact-grid">
+                  <label class="field"><span>Ihr Name <b>*</b></span><input type="text" name="contactName" placeholder="Vor- und Nachname" required maxlength="120" autocomplete="name"></label>
+                  <label class="field"><span>E-Mail-Adresse <b>*</b></span><input type="email" name="email" placeholder="name@unternehmen.de" required maxlength="160" autocomplete="email"></label>
+                  <label class="field"><span>Unternehmen</span><input type="text" name="contactCompany" placeholder="Ihr Unternehmen" maxlength="120" autocomplete="organization"></label>
+                  <label class="field"><span>Telefon (optional)</span><input type="tel" name="phone" placeholder="+49 ..." maxlength="40" autocomplete="tel"></label>
+                  <label class="field"><span>Wann soll es losgehen?</span><select name="timeframe"><option value="">Noch offen</option><option>So bald wie möglich</option><option>Innerhalb von 1–2 Monaten</option><option>In 3–6 Monaten</option><option>Später / noch in Planung</option></select></label>
+                  <label class="field"><span>Gibt es bereits eine Website?</span><input type="url" name="currentWebsite" placeholder="https://www.ihre-website.de" maxlength="300"></label>
+                </div>
+                <label class="field field-wide message-field"><span>Weitere Wünsche oder Fragen (optional)</span><textarea name="message" rows="4" maxlength="2000" placeholder="Gibt es etwas, das wir bei Ihrem Projekt beachten sollten?"></textarea></label>
+                <label class="consent-option"><input type="checkbox" name="privacyConsent" required><span class="consent-box">✓</span><span>Ich habe die <a href="datenschutz.html" target="_blank" rel="noopener">Datenschutzhinweise</a> gelesen und bin mit der Verarbeitung meiner Angaben zur Bearbeitung meiner Anfrage einverstanden. <b>*</b></span></label>
+                <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
+                <div class="submission-note"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.4 8.3-8 10-4.6-1.7-8-5-8-10V6z"></path><path d="m9 12 2 2 4-4"></path></svg><span>Ihre Anfrage ist unverbindlich. Ein Auftrag entsteht erst nach einem persönlichen Gespräch und Ihrer ausdrücklichen Zustimmung zu einem Angebot.</span></div>
+                <input type="text" name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+              </section>
+
+              <div class="form-error global-error" id="globalError" role="alert" aria-live="polite"></div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-back" id="backBtn" disabled><span>←</span> Zurück</button>
+                <div class="actions-right"><span class="secure-note"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg> Unverbindlich & sicher</span><button type="button" class="btn btn-primary" id="nextBtn">Weiter zum Design <span>→</span></button><button type="submit" class="btn btn-primary" id="submitBtn" hidden>Anfrage senden <span>↗</span></button></div>
+              </div>
+            </form>
+          </div>
+
+          <aside class="quote-sidebar" aria-label="Aktuelle Preisübersicht">
+            <div class="quote-card">
+              <div class="quote-card-head"><div><span class="quote-eyebrow">IHRE AUSWAHL</span><h3>Preisübersicht</h3></div><span class="quote-live"><i></i> LIVE</span></div>
+              <div class="quote-package" id="sidebarPackage"><span class="quote-package-icon">01</span><div><b>Unternehmenswebsite</b><small>Basis-Paket</small></div><strong>890 €</strong></div>
+              <div class="quote-lines" id="sidebarLines"><div class="quote-line"><span>Projektbasis</span><b>890 €</b></div></div>
+              <div class="quote-divider"></div>
+              <div class="quote-total-row"><span>Einmalig</span><strong id="sidebarTotal">890 €</strong></div>
+              <div class="quote-monthly-row"><span>Monatlich</span><b id="sidebarMonthly">0 €</b></div>
+              <div class="quote-footnote">Beispiel-Richtpreis · kein verbindliches Angebot. Externe Gebühren ggf. zusätzlich.</div>
+              <button type="button" class="quote-edit" id="editSelections">Auswahl überprüfen <span>↗</span></button>
+            </div>
+            <div class="sidebar-help"><div class="help-icon"><svg viewBox="0 0 24 24"><path d="M12 18h.01M9.1 9a3 3 0 1 1 5.2 2c-1.3 1-2.3 1.6-2.3 3"></path><circle cx="12" cy="12" r="9"></circle></svg></div><div><b>Sie sind unsicher?</b><p>Kein Problem. Markieren Sie „Beratung gewünscht“ oder schreiben Sie uns Ihre Fragen.</p></div></div>
+            <label class="advice-option"><input type="checkbox" name="aiUnsure" form="configForm"><span class="advice-check">✓</span><span>Ich wünsche eine persönliche Beratung zu den Möglichkeiten.</span></label>
+          </aside>
+        </div>
+      </section>
+
+      <section class="how-section" id="how-it-works">
+        <div class="how-title"><span class="eyebrow"><span class="eyebrow-line"></span> WAS PASSIERT DANACH?</span><h2>Von Ihrer Auswahl zum<br><em>fertigen Konzept.</em></h2></div>
+        <div class="how-steps">
+          <article><span>01</span><div class="how-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM8 9h8M8 13h5"></path></svg></div><h3>Sie konfigurieren</h3><p>Sie wählen die gewünschten Inhalte und Funktionen aus und senden uns Ihre Anfrage.</p></article>
+          <article><span>02</span><div class="how-icon"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 16l3-8 3 5 2-3 4 6"></path></svg></div><h3>Wir prüfen Ihr Projekt</h3><p>Wir schauen uns Ihre Anforderungen an und klären offene Fragen persönlich mit Ihnen.</p></article>
+          <article><span>03</span><div class="how-icon"><svg viewBox="0 0 24 24"><path d="M4 12.5 9 17l11-11"></path></svg></div><h3>Sie erhalten ein Angebot</h3><p>Sie bekommen ein konkretes Angebot. Erst nach Ihrer Zustimmung beginnt die Umsetzung.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a class="brand footer-brand" href="#top"><span class="brand-symbol">p<span>.</span></span><span class="brand-wordmark">pimenta<span>GROUP</span></span></a>
+      <p>Digitale Lösungen, passend zu Ihrem Unternehmen.</p>
+      <div class="footer-links"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></div>
+      <small>© <span id="year"></span> pimentaGROUP · Alle Rechte vorbehalten.</small>
+    </footer>
+  </div>
+
+  <div class="mobile-quote-bar" id="mobileQuoteBar">
+    <div class="mobile-quote-price"><small>Einmalig ab / aktuell</small><b id="mobileTotal">890 €</b><span id="mobileMonthly">+ 0 € / Monat</span></div>
+    <button type="button" class="btn btn-primary" id="mobileNextBtn">Weiter <span>→</span></button>
+    <button type="button" class="btn btn-primary" id="mobileSubmitBtn" hidden>Anfrage senden <span>↗</span></button>
+  </div>
+
+  <div class="success-overlay" id="successOverlay" hidden>
+    <div class="success-modal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+      <button type="button" class="modal-close" id="closeSuccess" aria-label="Schließen">×</button>
+      <div class="success-symbol"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></div>
+      <span class="eyebrow"><span class="eyebrow-line"></span> GESCHAFFT</span>
+      <h2 id="successTitle">Ihre Konfiguration ist bereit.</h2>
+      <p id="successMessage">Vielen Dank. Ihre Konfiguration wurde erstellt.</p>
+      <div class="modal-actions"><button type="button" class="btn btn-primary" id="closeSuccessPrimary">Zurück zur Website</button></div>
+    </div>
+  </div>
+</body>
+</html>
