@@ -37,7 +37,7 @@ function doPost(e) {
     const headers = [
       'Eingang', 'Name', 'Unternehmen', 'E-Mail', 'Telefon', 'Branche',
       'Projektart', 'Website-Status', 'Website-Funktionen', 'Smartphone-Funktionen',
-      'Social-Profile', 'Social-Funktionen', 'KI-Funktionen', 'Zubehör / Hintergrundfunktionen',
+      'Social-Profile', 'Social-Funktionen', 'KI-Funktionen', 'Sichtbarkeit & Sprachen',
       'Erstellung einmalig EUR', 'Basis monatlich EUR', 'Zusatzmodule monatlich EUR',
       'Monatlich nach Test EUR', 'Kostenlose Testmonate', 'Preisstatus', 'Nachricht',
       'Vollständige Anfrage (JSON)'
@@ -67,7 +67,7 @@ function doPost(e) {
       safeCell(contact.phone), safeCell(project.industry), safeCell(project.type), safeCell(project.websiteStatus),
       safeCell(formatList(project.features)), safeCell(formatList(project.mobileFeatures)),
       safeCell((project.socialProfiles || []).join(', ')), safeCell(formatList(project.socialFeatures)),
-      safeCell(formatList(project.aiFeatures)), safeCell(formatList(project.extrasFeatures)),
+      safeCell(formatList(project.aiFeatures)), safeCell(formatList(project.visibilityFeatures)),
       Number(pricing.setupPrice || 0), Number(pricing.baseMonthly || 0),
       Number(pricing.addonsMonthly || 0), Number(pricing.monthlyAfterTrial || 0),
       Number(pricing.freeTrialMonths || 0), safeCell(pricing.status), safeCell(contact.message), JSON.stringify(data)
@@ -116,7 +116,7 @@ function sendNotification(data) {
     '', 'SOCIAL-PROFILE', (project.socialProfiles || []).join(', ') || '-',
     '', 'SOCIAL-FUNKTIONEN', ...list(project.socialFeatures),
     '', 'KI & AUTOMATISIERUNG', ...list(project.aiFeatures),
-    '', 'ZUBEHÖR', ...list(project.extrasFeatures),
+    '', 'SICHTBARKEIT & SPRACHEN', ...list(project.visibilityFeatures),
     '', 'PREISORIENTIERUNG',
     `Erstellung einmalig: ${formatEuro(price.setupPrice || 0)}`,
     `Basis pro Monat: ${formatEuro(price.baseMonthly || 0)}`,

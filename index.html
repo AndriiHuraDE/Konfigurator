@@ -56,7 +56,7 @@
           <div class="site-viewport" id="siteViewport">
             <div class="demo-site" id="demoSite">
               <header class="demo-nav">
-                <a class="demo-logo" href="#siteTop"><span class="logo-monogram">S</span><span><b id="previewBrand">SÉLYS</b><small>HAIR & BEAUTY</small></span></a>
+                <a class="demo-logo" href="#siteTop"><span class="logo-monogram">D</span><span><b id="previewBrand">DEMO</b><small id="previewTagline">HAIR & BEAUTY</small></span></a>
                 <nav aria-label="Website-Navigation">
                   <a href="#siteServices">Leistungen</a>
                   <a href="#siteTeam">Team</a>
@@ -68,9 +68,9 @@
 
               <section class="demo-hero" id="siteTop">
                 <div class="hero-copy">
-                  <span class="site-eyebrow">MÜNSTER · PREMIUM HAIR STUDIO</span>
-                  <h2>Ihr Stil.<br><em>Ihr Moment.</em></h2>
-                  <p>Individuelle Looks, persönliche Beratung und ein gutes Gefühl bei jedem Besuch.</p>
+                  <span class="site-eyebrow" id="siteEyebrow">MÜNSTER · PREMIUM HAIR STUDIO</span>
+                  <h2 id="siteHeroTitle">Ihr Stil.<br><em>Ihr Moment.</em></h2>
+                  <p id="siteHeroText">Individuelle Looks, persönliche Beratung und ein gutes Gefühl bei jedem Besuch.</p>
                   <div class="hero-actions"><a class="hero-primary" href="#module-booking">Termin entdecken <span>↗</span></a><a class="hero-secondary" href="#siteServices">Leistungen ansehen</a></div>
                   <div class="hero-proof"><span>✦ Persönliche Beratung</span><span>✦ Zeit für Ihren Look</span></div>
                 </div>
@@ -81,28 +81,30 @@
               </section>
 
               <section class="site-services" id="siteServices">
-                <div class="site-section-heading"><span>UNSERE LEISTUNGEN</span><h3>Für Ihren ganz<br><em>eigenen Stil.</em></h3></div>
+                <div class="site-section-heading"><span id="servicesEyebrow">UNSERE LEISTUNGEN</span><h3 id="siteServicesTitle">Für Ihren ganz<br><em>eigenen Stil.</em></h3></div>
                 <div class="service-preview-grid">
-                  <article class="service-preview"><span class="service-number">01</span><b>Cut & Styling</b><small>Individuell. Präzise. Persönlich.</small><i>↗</i></article>
-                  <article class="service-preview"><span class="service-number">02</span><b>Color & Care</b><small>Farbe, die zu Ihnen passt.</small><i>↗</i></article>
-                  <article class="service-preview"><span class="service-number">03</span><b>Beauty Rituals</b><small>Zeit für Pflege und Wohlgefühl.</small><i>↗</i></article>
+                  <article class="service-preview"><span class="service-number">01</span><b id="serviceOneName">Cut & Styling</b><small id="serviceOneDesc">Individuell. Präzise. Persönlich.</small><i>↗</i></article>
+                  <article class="service-preview"><span class="service-number">02</span><b id="serviceTwoName">Color & Care</b><small id="serviceTwoDesc">Farbe, die zu Ihnen passt.</small><i>↗</i></article>
+                  <article class="service-preview"><span class="service-number">03</span><b id="serviceThreeName">Beauty Rituals</b><small id="serviceThreeDesc">Zeit für Pflege und Wohlgefühl.</small><i>↗</i></article>
                 </div>
               </section>
 
               <section class="site-team" id="siteTeam">
-                <div class="site-section-heading compact"><span>MIT LIEBE ZUM DETAIL</span><h3>Menschen hinter<br><em>dem Handwerk.</em></h3></div>
+                <div class="site-section-heading compact"><span id="teamEyebrow">MIT LIEBE ZUM DETAIL</span><h3 id="teamTitle">Menschen hinter<br><em>dem Handwerk.</em></h3></div>
                 <div class="team-preview-grid">
-                  <article class="team-preview"><div class="team-person person-one"><i></i></div><b>Anna</b><small>Creative Director</small></article>
-                  <article class="team-preview"><div class="team-person person-two"><i></i></div><b>Lukas</b><small>Master Stylist</small></article>
-                  <article class="team-preview"><div class="team-person person-three"><i></i></div><b>Sophie</b><small>Color Expert</small></article>
+                  <article class="team-preview"><div class="team-person person-one"><i></i></div><b>Anna</b><small id="teamRoleOne">Creative Director</small></article>
+                  <article class="team-preview"><div class="team-person person-two"><i></i></div><b>Lukas</b><small id="teamRoleTwo">Master Stylist</small></article>
+                  <article class="team-preview"><div class="team-person person-three"><i></i></div><b>Sophie</b><small id="teamRoleThree">Color Expert</small></article>
                 </div>
               </section>
 
               <div id="siteModules" class="site-modules" aria-live="polite"></div>
-              <footer class="demo-site-footer" id="siteContact"><span class="footer-wordmark" id="footerBrand">SÉLYS</span><span>HAIR & BEAUTY · MÜNSTER</span><span>Ein Ort für Ihren Stil.</span></footer>
-              <a class="site-whatsapp-float" id="siteWhatsApp" href="#" aria-label="WhatsApp-Kontakt" hidden>◔</a>
-              <div class="site-chat-float" id="siteChatFloat" hidden><span>✳</span><div><b>Wie können wir helfen?</b><small>Unser digitaler Assistent</small></div></div>
+              <footer class="demo-site-footer" id="siteContact"><span class="footer-wordmark" id="footerBrand">DEMO</span><span id="footerTagline">HAIR & BEAUTY · MÜNSTER</span><span id="footerPromise">Ein Ort für Ihren Stil.</span><div class="demo-social-links" id="siteSocialLinks" hidden></div></footer>
             </div>
+          </div>
+          <div class="site-floating-actions" aria-label="Kontakt-Widgets der Website-Demo">
+            <div class="site-chat-float" id="siteChatFloat" hidden><span>✳</span><div><b>Wie können wir helfen?</b><small>Unser digitaler Assistent</small></div></div>
+            <a class="site-whatsapp-float" id="siteWhatsApp" href="#" aria-label="WhatsApp-Kontakt" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.8a8.4 8.4 0 0 1-12.4 7.3L3 20.5l1.3-5A8.4 8.4 0 1 1 20.5 11.8Z"/><path d="M8.5 8.3c.4 2.7 2.1 4.4 4.8 5.2l1.2-1.2 2.1 1c-.2 1.5-1.3 2.2-2.7 2.1-3.8-.4-7.1-3.8-7.3-7.4-.1-1.2.7-2.2 2-2.4l1 2.2-1.1.5Z"/></svg></a>
           </div>
         </div>
 
@@ -112,62 +114,51 @@
             <div class="phone-copy"><span class="scene-kicker">MOBIL OPTIMIERT</span><h2>Alles Wichtige.<br><em>In Ihrer Hand.</em></h2><p>So erleben Ihre Kunden die Website auf dem Smartphone.</p></div>
             <div class="phone-device" id="phoneDevice">
               <div class="phone-island"></div>
-              <div class="phone-screen">
+              <div class="phone-screen" id="phoneScreen">
                 <div class="phone-status"><span>9:41</span><span>●●● ▰</span></div>
-                <div class="phone-site-head"><b id="phoneBrand">SÉLYS</b><span>☰</span></div>
-                <div class="phone-hero"><small>HAIR & BEAUTY</small><b>Ihr Stil.<br><em>Ihr Moment.</em></b><span>Persönlich. Modern. Für Sie.</span><i>Termin entdecken ↗</i></div>
-                <div class="phone-mini-services"><span>UNSERE LEISTUNGEN</span><div><i></i><i></i><i></i></div></div>
+                <div class="phone-site-head"><b id="phoneBrand">DEMO</b><span>☰</span></div>
+                <div class="phone-hero"><small id="phoneTagline">HAIR & BEAUTY</small><b id="phoneHeroTitle">Ihr Stil.<br><em>Ihr Moment.</em></b><span id="phoneHeroText">Persönlich. Modern. Für Sie.</span><i>Termin entdecken ↗</i></div>
+                <div class="phone-mini-services"><span id="phoneServicesEyebrow">UNSERE LEISTUNGEN</span><div><i></i><i></i><i></i></div></div>
+                <div class="phone-about"><small id="phoneAboutEyebrow">ÜBER DAS STUDIO</small><b id="phoneAboutTitle">Persönlich. Für Sie.</b><span id="phoneAboutText">Leistungen, Menschen und ein guter erster Eindruck.</span></div>
                 <div class="phone-live-module" id="phoneLiveModule"><span class="phone-module-empty">Ihre mobile Funktion erscheint hier.</span></div>
                 <div class="phone-bottom-nav"><span>⌂</span><span>♡</span><span>▦</span><span>☻</span></div>
               </div>
+              <div class="phone-scrollbar" id="phoneScrollbar" aria-hidden="true"><span id="phoneScrollbarThumb"></span></div>
             </div>
           </div>
         </div>
 
-        <!-- SOCIAL SCENE -->
+        <!-- SOCIAL SCENE: each selected platform gets its own recognizable preview -->
         <div class="scene scene-social" data-scene="social" hidden>
           <div class="social-presentation">
-            <div class="scene-heading"><span class="scene-kicker">SOCIAL MEDIA</span><h2>Ihre Kanäle.<br><em>Ein Auftritt.</em></h2></div>
+            <div class="scene-heading"><span class="scene-kicker">SOCIAL MEDIA</span><h2>Ihre Kanäle.<br><em>Ihr Auftritt.</em></h2></div>
             <div class="social-workspace">
-              <div class="social-profile-window" id="socialProfile">
-                <div class="social-window-top"><span></span><span></span><span></span><b>instagram</b></div>
-                <div class="social-profile-info"><div class="social-profile-avatar">S</div><div><b id="socialHandle">ihr.studio</b><small>Hair · Beauty · Münster</small></div><button>Folgen</button></div>
-                <div class="social-profile-stats"><span><b>128</b> Beiträge</span><span><b>2.4k</b> Follower</span><span><b>340</b> Gefolgt</span></div>
-                <div class="social-posts" id="socialPosts"><i class="post-art post-one"></i><i class="post-art post-two"></i><i class="post-art post-three"></i><i class="post-art post-four"></i><i class="post-art post-five"></i><i class="post-art post-six"></i></div>
-                <div class="social-network-links" id="socialNetworkLinks"><span>Instagram</span><span>Facebook</span><span>TikTok</span><span>LinkedIn</span></div>
+              <div class="social-preview-grid" id="socialPreviewContent" aria-live="polite"></div>
+              <div class="social-connection" id="socialConnection">
+                <div class="connection-node web-node">Ihre Website</div>
+                <div class="connection-line"><i></i><i></i><i></i></div>
+                <div class="social-targets" id="socialTargets"><span class="connection-node social-node">Social Media</span></div>
+                <p id="socialConnectionText">Wählen Sie Kanäle aus, um sie hier zu sehen.</p>
               </div>
-              <div class="social-connection" id="socialConnection"><div class="connection-node web-node">Ihre Website</div><div class="connection-line"><i></i><i></i><i></i></div><div class="connection-node social-node">Social Media</div><p>Profile und Website sinnvoll verbinden.</p></div>
             </div>
           </div>
         </div>
 
-        <!-- AI SCENE -->
+        <!-- AI SCENE: selected AI services are rendered as individual product previews -->
         <div class="scene scene-ai" data-scene="ai" hidden>
           <div class="ai-presentation">
-            <div class="scene-heading"><span class="scene-kicker">KI & AUTOMATISIERUNG</span><h2>Mehr Zeit für<br><em>Ihr Unternehmen.</em></h2></div>
-            <div class="ai-workspace">
-              <div class="ai-chat-demo" id="aiChatDemo">
-                <div class="ai-chat-top"><span class="ai-avatar">✳</span><div><b>Digitaler Assistent</b><small><i></i> Demo-Unterhaltung</small></div><span>•••</span></div>
-                <div class="ai-chat-body" id="aiChatBody"><div class="chat-time">HEUTE · 10:42</div><div class="chat-message bot">Hallo! Wie kann ich Ihnen helfen?</div><div class="chat-message user">Ich möchte einen Termin buchen.</div><div class="chat-message bot">Sehr gern. Ich zeige Ihnen die nächsten freien Zeiten.</div></div>
-                <div class="ai-chat-input"><span>Nachricht eingeben …</span><b>↑</b></div>
-              </div>
-              <div class="automation-demo" id="automationDemo"><div class="automation-step"><span>01</span><div><b>Kundenanfrage</b><small>Website · WhatsApp · Telefon</small></div></div><div class="automation-connector"><i></i><i></i><i></i></div><div class="automation-step automation-active"><span>✳</span><div><b>Assistent</b><small>Erkennen · Antworten · Sortieren</small></div></div><div class="automation-connector"><i></i><i></i><i></i></div><div class="automation-step"><span>✓</span><div><b>Ihr Team</b><small>Übersichtlich vorbereitet</small></div></div></div>
-            </div>
-            <div class="ai-active-label" id="aiActiveLabel">Wählen Sie rechts eine Automatisierung.</div>
+            <div class="scene-heading"><span class="scene-kicker">KI & AUTOMATISIERUNG</span><h2>Digitale Helfer.<br><em>Für Ihren Alltag.</em></h2></div>
+            <div class="ai-workspace" id="aiPreviewContent" aria-live="polite"></div>
+            <div class="ai-active-label" id="aiActiveLabel">Wählen Sie rechts einen KI-Baustein.</div>
           </div>
         </div>
 
-        <!-- ACCESSORIES / ABSTRACT FUNCTIONS -->
-        <div class="scene scene-extras" data-scene="extras" hidden>
-          <div class="extras-presentation">
-            <span class="scene-kicker">IM HINTERGRUND</span>
-            <h2>Das Unsichtbare,<br><em>das mitarbeitet.</em></h2>
-            <div class="extras-visual" id="extrasVisual">
-              <div class="extras-search"><span>⌕</span><div><small>GOOGLE-SUCHE</small><b>Friseursalon in Ihrer Nähe</b><i>Ihre Website · Öffnungszeiten · Leistungen</i></div><strong>✓</strong></div>
-              <div class="extras-language"><span>DE</span><span>EN</span><span>FR</span></div>
-              <div class="extras-orbit orbit-one"></div><div class="extras-orbit orbit-two"></div>
-            </div>
-            <div class="extras-active" id="extrasActive"><span>Keine Zusatzoption ausgewählt</span></div>
+        <!-- VISIBILITY SCENE: background services have a relevant visual, not fake page blocks -->
+        <div class="scene scene-visibility" data-scene="visibility" hidden>
+          <div class="visibility-presentation">
+            <div class="scene-heading"><span class="scene-kicker">SICHTBARKEIT & SPRACHEN</span><h2>Auch gefunden werden.<br><em>Überall verstanden.</em></h2></div>
+            <div class="visibility-preview-grid" id="visibilityPreview" aria-live="polite"></div>
+            <div class="ai-active-label" id="visibilityActiveLabel">Wählen Sie rechts Ihre Optionen.</div>
           </div>
         </div>
       </section>
@@ -179,11 +170,12 @@
           <div class="option-list" id="listWebsite"></div>
         </section>
         <section class="option-section" data-scene-section="phone" id="optionsPhone">
-          <h2>Smartphone</h2>
+          <h2>Buchung & Kontakt</h2>
           <div class="option-list" id="listPhone"></div>
         </section>
         <section class="option-section" data-scene-section="social" id="optionsSocial">
           <h2>Social Media</h2>
+          <p class="section-subcopy">Profile verlinken: kostenlos. <b>+4 €/Monat</b> für ausgewählte Instagram-Beiträge direkt auf der Website. Keine laufende Social-Media-Betreuung.</p>
           <div class="social-choice-list" id="socialChoices"></div>
           <div class="option-list" id="listSocial"></div>
         </section>
@@ -191,9 +183,9 @@
           <h2>KI & Automatisierung</h2>
           <div class="option-list" id="listAI"></div>
         </section>
-        <section class="option-section option-section-last" data-scene-section="extras" id="optionsExtras">
-          <h2>Zubehör</h2>
-          <div class="option-list" id="listExtras"></div>
+        <section class="option-section option-section-last" data-scene-section="visibility" id="optionsVisibility">
+          <h2>Sichtbarkeit & Sprachen</h2>
+          <div class="option-list" id="listVisibility"></div>
           <button class="change-basics" id="changeBasics" type="button">← Betriebsangaben ändern</button>
         </section>
       </aside>
