@@ -806,10 +806,6 @@ dialog{border:1px solid #dededb;box-shadow:0 30px 100px #0003;padding:0;color:#2
  .price-cta{font-size:11px!important}
 }
 
-/* V11: one reliable arrival frame, applied to the inserted block after the controlled scroll completes. */
-.site-module.is-highlighted,.phone-module-card.is-highlighted,.network-card.is-highlighted,.ai-service-card.is-highlighted,.visibility-card.is-highlighted{position:relative!important;z-index:40!important;isolation:isolate;animation:none!important}
-.site-module.is-highlighted::after,.phone-module-card.is-highlighted::after,.network-card.is-highlighted::after,.ai-service-card.is-highlighted::after,.visibility-card.is-highlighted::after{content:"";position:absolute;inset:0;display:block;border:2px solid rgba(255,255,255,.98);outline:1px solid rgba(20,20,20,.5);border-radius:inherit;box-shadow:0 0 0 0 rgba(255,255,255,.9),0 0 0 2px rgba(20,20,20,.16);pointer-events:none;z-index:80;animation:pimentaArrivalFrame 2.4s cubic-bezier(.18,.72,.26,1) both}
-@keyframes pimentaArrivalFrame{0%{opacity:0;transform:scale(.985);box-shadow:0 0 0 0 rgba(255,255,255,.9),0 0 0 2px rgba(20,20,20,.16)}16%{opacity:1;transform:scale(1);box-shadow:0 0 0 0 rgba(255,255,255,.9),0 0 0 2px rgba(20,20,20,.16)}62%{opacity:1;transform:scale(1.012);box-shadow:0 0 0 10px rgba(255,255,255,.55),0 0 0 14px rgba(20,20,20,.09)}100%{opacity:0;transform:scale(1.028);box-shadow:0 0 0 24px rgba(255,255,255,0),0 0 0 29px rgba(20,20,20,0)}}
 
 /* V12: align the floating contact widgets to the inside edge of the demo website frame. */
 .website-preview-shell{
@@ -857,3 +853,303 @@ dialog{border:1px solid #dededb;box-shadow:0 30px 100px #0003;padding:0;color:#2
   .demo-site .service-preview small,.demo-site .team-preview>small,.demo-site .module-subtitle{font-size:9px!important;}
   .demo-site .map-info span,.demo-site .map-info a,.demo-site .booking-services span,.demo-site .booking-dates span,.demo-site .booking-times span{font-size:9px!important;}
 }
+
+
+/* ===== V10 refinement: WhatsApp card, isolated widgets, real phone website and FLIP motion ===== */
+.options-rail{padding-top:0!important;}
+.options-rail .rail-tools{top:0!important;margin-top:0!important;padding-top:8px!important;background:rgba(255,255,255,.985)!important;}
+.options-rail .option-section:first-of-type{margin-top:0!important;padding-top:12px!important;}
+
+/* WhatsApp in the website preview must look like a deliberate CTA, never like a browser-default blue link. */
+.demo-site .module-whatsapp-link,
+.demo-site .module-whatsapp-link:link,
+.demo-site .module-whatsapp-link:visited{
+  display:grid;grid-template-columns:52px minmax(0,1fr) 24px;align-items:center;gap:14px;
+  width:min(100%,660px);min-height:76px;padding:14px 18px;
+  color:#173c2b!important;text-decoration:none!important;
+  background:linear-gradient(110deg,#edf7ef,#f7fbf7);border:1px solid #cfe2d3;
+  box-shadow:0 8px 24px rgba(26,82,46,.07);transition:background .2s,border-color .2s,transform .2s,box-shadow .2s;
+}
+.demo-site .module-whatsapp-link:hover{color:#123623!important;background:#e4f2e7;border-color:#9dc6a6;transform:translateY(-2px);box-shadow:0 12px 28px rgba(26,82,46,.12);}
+.demo-site .module-whatsapp-link:focus-visible{outline:2px solid #238a50;outline-offset:3px;}
+.module-whatsapp-mark{width:46px;height:46px;display:grid;place-items:center;border-radius:50%;background:#218c4c;color:#fff;}
+.module-whatsapp-mark .social-brand-icon{width:26px;height:26px;color:#fff;}
+.module-whatsapp-link>span:nth-child(2){display:grid;gap:4px;min-width:0;}
+.module-whatsapp-link b{font:600 15px/1.25 Inter,Arial,sans-serif;color:#173c2b;}
+.module-whatsapp-link small{font:400 11px/1.4 Inter,Arial,sans-serif;color:#54705e;}
+.module-whatsapp-link>i{font-style:normal;font-size:21px;color:#287b49;justify-self:end;}
+
+/* The chatbot and WhatsApp buttons are a single stack inside the preview frame. */
+.website-preview-shell .site-floating-actions{
+  position:absolute!important;right:clamp(14px,2.1vw,30px)!important;bottom:clamp(14px,2vw,26px)!important;
+  z-index:45!important;display:flex!important;flex-direction:column!important;align-items:flex-end!important;
+  justify-content:flex-end!important;gap:10px!important;width:max-content;max-width:min(240px,42%);
+  pointer-events:none!important;isolation:isolate;
+}
+.website-preview-shell .site-floating-actions[hidden]{display:none!important;}
+.website-preview-shell .site-floating-actions>*{position:relative!important;inset:auto!important;float:none!important;margin:0!important;flex:none!important;pointer-events:auto!important;transform:none;}
+.website-preview-shell .site-chat-float{
+  display:flex!important;align-items:center;gap:10px;max-width:100%!important;min-height:54px;padding:10px 13px!important;
+  background:#232323!important;color:#fff!important;border:1px solid rgba(255,255,255,.9);border-radius:3px;
+  box-shadow:0 8px 24px rgba(0,0,0,.22)!important;white-space:normal;
+}
+.website-preview-shell .site-chat-float b{display:block;font-size:11px!important;line-height:1.3;color:#fff!important;}
+.website-preview-shell .site-chat-float small{display:block;font-size:9px!important;line-height:1.35;color:#d1d1cd!important;}
+.website-preview-shell .site-whatsapp-float{
+  display:grid!important;place-items:center;width:48px!important;height:48px!important;min-width:48px;
+  padding:0!important;background:#218c4c!important;color:#fff!important;border:2px solid #fff;
+  border-radius:50%!important;box-shadow:0 6px 18px rgba(0,0,0,.24)!important;
+}
+.website-preview-shell .site-whatsapp-float svg{display:block;width:25px!important;height:25px!important;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;}
+.website-preview-shell .site-floating-actions>*:hover{filter:brightness(1.06);}
+
+/* Footer content reserves a dedicated safe column for the floating stack. */
+.demo-site-footer{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-areas:"brand tagline" "promise socials";
+  align-items:center;justify-items:start;column-gap:14px;row-gap:7px;
+  padding:22px clamp(18px,4vw,52px) 22px clamp(18px,5.2vw,80px)!important;
+  padding-right:clamp(150px,22vw,260px)!important;min-height:124px;
+}
+.demo-site-footer #footerBrand{grid-area:brand;}
+.demo-site-footer #footerTagline{grid-area:tagline;}
+.demo-site-footer #footerPromise{grid-area:promise;}
+.demo-site-footer .demo-social-links{grid-area:socials;justify-self:start;align-self:center;display:flex;flex-wrap:wrap;gap:8px;margin:0!important;max-width:100%;}
+.demo-site-footer .site-social-link{flex:none;width:27px;height:27px;}
+.demo-site-footer .site-social-link .social-brand-icon{width:15px;height:15px;}
+.demo-social-links[hidden]{display:none!important;}
+
+/* Phone: render the same HTML modules as desktop, naturally reflowed to a narrow screen. */
+.phone-live-module{display:block!important;padding:0 0 12px!important;min-width:0;}
+.phone-live-module .site-module{
+  width:100%;min-width:0;padding:17px 11px!important;margin:0!important;
+  border-top:1px solid #e8e2d8;background:#fdfbf7;overflow:hidden;
+}
+.phone-live-module .module-kicker{font-size:8px!important;letter-spacing:.14em;}
+.phone-live-module .module-title{font-size:19px!important;line-height:1.08;margin:7px 0 11px!important;}
+.phone-live-module .module-subtitle{font-size:10px!important;line-height:1.45;margin:0 0 11px!important;}
+.phone-live-module .module-map-layout{grid-template-columns:1fr!important;gap:10px!important;}
+.phone-live-module .map-art{min-height:115px!important;}
+.phone-live-module .map-info{gap:6px!important;}
+.phone-live-module .map-info b{font-size:14px!important;}
+.phone-live-module .map-info span,.phone-live-module .map-info a{font-size:10px!important;}
+.phone-live-module .module-team-grid{grid-template-columns:1fr!important;gap:6px!important;}
+.phone-live-module .module-team-person{display:flex!important;flex-direction:row!important;align-items:center!important;padding:8px!important;}
+.phone-live-module .module-team-person b{font-size:11px!important;}
+.phone-live-module .module-team-person small{font-size:9px!important;}
+.phone-live-module .module-team-avatar{width:31px;height:31px;}
+.phone-live-module .module-gallery-grid{grid-template-columns:1fr 1fr!important;gap:5px!important;}
+.phone-live-module .module-gallery-grid i{min-height:83px!important;}
+.phone-live-module .module-reviews-grid{grid-template-columns:1fr!important;gap:7px!important;}
+.phone-live-module .review-card{padding:11px!important;}
+.phone-live-module .review-card blockquote{font-size:12px!important;margin:7px 0!important;}
+.phone-live-module .review-card small{font-size:9px!important;}
+.phone-live-module .booking-widget{padding:10px!important;}
+.phone-live-module .booking-widget-head{gap:6px!important;}
+.phone-live-module .booking-widget-head b{font-size:13px!important;}
+.phone-live-module .booking-widget-head small{font-size:8px!important;}
+.phone-live-module .booking-services{gap:4px!important;}
+.phone-live-module .booking-services span,.phone-live-module .booking-dates span,.phone-live-module .booking-times span{font-size:8px!important;padding:6px 5px!important;}
+.phone-live-module .booking-dates{gap:4px!important;}
+.phone-live-module .module-faq-list summary{font-size:12px!important;}
+.phone-live-module .module-faq-list p{font-size:10px!important;}
+.phone-live-module .module-blog-grid,.phone-live-module .module-shop-grid{grid-template-columns:1fr 1fr!important;gap:6px!important;}
+.phone-live-module .blog-art,.phone-live-module .shop-art{height:76px!important;}
+.phone-live-module .blog-card,.phone-live-module .shop-card{padding:8px!important;min-width:0;}
+.phone-live-module .blog-card b,.phone-live-module .shop-card b{font-size:10px!important;}
+.phone-live-module .blog-card small,.phone-live-module .shop-card small{font-size:9px!important;}
+.phone-live-module .module-newsletter{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;}
+.phone-live-module .newsletter-copy h3{font-size:16px!important;}
+.phone-live-module .newsletter-copy p{font-size:10px!important;}
+.phone-live-module .newsletter-form{display:flex!important;width:100%;max-width:none!important;}
+.phone-live-module .newsletter-form input,.phone-live-module .newsletter-form button{font-size:9px!important;padding:9px 7px!important;min-width:0;}
+.phone-live-module .module-contact-form{grid-template-columns:1fr!important;gap:7px!important;}
+.phone-live-module .module-contact-form input,.phone-live-module .module-contact-form textarea,.phone-live-module .module-contact-form button{font-size:10px!important;padding:9px!important;}
+.phone-live-module .module-whatsapp-link{grid-template-columns:38px minmax(0,1fr) 17px!important;gap:8px!important;min-height:58px;padding:9px!important;}
+.phone-live-module .module-whatsapp-mark{width:35px;height:35px;}
+.phone-live-module .module-whatsapp-mark .social-brand-icon{width:20px;height:20px;}
+.phone-live-module .module-whatsapp-link b{font-size:10px!important;}
+.phone-live-module .module-whatsapp-link small{font-size:8px!important;}
+.phone-live-module .module-whatsapp-link>i{font-size:16px!important;}
+.phone-live-module .module-instagram-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;}
+.phone-live-module .module-instagram-grid i{aspect-ratio:1;min-width:0;}
+.phone-live-module .module-shop-grid .shop-card{overflow:hidden;}
+.phone-live-module .site-module.is-highlighted{z-index:2!important;}
+.phone-social-links{justify-content:flex-start!important;flex-wrap:wrap;padding:10px 100px 14px 12px!important;gap:9px!important;}
+.phone-social-link{flex:none;}
+.phone-screen.has-phone-actions .phone-scroll-content{padding-bottom:112px!important;}
+.phone-screen .phone-floating-actions{
+  position:absolute!important;right:9px!important;bottom:49px!important;z-index:40!important;
+  display:flex!important;flex-direction:column!important;align-items:flex-end!important;justify-content:flex-end!important;
+  gap:7px!important;max-width:118px;pointer-events:none!important;
+}
+.phone-screen .phone-floating-actions[hidden]{display:none!important;}
+.phone-screen .phone-ai-action{position:relative!important;display:flex!important;align-items:center;gap:6px;min-height:30px;padding:6px 9px!important;
+  max-width:100%;border-radius:22px;background:#252525!important;color:#fff!important;border:1px solid #fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);white-space:nowrap;}
+.phone-screen .phone-ai-action b{font:600 9px/1 Arial,sans-serif;color:#fff;}
+.phone-screen .phone-ai-action .social-brand-icon{width:14px;height:14px;color:#fff;}
+.phone-screen .phone-bottom-nav{z-index:30!important;}
+
+/* Reflow animations are applied to the inserted/removed element itself plus FLIP movement of siblings. */
+.site-module,.network-card,.ai-service-card,.visibility-card{will-change:transform,opacity;}
+@media(max-width:820px){
+  .demo-site-footer{grid-template-columns:minmax(0,1fr);grid-template-areas:"brand" "tagline" "promise" "socials";row-gap:5px;min-height:120px;padding:15px 90px 15px 14px!important;}
+  .demo-site-footer .demo-social-links{justify-self:start;}
+  .website-preview-shell .site-floating-actions{right:9px!important;bottom:12px!important;gap:7px!important;max-width:150px;}
+  .website-preview-shell .site-chat-float{min-height:43px;padding:7px 9px!important;gap:7px!important;}
+  .website-preview-shell .site-chat-float b{font-size:9px!important;}
+  .website-preview-shell .site-chat-float small{font-size:8px!important;}
+  .website-preview-shell .site-whatsapp-float{width:40px!important;height:40px!important;min-width:40px;}
+  .website-preview-shell .site-whatsapp-float svg{width:21px!important;height:21px!important;}
+}
+@media(max-width:560px){
+  .options-rail .rail-tools{padding-top:5px!important;}
+  .demo-site-footer{padding-right:80px!important;}
+  .website-preview-shell .site-floating-actions{right:6px!important;bottom:7px!important;max-width:116px;gap:5px!important;}
+  .website-preview-shell .site-chat-float{min-height:38px;padding:6px 7px!important;}
+  .website-preview-shell .site-chat-float b{font-size:8px!important;}
+  .website-preview-shell .site-chat-float small{font-size:7px!important;}
+  .website-preview-shell .site-whatsapp-float{width:34px!important;height:34px!important;min-width:34px;}
+  .website-preview-shell .site-whatsapp-float svg{width:18px!important;height:18px!important;}
+  .phone-live-module .site-module{padding:14px 9px!important;}
+  .phone-live-module .module-title{font-size:17px!important;}
+  .phone-live-module .module-subtitle{font-size:9px!important;}
+}
+
+/* WhatsApp CTA styles also apply to the cloned phone version outside .demo-site. */
+.module-whatsapp-link,.module-whatsapp-link:link,.module-whatsapp-link:visited{
+  display:grid;grid-template-columns:52px minmax(0,1fr) 24px;align-items:center;gap:14px;
+  width:min(100%,660px);min-height:76px;padding:14px 18px;
+  color:#173c2b!important;text-decoration:none!important;
+  background:linear-gradient(110deg,#edf7ef,#f7fbf7)!important;border:1px solid #cfe2d3;
+  box-shadow:0 8px 24px rgba(26,82,46,.07);transition:background .2s,border-color .2s,transform .2s,box-shadow .2s;
+}
+.module-whatsapp-link:hover{color:#123623!important;background:#e4f2e7!important;border-color:#9dc6a6;}
+.module-whatsapp-link b{color:#173c2b!important;}
+.module-whatsapp-link small{color:#54705e!important;}
+.module-whatsapp-link>i{color:#287b49!important;}
+.module-whatsapp-mark{background:#218c4c!important;color:#fff!important;}
+.module-whatsapp-mark .social-brand-icon{color:#fff!important;}
+/* The module movement is driven by the single FLIP/Web Animations sequence in JS. */
+.site-module,.network-card,.ai-service-card,.visibility-card{animation:none!important;}
+
+
+/* V11: WhatsApp cards are self-contained and immune to generic site-link styles. */
+.demo-site .module-whatsapp,
+.phone-live-module .module-whatsapp,
+.module-whatsapp {
+  color:#20231f;
+}
+.demo-site .module-whatsapp-link,
+.demo-site .module-whatsapp-link:link,
+.demo-site .module-whatsapp-link:visited,
+.demo-site .module-whatsapp-link:hover,
+.demo-site .module-whatsapp-link:active,
+.phone-live-module .module-whatsapp-link,
+.phone-live-module .module-whatsapp-link:link,
+.phone-live-module .module-whatsapp-link:visited,
+.phone-live-module .module-whatsapp-link:hover,
+.phone-live-module .module-whatsapp-link:active,
+.module-whatsapp-link,
+.module-whatsapp-link:link,
+.module-whatsapp-link:visited,
+.module-whatsapp-link:hover,
+.module-whatsapp-link:active {
+  color:#173c2b!important;
+  -webkit-text-fill-color:#173c2b;
+  text-decoration:none!important;
+  border-radius:3px;
+  outline-offset:3px;
+}
+.module-whatsapp-link * { text-decoration:none!important; }
+.module-whatsapp-link .module-whatsapp-mark,
+.module-whatsapp-link .module-whatsapp-mark * {
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+.module-whatsapp-link b { color:#173c2b!important; -webkit-text-fill-color:#173c2b!important; }
+.module-whatsapp-link small { color:#54705e!important; -webkit-text-fill-color:#54705e!important; }
+.module-whatsapp-link>i { color:#287b49!important; -webkit-text-fill-color:#287b49!important; }
+.wa-chat-mock {
+  width:100%;max-width:100%;min-width:0;overflow:hidden;
+  border:1px solid #d7ded4;border-radius:8px;
+  background:#e9eee7;box-shadow:0 5px 18px rgba(0,0,0,.06);
+}
+.wa-chat-header { min-width:0; }
+.wa-chat-header>span { min-width:0; }
+.wa-chat-header strong,.wa-chat-header small { overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.wa-chat-header>i { flex:none;color:#68736a; }
+.wa-chat-body { min-width:0; }
+.wa-bubble { overflow-wrap:anywhere; }
+.wa-chat-compose {
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  min-width:0;color:#526257!important;background:#f8faf7!important;
+  border-top:1px solid #dce4da;font-size:10px;
+}
+.wa-chat-compose::after {
+  content:"➤";display:grid;place-items:center;flex:none;width:25px;height:25px;
+  border-radius:50%;background:#238b50;color:#fff;font-size:12px;
+}
+
+/* Keep floating contact actions in one non-overlapping vertical stack. */
+.website-preview-shell .site-floating-actions {
+  display:flex!important;flex-direction:column!important;align-items:flex-end!important;
+  justify-content:flex-end!important;gap:12px!important;
+  width:max-content!important;height:auto!important;min-height:0!important;
+  max-height:calc(100% - 28px);overflow:visible!important;
+}
+.website-preview-shell .site-floating-actions>* {
+  display:flex!important;position:relative!important;flex:0 0 auto!important;
+  float:none!important;clear:both!important;transform:none!important;
+  max-width:100%!important;min-width:0!important;
+}
+.website-preview-shell .site-chat-float { order:1; }
+.website-preview-shell .site-whatsapp-float { order:2; }
+.demo-site-footer .demo-social-links {
+  position:relative;z-index:1;isolation:isolate;
+  padding-right:8px;max-width:calc(100% - 12px);
+}
+.demo-site-footer .site-social-link { position:relative;z-index:1; }
+
+/* SEO and AI use the same calmer, deliberate motion timing. */
+.ai-service-card,.visibility-card {
+  animation:none!important;
+  transform-origin:left center;
+}
+.ai-service-card,.visibility-card,.site-module,.network-card {
+  will-change:transform,opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-service-card,.visibility-card,.site-module,.network-card,
+  .module-whatsapp-link { transition:none!important;animation:none!important; }
+}
+
+/* V12 fixes: respect the hidden attribute even where widget styles use !important. */
+.website-preview-shell .site-floating-actions[hidden],
+.website-preview-shell .site-floating-actions > [hidden],
+.website-preview-shell .site-chat-float[hidden],
+.website-preview-shell .site-whatsapp-float[hidden] {
+  display:none!important;
+}
+
+/* The empty social state presents the four platform marks in one balanced row. */
+.social-empty-symbol {
+  display:flex!important;align-items:center;justify-content:center;gap:11px;
+  width:auto!important;min-width:0;min-height:62px;height:auto!important;
+  padding:0 19px!important;border:1px solid #e2dfd8!important;
+  border-radius:18px!important;background:#faf9f6!important;
+  color:#3b3a36!important;font-size:0!important;
+}
+.social-empty-symbol .social-brand-icon {
+  display:block!important;flex:0 0 23px!important;width:23px!important;height:23px!important;
+  max-width:23px!important;max-height:23px!important;overflow:visible!important;
+}
+.social-empty-preview {gap:0;}
+.social-empty-preview h3 {margin-top:18px;}
+
+/* Keep the mobile option clear and concise; the mobile layout is mandatory, not an upsell. */
+#listPhone .feature-price {color:#777;font-weight:500;}
+
+/* AI cards enter with the exact reverse motion of the existing left-and-fade removal. */
+.ai-workspace {align-items:start!important;align-content:start!important;}

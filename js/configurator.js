@@ -28,7 +28,7 @@
       {id:'newsletter',name:'Newsletter-Anmeldung',price:4,glyph:'✉',scene:'website',target:'module-newsletter',detail:'Ein sichtbares Anmeldeformular für Neuigkeiten und Angebote. Newsletter-Anbieter, Double-Opt-in und mögliche Lizenzgebühren werden vor der Aktivierung geprüft.'}
     ],
     phone: [
-      {id:'mobileOptimization',name:'Kostenlose Mobiloptimierung',price:0,glyph:'▯',scene:'phone',target:'phoneSiteTop',mandatory:true,detail:'Ihre Website wird automatisch für Smartphone-Bildschirme angepasst. Dieselben Inhalte und Funktionen wie auf dem Desktop – nur in einem passenden mobilen Layout. Diese Anpassung ist kostenlos und immer enthalten.'}
+      {id:'mobileOptimization',name:'Mobile Website-Ansicht',price:0,glyph:'▯',scene:'phone',target:'phoneSiteTop',mandatory:true,detail:'Ihre vollständige Website wird automatisch an Smartphone-Bildschirme angepasst. Alle ausgewählten Website-Bausteine bleiben enthalten und werden für die schmale Ansicht neu angeordnet. Die mobile Darstellung ist fester Bestandteil der Website.'}
     ],
     ai: [
       {id:'whatsappBot',name:'WhatsApp-Chatbot',price:19,glyph:'◔',scene:'ai',target:'ai-preview-whatsappBot',detail:'Ein automatisierter Assistent beantwortet definierte häufige Fragen über WhatsApp und kann Anliegen vorsortieren. Die Anbindung an WhatsApp Business sowie mögliche Meta-, Plattform- und Nachrichtenkosten werden separat geprüft.'},
@@ -120,7 +120,7 @@
       const container = $(containerId);
       container.innerHTML = FEATURES[category].map(item => {
         const active = SELECTED.has(item.id);
-        const price = item.mandatory ? (item.price ? `${money(item.price)} / Mon.` : 'Immer inklusive') : item.price ? `+ ${money(item.price)} / Mon.` : 'Kostenlos';
+        const price = item.mandatory ? (item.price ? `${money(item.price)} / Mon.` : 'Immer enthalten') : item.price ? `+ ${money(item.price)} / Mon.` : 'Ohne Aufpreis';
         const mandatory = item.mandatory ? ' mandatory' : '';
         const rowIcon = item.id === 'baseService' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21H3Z"/><path d="M9 21v-7h6v7"/></svg>' : featureIcon(item);
         return `<div class="feature-row${active ? ' selected' : ''}${mandatory}" role="checkbox" aria-checked="${active}" aria-disabled="${!!item.mandatory}" tabindex="0" data-feature="${item.id}">
@@ -171,6 +171,7 @@
     $('siteModules').innerHTML = parts.join('');
     $('siteWhatsApp').hidden = !(has('whatsapp') || has('whatsappBot'));
     $('siteChatFloat').hidden = !has('chatbot');
+    $('siteFloatingActions').hidden = !has('chatbot') && !has('whatsapp') && !has('whatsappBot');
     $('previewBrand').textContent = currentBrand();
     $('footerBrand').textContent = currentBrand();
     $('phoneBrand').textContent = currentBrand();
@@ -245,32 +246,36 @@
   }
 
   function renderPhoneModules() {
-    const parts = [];
-    const theme = industryTheme();
-    if (SELECTED.has('booking')) parts.push(phoneCard('booking','Online-Terminbuchung',`<small>Leistung und Wunschzeit auswählen.</small><div class="phone-slot-list">${theme.services.map(service => `<span>${escapeHTML(service[0])}</span>`).join('')}</div><div class="phone-slot-list"><span>Heute · 10:30</span><span>12:00</span><span>14:00</span></div>`));
-    if (SELECTED.has('employeeManagement')) parts.push(phoneCard('team-management','Mitarbeiter & Termine',`<small>Teamübersicht</small><div class="phone-team-row"><i></i><span>Anna · 09:00–17:00</span></div><div class="phone-team-row"><i></i><span>Lukas · 10:00–18:00</span></div><div class="phone-team-row"><i></i><span>Sophie · 09:00–16:00</span></div>`));
-    if (SELECTED.has('whatsapp')) parts.push(phoneCard('whatsapp','WhatsApp-Kontakt',`<div class="phone-whatsapp-button">${socialBrandIcon('whatsapp')} Nachricht senden</div>`));
-    if (SELECTED.has('contactPlus')) parts.push(phoneCard('contact','Kontaktformular',`<div class="phone-form-field">Ihr Name</div><div class="phone-form-field">E-Mail-Adresse</div><div class="phone-form-field phone-form-message">Ihre Nachricht …</div><div class="phone-form-submit">Nachricht senden ↗</div>`));
-    if (SELECTED.has('gallery')) parts.push(phoneCard('gallery',industryTheme().galleryTitle,`<div class="phone-gallery-grid"><i></i><i></i><i></i></div>`));
-    if (SELECTED.has('instagramFeed')) parts.push(phoneCard('instagram','Instagram-Beiträge',`<small>Ausgewählte Beiträge direkt auf Ihrer Website.</small><div class="phone-gallery-grid instagram-phone-grid"><i></i><i></i><i></i></div>`));
-    if (SELECTED.has('reviews')) parts.push(phoneCard('reviews','Google-Bewertungen',`<div class="phone-review-stars">★★★★★ <b>4,9</b></div><small>„Tolle Beratung und ein schönes Ergebnis.“</small>`));
-    if (SELECTED.has('maps')) parts.push(phoneCard('maps','Karte & Öffnungszeiten',`<div class="phone-map-mini"><i></i></div><small>Beispielstraße 12 · Münster</small><small>Mo–Fr · 09:00–18:00</small>`));
-    if (SELECTED.has('faq')) parts.push(phoneCard('faq','Häufige Fragen',`<div class="phone-faq-row">Wie kann ich buchen?　＋</div><div class="phone-faq-row">Welche Leistungen gibt es?　＋</div>`));
-    if (SELECTED.has('blog')) parts.push(phoneCard('blog','Neuigkeiten',`<div class="phone-blog-mini"></div><b>Tipps & Inspiration</b><small>Neues aus dem Studio</small>`));
-    if (SELECTED.has('shop')) parts.push(phoneCard('shop','Produkte & Gutscheine',`<div class="phone-shop-row"><i></i><span>Studio Gutschein</span><b>ab 30 €</b></div>`));
-    if (SELECTED.has('newsletter')) parts.push(phoneCard('newsletter','Newsletter',`<div class="phone-form-field">Ihre E-Mail-Adresse</div><div class="phone-form-submit">Anmelden ↗</div>`));
-    $('phoneLiveModule').innerHTML = parts.length ? parts.join('') : `<span class="phone-module-empty">Ihre ausgewählten Website-Funktionen erscheinen hier.</span>`;
+    // The mobile demo is the same website, not a reduced feature catalogue.
+    // Clone the desktop modules and prefix IDs so both previews can coexist in the DOM.
+    const desktopModules = $('siteModules').innerHTML.trim();
+    const phoneModules = desktopModules
+      .replace(/\bid="module-([^\"]+)"/g, 'id="phone-module-$1"')
+      .replace(/href="#module-([^\"]+)"/g, 'href="#phone-module-$1"');
+    $('phoneLiveModule').innerHTML = phoneModules ||
+      `<div class="phone-module-empty">Zusätzliche Website-Funktionen erscheinen hier.</div>`;
+
     const phoneLinks = $('phoneSocialLinks');
     const chosenSocial = SOCIAL.filter(item => SELECTED_SOCIAL.has(item.id));
-    phoneLinks.innerHTML = chosenSocial.map(item => `<span class="phone-social-link">${socialBrandIcon(item.id)}</span>`).join('');
+    phoneLinks.innerHTML = chosenSocial.map(item =>
+      `<span class="phone-social-link" aria-label="${escapeHTML(item.name)}">${socialBrandIcon(item.id)}</span>`
+    ).join('');
     phoneLinks.hidden = chosenSocial.length === 0;
+
     const floating = [];
-    if (SELECTED.has('chatbot')) floating.push(`<span class="phone-ai-action phone-ai-chat"><i>✳</i><b>KI-Chat</b></span>`);
-    if (SELECTED.has('whatsappBot')) floating.push(`<span class="phone-ai-action phone-ai-whatsapp">${socialBrandIcon('whatsapp')}<b>WhatsApp</b></span>`);
-    else if (SELECTED.has('whatsapp')) floating.push(`<span class="phone-ai-action phone-ai-whatsapp">${socialBrandIcon('whatsapp')}<b>Nachricht</b></span>`);
+    if (SELECTED.has('chatbot')) floating.push(
+      `<span class="phone-ai-action phone-ai-chat"><i>✳</i><b>KI-Chat</b></span>`
+    );
+    if (SELECTED.has('whatsappBot')) floating.push(
+      `<span class="phone-ai-action phone-ai-whatsapp">${socialBrandIcon('whatsapp')}<b>WhatsApp</b></span>`
+    );
+    else if (SELECTED.has('whatsapp')) floating.push(
+      `<span class="phone-ai-action phone-ai-whatsapp">${socialBrandIcon('whatsapp')}<b>Nachricht</b></span>`
+    );
     const phoneActions = $('phoneFloatingActions');
     phoneActions.innerHTML = floating.join('');
     phoneActions.hidden = floating.length === 0;
+    $('phoneScreen').classList.toggle('has-phone-actions', floating.length > 0);
     requestAnimationFrame(() => requestAnimationFrame(updatePhoneScrollbar));
   }
 
@@ -379,7 +384,12 @@
     if (scene === 'phone') requestAnimationFrame(updatePhoneScrollbar);
   }
 
-  function animatePreviewScroll(scroller, destination, duration = 2100, token) {
+  function nextPaint() {
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  }
+
+  function animatePreviewScroll(scroller, destination, duration = 1050, token) {
+    if (!scroller) return Promise.resolve();
     const previousValue = scroller.style.getPropertyValue('scroll-behavior');
     const previousPriority = scroller.style.getPropertyPriority('scroll-behavior');
     scroller.style.setProperty('scroll-behavior', 'auto', 'important');
@@ -389,7 +399,7 @@
     };
     const start = scroller.scrollTop;
     const distance = destination - start;
-    if (Math.abs(distance) < 3) { restore(); return Promise.resolve(); }
+    if (Math.abs(distance) < 2) { restore(); return Promise.resolve(); }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       scroller.scrollTop = destination;
       restore();
@@ -407,6 +417,7 @@
       const frame = now => {
         if (token !== previewScrollToken) { finish(); return; }
         const progress = Math.min(1, (now - started) / duration);
+        // Smooth ease-in/out, with a deliberate but not sluggish arrival.
         const eased = progress < .5
           ? 4 * progress * progress * progress
           : 1 - Math.pow(-2 * progress + 2, 3) / 2;
@@ -421,21 +432,53 @@
     });
   }
 
-  const arrivalTimers = new WeakMap();
+  function previewHost(scene) {
+    return ({
+      website: $('siteModules'),
+      social: $('socialPreviewContent'),
+      ai: $('aiPreviewContent'),
+      visibility: $('visibilityPreview')
+    })[scene] || null;
+  }
 
-  function showAddedAnimation(target) {
-    if (!target) return;
-    const previousTimer = arrivalTimers.get(target);
-    if (previousTimer) window.clearTimeout(previousTimer);
-    target.classList.remove('is-highlighted');
-    // Force the pseudo-element animation to restart even when the same module is added again.
-    void target.offsetWidth;
-    target.classList.add('is-highlighted');
-    const timer = window.setTimeout(() => {
-      target.classList.remove('is-highlighted');
-      arrivalTimers.delete(target);
-    }, 2450);
-    arrivalTimers.set(target, timer);
+  function captureLayout(host) {
+    if (!host) return new Map();
+    return new Map([...host.children].map(element => [element.id, element.getBoundingClientRect()]));
+  }
+
+  function animateLayout(host, before, enteringId = '') {
+    if (!host || !before) return;
+    for (const element of host.children) {
+      const previous = before.get(element.id);
+      if (!previous) {
+        if (element.id === enteringId && element.animate) {
+          element.animate([
+            { opacity: 0, transform: 'translate3d(-42px, 0, 0)' },
+            { opacity: 1, transform: 'translate3d(0, 0, 0)' }
+          ], { duration: 430, easing: 'cubic-bezier(.2,.65,.6,1)', fill: 'both' });
+        }
+        continue;
+      }
+      const current = element.getBoundingClientRect();
+      const dx = previous.left - current.left;
+      const dy = previous.top - current.top;
+      if ((Math.abs(dx) > 1 || Math.abs(dy) > 1) && element.animate) {
+        element.animate([
+          { transform: `translate3d(${dx}px, ${dy}px, 0)` },
+          { transform: 'translate3d(0, 0, 0)' }
+        ], { duration: 860, easing: 'cubic-bezier(.22,.72,.18,1)' });
+      }
+    }
+  }
+
+  async function animateRemoval(target) {
+    if (!target || !target.isConnected || !target.animate) return;
+    try {
+      await target.animate([
+        { opacity: 1, transform: 'translate3d(0,0,0)' },
+        { opacity: 0, transform: 'translate3d(-54px,0,0)' }
+      ], { duration: 430, easing: 'cubic-bezier(.4,0,.8,.35)', fill: 'forwards' }).finished;
+    } catch (_) { /* A cancelled animation should not block the selection update. */ }
   }
 
   function findPreviewScroller(target) {
@@ -448,31 +491,29 @@
   }
 
   function scrollPreviewTo(targetId) {
-    if (!targetId) return;
+    if (!targetId) return Promise.resolve();
     const token = ++previewScrollToken;
-    requestAnimationFrame(() => requestAnimationFrame(async () => {
-      if (token !== previewScrollToken) return;
-      const target = $(targetId);
-      if (!target || !target.isConnected) return;
-      const scroller = findPreviewScroller(target);
-      if (!scroller || !target.getClientRects().length) return;
-      // Measure only after the target's scene has been made visible and reflowed.
-      const targetRect = target.getBoundingClientRect();
-      const scrollerRect = scroller.getBoundingClientRect();
-      const topInset = Math.max(28, Math.min(86, scroller.clientHeight * .13));
-      const destination = scroller.scrollTop + targetRect.top - scrollerRect.top - topInset;
-      await animatePreviewScroll(
-        scroller,
-        Math.max(0, Math.min(destination, scroller.scrollHeight - scroller.clientHeight)),
-        2200,
-        token
-      );
-      if (token !== previewScrollToken) return;
-      // Wait until the destination has been painted; then pulse the exact inserted block.
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        if (token === previewScrollToken && target.isConnected) showAddedAnimation(target);
+    return new Promise(resolve => {
+      requestAnimationFrame(() => requestAnimationFrame(async () => {
+        if (token !== previewScrollToken) { resolve(); return; }
+        const target = $(targetId);
+        if (!target || !target.isConnected || !target.getClientRects().length) { resolve(); return; }
+        // Scroll the preview's own viewport (website / phone / social / AI), never the options rail.
+        const scroller = findPreviewScroller(target);
+        if (!scroller) { resolve(); return; }
+        const targetRect = target.getBoundingClientRect();
+        const scrollerRect = scroller.getBoundingClientRect();
+        const topInset = Math.max(22, Math.min(62, scroller.clientHeight * .09));
+        const destination = scroller.scrollTop + targetRect.top - scrollerRect.top - topInset;
+        await animatePreviewScroll(
+          scroller,
+          Math.max(0, Math.min(destination, scroller.scrollHeight - scroller.clientHeight)),
+          1550,
+          token
+        );
+        resolve();
       }));
-    }));
+    });
   }
 
   function updatePhoneScrollbar() {
@@ -540,22 +581,64 @@
     rail.scrollTo({top:Math.max(0, top), behavior:'smooth'});
   }
 
-  function toggleFeature(id) {
+  const pendingChanges = new Set();
+
+  async function toggleFeature(id) {
     const item = byId(id);
-    if (!item || item.mandatory) return;
-    const adding = !SELECTED.has(id);
-    if (adding) SELECTED.add(id); else SELECTED.delete(id);
-    refresh();
-    setScene(item.scene);
-    if (adding) scrollPreviewTo(item.target);
+    if (!item || item.mandatory || pendingChanges.has(id)) return;
+    pendingChanges.add(id);
+    try {
+      setScene(item.scene);
+      await nextPaint();
+      const adding = !SELECTED.has(id);
+      const host = previewHost(item.scene);
+      const before = captureLayout(host);
+      if (!adding) {
+        const target = $(item.target);
+        if (target && currentScene === item.scene) { await scrollPreviewTo(item.target); await animateRemoval(target); }
+        SELECTED.delete(id);
+        refresh();
+        await nextPaint();
+        animateLayout(host, before);
+        return;
+      }
+      SELECTED.add(id);
+      refresh();
+      await nextPaint();
+      animateLayout(host, before, item.target);
+      await scrollPreviewTo(item.target);
+    } finally {
+      pendingChanges.delete(id);
+    }
   }
 
-  function toggleSocial(id) {
-    const adding = !SELECTED_SOCIAL.has(id);
-    if (adding) SELECTED_SOCIAL.add(id); else SELECTED_SOCIAL.delete(id);
-    refresh();
-    setScene('social');
-    if (adding) scrollPreviewTo(`social-channel-${id}`);
+  async function toggleSocial(id) {
+    if (pendingChanges.has(`social:${id}`)) return;
+    pendingChanges.add(`social:${id}`);
+    try {
+      setScene('social');
+      await nextPaint();
+      const adding = !SELECTED_SOCIAL.has(id);
+      const host = previewHost('social');
+      const targetId = `social-channel-${id}`;
+      const before = captureLayout(host);
+      if (!adding) {
+        const target = $(targetId);
+        if (target && currentScene === 'social') { await scrollPreviewTo(targetId); await animateRemoval(target); }
+        SELECTED_SOCIAL.delete(id);
+        refresh();
+        await nextPaint();
+        animateLayout(host, before);
+        return;
+      }
+      SELECTED_SOCIAL.add(id);
+      refresh();
+      await nextPaint();
+      animateLayout(host, before, targetId);
+      await scrollPreviewTo(targetId);
+    } finally {
+      pendingChanges.delete(`social:${id}`);
+    }
   }
 
   function applyRecommendedPreset() {
@@ -576,7 +659,7 @@
     $('infoArt').innerHTML = illustration(item);
     $('infoTitle').textContent = item.name;
     $('infoDescription').textContent = item.detail;
-    $('infoPrice').textContent = item.id === 'mobileOptimization' ? 'Kostenlos · immer enthalten' : item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · 2 Monate kostenlos testen` : item.price ? `${money(item.price)} pro Monat · 2 Monate kostenlos testen` : 'Ohne Aufpreis enthalten';
+    $('infoPrice').textContent = item.id === 'mobileOptimization' ? 'Immer enthalten · keine Zusatzkosten' : item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · 2 Monate kostenlos testen` : item.price ? `${money(item.price)} pro Monat · 2 Monate kostenlos testen` : 'Ohne Aufpreis enthalten';
     $('infoToggle').textContent = item.mandatory ? 'Immer enthalten' : SELECTED.has(id) ? 'Aus Auswahl entfernen' : 'Hinzufügen';
     $('infoToggle').disabled = !!item.mandatory;
     $('infoDialog').showModal();

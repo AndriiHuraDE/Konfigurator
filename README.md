@@ -1,6 +1,6 @@
-# pimentaGROUP Website-Konfigurator
+# pimentaGROUP Website-Konfigurator – Version 10
 
-Tesla-inspirierter, deutschsprachiger Website-Konfigurator mit großem Live-Preview, unabhängig scrollender Optionsleiste, Abschnittsnavigation und fixer Preisleiste.
+Tesla-inspirierter Website-Konfigurator mit großer Live-Vorschau, unabhängig scrollender Optionsleiste, Abschnittsnavigation und fixer Preisleiste.
 
 ## Geschäftsmodell
 - Individuelle Website-Erstellung: 0 €.
@@ -8,23 +8,33 @@ Tesla-inspirierter, deutschsprachiger Website-Konfigurator mit großem Live-Prev
 - Website, Hosting & Basis-Support: 35 €/Monat nach der Testphase; fest ausgewählt und nicht abwählbar.
 - Zusätzliche Website-, KI- und Sichtbarkeitsmodule werden als monatliche Richtwerte ausgewiesen.
 - Social-Media-Profil-Einrichtung: 5 € einmalig je ausgewähltem Profil.
-- Instagram-Integration ist eine Website-Funktion: 4 €/Monat. Sie zeigt einen eigenen Instagram-Beitragsbereich auf Desktop und Smartphone.
-- Kostenlose Mobiloptimierung ist fest ausgewählt und nicht abwählbar. Die Smartphone-Vorschau zeigt dieselben ausgewählten Inhalte und Module in einem responsiven Layout.
+- Instagram-Integration ist eine Website-Funktion: 4 €/Monat. Sie erscheint als eigener Beitragsbereich auf Desktop und Smartphone.
+- Kostenlose Mobiloptimierung ist fest ausgewählt und nicht abwählbar. Die Smartphone-Vorschau zeigt dieselben Website-Module wie die Desktop-Vorschau in einem schmalen responsiven Layout.
 - Ein kostenpflichtiger Vertrag entsteht ausschließlich nach einem individuellen Angebot und ausdrücklicher Zustimmung.
 
-Alle Preise sind vorläufige Orientierungswerte und müssen intern freigegeben werden. Externe Kosten für Hosting-Anbieter, Domains, Buchungssysteme, Telefonie, CRM, KI-APIs oder Plattformen können je nach Projekt zusätzlich anfallen.
+Alle Preise sind vorläufige Orientierungswerte und müssen intern freigegeben werden. Externe Kosten für Hosting-Anbieter, Domains, Buchungssysteme, Telefonie, CRM, KI-APIs oder Plattformen können je nach Projekt zusätzlich anfallen. Der Richtwert für die empfohlene Auswahl beträgt 120 €/Monat nach der Testphase; ein ausgewähltes Instagram-Profil kostet zusätzlich 5 € einmalig.
 
-## Interaktion und Vorschau
-- Der Einstieg fragt nur Branche und aktuellen Website-Status ab.
-- Website, Mobil, Social Media, KI sowie Sichtbarkeit & Sprachen sind über eine Abschnittsnavigation erreichbar.
-- Die Live-Vorschau folgt der aktiven Position in der Optionsleiste; die Abschnitte werden per Scroll-Snap sauber angesteuert.
-- Beim Hinzufügen eines Moduls scrollt die passende Vorschau langsam zum neuen Modul. Erst danach erhält genau dieses Modul einen expandierenden weißen Fokusrahmen.
-- Die Scrollbewegung wird über eine einzelne `requestAnimationFrame`-Animation gesteuert. Währenddessen wird CSS-Smooth-Scrolling temporär deaktiviert, damit sich keine zweite Browseranimation darüberlegt.
-- Der Fokusrahmen wird über eine CSS-Pseudoebene des Zielmoduls ausgelöst. Es wird kein zusätzliches Element über die Vorschau gelegt.
-- Die Smartphone-Vorschau enthält einen eigenen Scrollbereich. Die untere Smartphone-Navigation bleibt außerhalb dieses Scrollbereichs fixiert; der sichtbare Scrollbalken gehört zum Smartphone selbst.
-- Website-Chatbot und WhatsApp-Aktionen liegen innerhalb der Desktop- bzw. Smartphone-Vorschau und sind vertikal angeordnet, damit sie sich nicht überlappen.
-- Social-Media-Profile verwenden eingebettete SVG-Markenlogos. Die Einrichtung kostet 5 € je ausgewähltem Profil einmalig.
-- Die Schaltfläche „Empfohlene Auswahl“ lädt das Demo-Paket mit 120 €/Monat und 5 € einmaliger Instagram-Profil-Einrichtung.
+## Interaktion und Live-Vorschau
+- Der Einstieg fragt nur nach Branche und aktuellem Website-Status.
+- Website, Mobil, Social Media, KI sowie Sichtbarkeit & Sprachen sind über die Abschnittsnavigation erreichbar.
+- Die Live-Vorschau folgt der aktiven Position in der Optionsleiste; die Optionen scrollen unabhängig vom Preview.
+- Website-Module werden direkt als echte Vorschau-Abschnitte aufgebaut, nicht als bloße Funktionslabels.
+- Die Smartphone-Ansicht übernimmt dieselben Desktop-Module aus dem DOM, versieht sie mit eigenen IDs und passt sie per CSS an die Gerätebreite an.
+- Der Smartphone-Bildschirm hat einen eigenen Scrollbereich und einen sichtbaren, ziehbaren Scrollbalken. Die untere Smartphone-Navigation bleibt außerhalb des scrollenden Inhalts fixiert.
+- Website-Chatbot und WhatsApp-Aktionen liegen in einem vertikalen Stack innerhalb des Preview-Fensters. Der Footer reserviert Platz für Social-Icons und überlappt die Floating-Aktionen nicht.
+- WhatsApp-Links sind inklusive `:visited` und `:hover` explizit gestaltet, damit keine blauen Browser-Standardlinks erscheinen.
+- Social-Media-Profile nutzen eingebettete SVG-Markenlogos. Die Einrichtung kostet 5 € je ausgewähltem Profil einmalig.
+- Die Instagram-Website-Integration kostet separat 4 €/Monat und wird im Website-Bereich ausgewählt.
+
+## Modul-Animationen
+- Beim Hinzufügen wird das neue Modul mit einer kurzen Slide-in-/Fade-in-Animation von links eingeblendet.
+- Bereits vorhandene Module verschieben sich mit einer FLIP-Animation an ihre neue Position, sodass das Layout weich Platz schafft.
+- Nach dem Einfügen scrollt die Vorschau kontrolliert und langsam zum neuen Modul. Die Bewegung wird mit einer einzelnen `requestAnimationFrame`-Animation gesteuert; CSS-Smooth-Scrolling wird währenddessen temporär deaktiviert, damit keine zweite Scroll-Animation konkurriert.
+- Beim Entfernen fährt das Modul nach links aus und blendet gleichzeitig aus. Anschließend rücken die verbleibenden Module weich zusammen.
+- Die Animationen berücksichtigen `prefers-reduced-motion` bei der Scrollbewegung.
+
+## Empfohlene Auswahl
+Die Schaltfläche „Empfohlene Auswahl“ lädt das Demo-Paket mit 120 €/Monat und 5 € einmaliger Instagram-Profil-Einrichtung. Die Preise sind Richtwerte und kein verbindliches Angebot.
 
 ## Lokale Vorschau
 Projektstruktur beibehalten und `index.html` über einen lokalen Webserver öffnen:
@@ -59,11 +69,19 @@ Alle Preiswerte befinden sich in `js/configurator.js`:
 - `js/configurator.js` – Auswahl, Live-Preview, Preisberechnung, Navigation und Formular
 - `google-apps-script/Code.gs` – optionaler Empfang in Google Sheets und per E-Mail
 
-## Aktuelle UI-Korrekturen
-- Instagram-Integration befindet sich unter Website und erscheint als eigener Website-Abschnitt auf Desktop und Smartphone.
-- Social-Media-Profile kosten 5 € einmalig je ausgewähltem Profil; die Instagram-Website-Integration kostet separat 4 €/Monat.
-- KI- und WhatsApp-Aktionen sind innerhalb der Desktop- bzw. Smartphone-Vorschau verankert und vertikal gestapelt.
-- Die Smartphone-Aktionen liegen innerhalb des Gerätebildschirms; die untere Navigation bleibt fixiert.
-- Die Vorschau nutzt pro Szene einen expliziten Scroll-Container. Nach dem langsamen Scrollen wird das neue Modul mit einem expandierenden weißen Fokusrahmen markiert.
-- Die Abschnittsnavigation wird auch nach dem Ende einer Scrollbewegung aktualisiert.
-- Die empfohlene Auswahl ergibt 120 €/Monat nach der kostenlosen Testphase sowie 5 € einmalig für das Instagram-Profil.
+Impressum und Datenschutzerklärung sind in dieser Version absichtlich nicht enthalten.
+
+
+## Version 12.0 – Korrekturen
+- WhatsApp-Kontaktkarte und WhatsApp-Business-Demo erhalten ein vollständig gekapseltes Styling ohne blaue Browser-Links.
+- Floating Chat-/WhatsApp-Aktionen werden als vertikaler Stack mit Abstand dargestellt; Social-Icons im Footer behalten eine eigene, freie Zone.
+- Website-, AI- und SEO-Module verwenden einheitliche, langsamere Ein-/Ausblend- und FLIP-Bewegungen.
+- Die Vorschau scrollt bei hinzugefügten Modulen mit einer längeren, kontrollierten Animation zum Ziel.
+
+## Version 12 – Korrekturen
+- WhatsApp- und Chat-Widget respektieren jetzt zuverlässig das `hidden`-Attribut. Bei ausgewähltem WhatsApp-Kontakt erscheint ausschließlich das WhatsApp-Symbol; das Chat-Widget bleibt dem KI-Website-Chat vorbehalten.
+- Hinzufügen und Entfernen scrollt gezielt im jeweiligen Vorschaufenster zum betroffenen Baustein. Beim Entfernen erfolgt das Scrollen, solange der Baustein noch vorhanden ist.
+- Das Scrollen in der Vorschau dauert jetzt 1,55 Sekunden; die Verschiebung der übrigen Website-Bausteine wurde auf 860 ms verlängert.
+- KI-Karten erscheinen mit der umgekehrten Links-und-Ausblenden-Animation der bestehenden Löschbewegung.
+- Der leere Social-Media-Zustand zeigt die vier Plattform-Icons nebeneinander in einer stabilen, zentrierten Reihe.
+- Die obligatorische Smartphone-Darstellung heißt jetzt „Mobile Website-Ansicht“. Die Desktop-Bausteine werden weiterhin vollständig in die mobile Website übernommen; die Option wird als „Immer enthalten“ statt mit wiederholten Kostenlos-Labels dargestellt.
