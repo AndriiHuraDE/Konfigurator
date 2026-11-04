@@ -53,8 +53,9 @@
       <section class="preview-stage" id="previewStage" aria-label="Live-Vorschau">
         <!-- WEBSITE SCENE -->
         <div class="scene scene-website active" data-scene="website">
-          <div class="site-viewport" id="siteViewport">
-            <div class="demo-site" id="demoSite">
+          <div class="website-preview-shell">
+            <div class="site-viewport" id="siteViewport">
+              <div class="demo-site" id="demoSite">
               <header class="demo-nav">
                 <a class="demo-logo" href="#siteTop"><span class="logo-monogram">D</span><span><b id="previewBrand">DEMO</b><small id="previewTagline">HAIR & BEAUTY</small></span></a>
                 <nav aria-label="Website-Navigation">
@@ -100,11 +101,12 @@
 
               <div id="siteModules" class="site-modules" aria-live="polite"></div>
               <footer class="demo-site-footer" id="siteContact"><span class="footer-wordmark" id="footerBrand">DEMO</span><span id="footerTagline">HAIR & BEAUTY · MÜNSTER</span><span id="footerPromise">Ein Ort für Ihren Stil.</span><div class="demo-social-links" id="siteSocialLinks" hidden></div></footer>
+              </div>
             </div>
-          </div>
-          <div class="site-floating-actions" aria-label="Kontakt-Widgets der Website-Demo">
-            <div class="site-chat-float" id="siteChatFloat" hidden><span>✳</span><div><b>Wie können wir helfen?</b><small>Unser digitaler Assistent</small></div></div>
-            <a class="site-whatsapp-float" id="siteWhatsApp" href="#" aria-label="WhatsApp-Kontakt" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.8a8.4 8.4 0 0 1-12.4 7.3L3 20.5l1.3-5A8.4 8.4 0 1 1 20.5 11.8Z"/><path d="M8.5 8.3c.4 2.7 2.1 4.4 4.8 5.2l1.2-1.2 2.1 1c-.2 1.5-1.3 2.2-2.7 2.1-3.8-.4-7.1-3.8-7.3-7.4-.1-1.2.7-2.2 2-2.4l1 2.2-1.1.5Z"/></svg></a>
+            <div class="site-floating-actions" aria-label="Kontakt-Widgets der Website-Demo">
+              <div class="site-chat-float" id="siteChatFloat" hidden><span>✳</span><div><b>Wie können wir helfen?</b><small>Unser digitaler Assistent</small></div></div>
+              <a class="site-whatsapp-float" id="siteWhatsApp" href="#" aria-label="WhatsApp-Kontakt" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.8a8.4 8.4 0 0 1-12.4 7.3L3 20.5l1.3-5A8.4 8.4 0 1 1 20.5 11.8Z"/><path d="M8.5 8.3c.4 2.7 2.1 4.4 4.8 5.2l1.2-1.2 2.1 1c-.2 1.5-1.3 2.2-2.7 2.1-3.8-.4-7.1-3.8-7.3-7.4-.1-1.2.7-2.2 2-2.4l1 2.2-1.1.5Z"/></svg></a>
+            </div>
           </div>
         </div>
 
@@ -115,13 +117,17 @@
             <div class="phone-device" id="phoneDevice">
               <div class="phone-island"></div>
               <div class="phone-screen" id="phoneScreen">
-                <div class="phone-status"><span>9:41</span><span>●●● ▰</span></div>
-                <div class="phone-site-head"><b id="phoneBrand">DEMO</b><span>☰</span></div>
-                <div class="phone-hero"><small id="phoneTagline">HAIR & BEAUTY</small><b id="phoneHeroTitle">Ihr Stil.<br><em>Ihr Moment.</em></b><span id="phoneHeroText">Persönlich. Modern. Für Sie.</span><i>Termin entdecken ↗</i></div>
-                <div class="phone-mini-services"><span id="phoneServicesEyebrow">UNSERE LEISTUNGEN</span><div><i></i><i></i><i></i></div></div>
-                <div class="phone-about"><small id="phoneAboutEyebrow">ÜBER DAS STUDIO</small><b id="phoneAboutTitle">Persönlich. Für Sie.</b><span id="phoneAboutText">Leistungen, Menschen und ein guter erster Eindruck.</span></div>
-                <div class="phone-live-module" id="phoneLiveModule"><span class="phone-module-empty">Ihre mobile Funktion erscheint hier.</span></div>
-                <div class="phone-bottom-nav"><span>⌂</span><span>♡</span><span>▦</span><span>☻</span></div>
+                <div class="phone-scroll-content" id="phoneContent">
+                  <div class="phone-status"><span>9:41</span><span>●●● ▰</span></div>
+                  <div class="phone-site-head" id="phoneSiteTop"><b id="phoneBrand">DEMO</b><span>☰</span></div>
+                  <div class="phone-hero"><small id="phoneTagline">HAIR & BEAUTY</small><b id="phoneHeroTitle">Ihr Stil.<br><em>Ihr Moment.</em></b><span id="phoneHeroText">Persönlich. Modern. Für Sie.</span><i>Termin entdecken ↗</i></div>
+                  <div class="phone-mini-services"><span id="phoneServicesEyebrow">UNSERE LEISTUNGEN</span><div><i></i><i></i><i></i></div></div>
+                  <div class="phone-about"><small id="phoneAboutEyebrow">ÜBER DAS STUDIO</small><b id="phoneAboutTitle">Persönlich. Für Sie.</b><span id="phoneAboutText">Leistungen, Menschen und ein guter erster Eindruck.</span></div>
+                  <div class="phone-live-module" id="phoneLiveModule"><span class="phone-module-empty">Ihre Website-Funktionen erscheinen hier.</span></div>
+                  <div class="phone-social-links" id="phoneSocialLinks" hidden aria-label="Social-Media-Profile"></div>
+                </div>
+                <div class="phone-bottom-nav" aria-label="Feste mobile Navigation"><span>⌂</span><span>♡</span><span>▦</span><span>☻</span></div>
+                <div class="phone-floating-actions" id="phoneFloatingActions" hidden aria-label="Kontakt-Widgets"></div>
               </div>
               <div class="phone-scrollbar" id="phoneScrollbar" aria-hidden="true"><span id="phoneScrollbarThumb"></span></div>
             </div>
@@ -165,17 +171,27 @@
 
       <!-- Only this pane scrolls on desktop -->
       <aside class="options-rail" id="optionsRail" aria-label="Funktionen auswählen">
+        <div class="rail-tools">
+          <nav class="section-nav" aria-label="Konfigurator-Bereiche">
+            <button type="button" data-jump-scene="website" class="active">Website</button>
+            <button type="button" data-jump-scene="phone">Mobil</button>
+            <button type="button" data-jump-scene="social">Social</button>
+            <button type="button" data-jump-scene="ai">KI</button>
+            <button type="button" data-jump-scene="visibility">SEO & Sprachen</button>
+          </nav>
+          <button type="button" class="recommend-preset" id="recommendPreset">✦ Empfohlene Auswahl</button>
+        </div>
         <section class="option-section" data-scene-section="website" id="optionsWebsite">
           <h2>Website</h2>
           <div class="option-list" id="listWebsite"></div>
         </section>
         <section class="option-section" data-scene-section="phone" id="optionsPhone">
-          <h2>Buchung & Kontakt</h2>
+          <h2>Mobiloptimierung</h2>
           <div class="option-list" id="listPhone"></div>
         </section>
         <section class="option-section" data-scene-section="social" id="optionsSocial">
           <h2>Social Media</h2>
-          <p class="section-subcopy">Profile verlinken: kostenlos. <b>+4 €/Monat</b> für ausgewählte Instagram-Beiträge direkt auf der Website. Keine laufende Social-Media-Betreuung.</p>
+          <p class="section-subcopy">Wir richten jedes ausgewählte Profil einmalig ein und verknüpfen es mit Ihrer Website: <b>5 € je Profil, einmalig.</b> Instagram-Beiträge auf der Website anzeigen: <b>+4 €/Monat</b>. Keine laufende Social-Media-Betreuung.</p>
           <div class="social-choice-list" id="socialChoices"></div>
           <div class="option-list" id="listSocial"></div>
         </section>
@@ -198,6 +214,8 @@
         <span class="price-divider"></span>
         <div class="price-item trial-price"><small>Ihre Testphase</small><b>2 Monate kostenlos</b></div>
         <span class="price-divider"></span>
+        <div class="price-item profile-setup-price"><small>Einrichtung einmalig</small><b id="oneTimeTotal">0 €</b></div>
+        <span class="price-divider"></span>
         <button type="button" class="price-details-button" id="priceDetailsButton">Auswahl & Preise <span>↗</span></button>
       </div>
       <div class="price-bar-right"><div class="monthly-total"><small>Danach pro Monat</small><b id="monthlyTotal">35 €</b></div><button type="button" class="price-cta" id="requestButton">Konfiguration anfragen <span>→</span></button></div>
@@ -216,6 +234,7 @@
       <span class="info-kicker">IHRE AUSWAHL</span><h2>Preisübersicht</h2>
       <div id="priceBreakdown" class="price-breakdown"></div>
       <div class="price-dialog-total"><span>Monatlich nach 2 Freimonaten</span><b id="priceDialogTotal">35 €</b></div>
+      <div class="price-dialog-total one-time-total"><span>Einmalige Profileinrichtung</span><b id="priceDialogOnce">0 €</b></div>
       <p>Die Preisangaben sind vorläufige Richtwerte. Ein kostenpflichtiger Vertrag entsteht ausschließlich nach einem individuellen Angebot und Ihrer ausdrücklichen Zustimmung.</p>
     </dialog>
 
@@ -235,7 +254,7 @@
           <div class="contact-error" id="contactError" role="alert" aria-live="polite"></div>
           <button class="contact-submit" id="contactSubmit" type="submit">Anfrage senden <span>↗</span></button>
         </form>
-        <aside class="contact-summary"><small>IHRE AUSWAHL</small><b id="contactMonthly">35 € / Monat</b><span>nach 2 Freimonaten</span><div id="contactSelected"></div><strong>Erstellung & Testphase: 0 €</strong></aside>
+        <aside class="contact-summary"><small>IHRE AUSWAHL</small><b id="contactMonthly">35 € / Monat</b><span>nach 2 Freimonaten</span><div class="contact-once"><small>Einmalig</small><b id="contactOnce">0 €</b></div><div id="contactSelected"></div><strong>Erstellung & Testphase: 0 €</strong></aside>
       </div>
     </dialog>
 

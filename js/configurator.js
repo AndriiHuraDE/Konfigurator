@@ -5,6 +5,7 @@
   const CONFIG = { FORM_ENDPOINT: '' };
   const BASE_MONTHLY = 35;
   const FREE_TRIAL_MONTHS = 2;
+  const PROFILE_SETUP_ONCE = 5;
   const PRICE_STATUS = 'Vorläufige Preisorientierung – monatliche Einzelpreise noch intern freizugeben';
   const euro = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
   const money = value => euro.format(Number(value || 0));
@@ -12,8 +13,13 @@
 
   const FEATURES = {
     website: [
-      {id:'baseService',name:'Website, Hosting & Basis-Support',price:35,glyph:'',scene:'website',target:'siteTop',mandatory:true,detail:'Die feste Basis für Ihren digitalen Auftritt: Bereitstellung der Website, Hosting und technischer Basis-Support. Dieser Service gehört immer zur Konfiguration und kann nicht abgewählt werden. Die ersten zwei Monate sind kostenlos; danach beträgt der vorläufige Richtwert 35 € pro Monat.'},
+      {id:'baseService',name:'Website, Hosting & Basis-Support',price:35,glyph:'',scene:'website',target:'siteTop',mandatory:true,detail:'Die feste Grundlage für Ihren digitalen Auftritt: Website-Bereitstellung, Hosting und technischer Basis-Support. Dieser Service gehört immer zur Konfiguration und kann nicht abgewählt werden. Die ersten zwei Monate sind kostenlos; danach beträgt der vorläufige Richtwert 35 € pro Monat.'},
+      {id:'booking',name:'Online-Terminbuchung',price:19,glyph:'▦',scene:'website',target:'module-booking',detail:'Kunden wählen Leistungen, Wunschtermin und freie Uhrzeiten direkt auf Ihrer Website. Der Buchungsbereich erscheint auf der Website und in der mobilen Ansicht. Mögliche Plattformlizenzen werden vor dem Start geklärt.'},
+      {id:'employeeManagement',name:'Mitarbeiter- & Terminverwaltung',price:15,glyph:'♙',scene:'website',target:'module-team-management',detail:'Mitarbeiter, Arbeitszeiten und Terminübersichten werden zentral verwaltet. Die Vorschau zeigt eine Team- und Tagesübersicht. Der genaue Funktionsumfang hängt von der gewählten Buchungslösung ab.'},
+      {id:'whatsapp',name:'WhatsApp-Kontakt',price:0,glyph:'◔',scene:'website',target:'module-whatsapp',detail:'Ein WhatsApp-Kontakt öffnet eine Nachricht an Ihre WhatsApp-Business-Nummer. Das ist ein direkter Kontaktweg und noch kein automatischer Chatbot.'},
+      {id:'contactPlus',name:'Erweitertes Kontaktformular',price:2,glyph:'▤',scene:'website',target:'module-contact',detail:'Ein Formular mit zusätzlichen Feldern und Auswahlmöglichkeiten hilft, Anfragen strukturiert zu erfassen. Empfänger, Versandweg und Spam-Schutz werden passend eingerichtet.'},
       {id:'gallery',name:'Galerie & Portfolio',price:3,glyph:'▧',scene:'website',target:'module-gallery',detail:'Eine große, bildorientierte Galerie für Arbeiten, Referenzen oder Räume. Die Vorschau zeigt einen echten Bildbereich mit mehreren Formaten. Fotos und Nutzungsrechte werden vom Betrieb bereitgestellt bzw. vorab geklärt.'},
+      {id:'instagramFeed',name:'Instagram-Integration',price:4,glyph:'◎',scene:'website',target:'module-instagram',detail:'Ausgewählte Instagram-Beiträge werden als eigener Bereich direkt in Ihre Website eingebunden. Die Vorschau zeigt ein Beitragsraster auf Ihrer Website. Dafür fallen 4 € pro Monat an. Einrichtung und Verknüpfung des Instagram-Profils sind davon getrennt und kosten einmalig 5 € pro ausgewähltem Profil. Keine laufende Social-Media-Betreuung.'},
       {id:'reviews',name:'Google-Bewertungen',price:3,glyph:'★',scene:'website',target:'module-reviews',detail:'Ein Bewertungsbereich mit ausgewählten Kundenstimmen und einer Verknüpfung zum Bewertungsprofil. Eine automatische Live-Synchronisierung hängt von einer verfügbaren Schnittstelle ab.'},
       {id:'maps',name:'Karte & Öffnungszeiten',price:0,glyph:'⌖',scene:'website',target:'module-maps',detail:'Ein sichtbarer Standortbereich mit einer grafischen Karte, Adresse, Öffnungszeiten und einem Link zur Routenplanung. Eine externe Karten-Einbettung wird erst nach technischer und datenschutzrechtlicher Prüfung aktiviert.'},
       {id:'faq',name:'FAQ-Bereich',price:0,glyph:'＋',scene:'website',target:'module-faq',detail:'Ein aufklappbarer Fragenbereich. Besucher können Antworten direkt auf der Website öffnen, ohne erst anrufen zu müssen.'},
@@ -22,10 +28,7 @@
       {id:'newsletter',name:'Newsletter-Anmeldung',price:4,glyph:'✉',scene:'website',target:'module-newsletter',detail:'Ein sichtbares Anmeldeformular für Neuigkeiten und Angebote. Newsletter-Anbieter, Double-Opt-in und mögliche Lizenzgebühren werden vor der Aktivierung geprüft.'}
     ],
     phone: [
-      {id:'booking',name:'Online-Terminbuchung',price:19,glyph:'▦',scene:'phone',target:'phone-booking',detail:'Kunden wählen Leistungen, Wunschtermin und freie Uhrzeiten direkt auf Ihrer Website. Der genaue Buchungsablauf und mögliche Plattformlizenzen werden vor dem Start vereinbart.'},
-      {id:'employeeManagement',name:'Mitarbeiter- & Terminverwaltung',price:15,glyph:'♙',scene:'phone',target:'phone-team',detail:'Mitarbeiter, Arbeitszeiten und Terminübersichten werden zentral verwaltet. Die Vorschau zeigt eine Team- und Tagesübersicht. Der genaue Funktionsumfang hängt von der gewählten Buchungslösung ab.'},
-      {id:'whatsapp',name:'WhatsApp-Kontakt',price:0,glyph:'◔',scene:'phone',target:'phone-whatsapp',detail:'Ein Kontakt-Button öffnet eine Nachricht an Ihre WhatsApp-Business-Nummer. Das ist ein direkter Kontaktweg und noch kein automatischer Chatbot.'},
-      {id:'contactPlus',name:'Erweitertes Kontaktformular',price:2,glyph:'▤',scene:'phone',target:'phone-contact',detail:'Ein Formular mit zusätzlichen Feldern und Auswahlmöglichkeiten hilft, Anfragen strukturiert zu erfassen. Empfänger, Versandweg und Spam-Schutz werden passend eingerichtet.'}
+      {id:'mobileOptimization',name:'Kostenlose Mobiloptimierung',price:0,glyph:'▯',scene:'phone',target:'phoneSiteTop',mandatory:true,detail:'Ihre Website wird automatisch für Smartphone-Bildschirme angepasst. Dieselben Inhalte und Funktionen wie auf dem Desktop – nur in einem passenden mobilen Layout. Diese Anpassung ist kostenlos und immer enthalten.'}
     ],
     ai: [
       {id:'whatsappBot',name:'WhatsApp-Chatbot',price:19,glyph:'◔',scene:'ai',target:'ai-preview-whatsappBot',detail:'Ein automatisierter Assistent beantwortet definierte häufige Fragen über WhatsApp und kann Anliegen vorsortieren. Die Anbindung an WhatsApp Business sowie mögliche Meta-, Plattform- und Nachrichtenkosten werden separat geprüft.'},
@@ -36,12 +39,10 @@
       {id:'voice',name:'KI-Telefonassistent',price:29,glyph:'◖',scene:'ai',target:'ai-preview-voice',detail:'Ein Sprachassistent nimmt Anrufe entgegen und erfasst Anliegen oder Terminwünsche. Rufnummer, Telefonie-Minuten, Anbieter- und KI-Verbrauch werden separat kalkuliert.'},
       {id:'automation',name:'Prozess-Automatisierung',price:12,glyph:'⚙',scene:'ai',target:'ai-preview-automation',detail:'Verbindet ausgewählte Formulare, E-Mails und Tools zu einem definierten Ablauf. Der genaue Prozess und mögliche Drittanbieter-Lizenzen werden vorab festgelegt.'}
     ],
+    social: [],
     visibility: [
       {id:'localSEO',name:'Lokale SEO-Grundlagen',price:9,glyph:'⌕',scene:'visibility',target:'visibility-seo',detail:'Grundlegende lokale SEO-Einrichtung: Seitenstruktur, Unternehmensinformationen, Metadaten und technische Basis. Das ist keine Garantie für bestimmte Rankings und keine laufende SEO-Kampagne.'},
       {id:'multilingual',name:'Mehrsprachigkeit',price:12,glyph:'文',scene:'visibility',target:'visibility-multilingual',detail:'Die vereinbarten Seiten werden in zusätzliche Sprachen übertragen und mit einer Sprachumschaltung versehen. Umfang und spätere Pflege werden im individuellen Angebot festgelegt.'}
-    ],
-    social: [
-      {id:'instagramFeed',name:'Instagram-Integration',price:4,glyph:'◎',scene:'social',target:'social-integration-preview',detail:'Eine abgestimmte Instagram-Darstellung verbindet die Website mit Ihrem Profil. Ob ein Live-Feed technisch verfügbar ist, hängt von den aktuellen Plattform-Schnittstellen ab. Laufende Social-Media-Betreuung und die Erstellung von Beiträgen sind nicht enthalten.'}
     ]
   };
 
@@ -52,7 +53,7 @@
     {id:'linkedin',name:'LinkedIn'}
   ];
 
-  const SELECTED = new Set(['baseService']);
+  const SELECTED = new Set(['baseService','mobileOptimization']);
   const SELECTED_SOCIAL = new Set();
   let industry = 'Friseursalon / Barbershop';
   let websiteStatus = 'Keine Website';
@@ -66,6 +67,7 @@
   const categoryOf = id => Object.keys(FEATURES).find(key => FEATURES[key].some(item => item.id === id));
   const selectedItems = () => allFeatures.filter(item => SELECTED.has(item.id));
   const monthlyTotal = () => selectedItems().reduce((sum, item) => sum + item.price, 0);
+  const profileSetupTotal = () => SELECTED_SOCIAL.size * PROFILE_SETUP_ONCE;
   const addonsTotal = () => selectedItems().filter(item => !item.mandatory).reduce((sum, item) => sum + item.price, 0);
   const projectType = () => websiteStatus === 'Keine Website' ? 'Neue Website' : websiteStatus.startsWith('Veraltet') ? 'Website erneuern' : 'Website erweitern';
   const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -91,18 +93,21 @@
     automation:'<circle cx="6" cy="5" r="3"/><circle cx="18" cy="19" r="3"/><path d="M6 8v5a4 4 0 0 0 4 4h5M18 16v-5a4 4 0 0 0-4-4H9"/>',
     localSEO:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
     multilingual:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+    mobileOptimization:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 18h4"/>',
     instagramFeed:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/>'
   };
-  const SOCIAL_ICON_PATHS = {
-    instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>',
-    facebook: '<path d="M13.4 21v-8.1h2.8l.4-3.2h-3.2V7.6c0-.9.3-1.5 1.6-1.5h1.7V3.3c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.2H7.2v3.2H10V21h3.4Z" fill="currentColor" stroke="none"/>',
-    tiktok: '<path d="M15.1 3h3c.2 2.1 1.4 3.7 3.4 4.1v3.1c-1.7-.1-3.2-.7-4.5-1.7v6.7a6.1 6.1 0 1 1-6.1-6.1c.4 0 .8 0 1.2.1v3.2a3 3 0 1 0 1.8 2.8V3h1.2Z" fill="currentColor" stroke="none"/>',
-    linkedin: '<path d="M5.3 8.7H2.1V21h3.2V8.7ZM3.7 2.6a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8ZM21.9 13.9c0-3.7-2-5.4-4.7-5.4-2.1 0-3.1 1.1-3.6 1.9V8.7h-3.2V21h3.2v-6.1c0-1.6.3-3.2 2.4-3.2s2.5 1.6 2.5 3.3V21h3.4v-7.1Z" fill="currentColor" stroke="none"/>'
+  const SOCIAL_BRANDS = {
+    instagram: { width:448, height:512, path:"M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" },
+    facebook: { width:320, height:512, path:"M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z" },
+    tiktok: { width:448, height:512, path:"M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" },
+    linkedin: { width:448, height:512, path:"M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" },
+    whatsapp: { width:448, height:512, path:"M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" }
   };
 
   function socialBrandIcon(id, extraClass = '') {
-    const colorClass = `brand-${id}`;
-    return `<svg class="social-brand-icon ${colorClass} ${extraClass}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${SOCIAL_ICON_PATHS[id] || ''}</svg>`;
+    const brand = SOCIAL_BRANDS[id];
+    if (!brand) return '';
+    return `<svg class="social-brand-icon brand-${id} ${extraClass}" viewBox="0 0 ${brand.width} ${brand.height}" aria-hidden="true" focusable="false"><path d="${brand.path}" fill="currentColor"/></svg>`;
   }
 
   function featureIcon(item) {
@@ -115,10 +120,11 @@
       const container = $(containerId);
       container.innerHTML = FEATURES[category].map(item => {
         const active = SELECTED.has(item.id);
-        const price = item.mandatory ? `${money(item.price)} / Mon.` : item.price ? `+ ${money(item.price)} / Mon.` : 'Kostenlos';
+        const price = item.mandatory ? (item.price ? `${money(item.price)} / Mon.` : 'Immer inklusive') : item.price ? `+ ${money(item.price)} / Mon.` : 'Kostenlos';
         const mandatory = item.mandatory ? ' mandatory' : '';
+        const rowIcon = item.id === 'baseService' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21H3Z"/><path d="M9 21v-7h6v7"/></svg>' : featureIcon(item);
         return `<div class="feature-row${active ? ' selected' : ''}${mandatory}" role="checkbox" aria-checked="${active}" aria-disabled="${!!item.mandatory}" tabindex="0" data-feature="${item.id}">
-          <div class="feature-main"><span class="feature-glyph" aria-hidden="true">${item.mandatory ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21H3Z"/><path d="M9 21v-7h6v7"/></svg>' : featureIcon(item)}</span><span class="feature-name">${item.name}</span></div>
+          <div class="feature-main"><span class="feature-glyph" aria-hidden="true">${rowIcon}</span><span class="feature-name">${item.name}</span></div>
           <div class="feature-end"><span class="feature-price">${price}</span><button type="button" class="feature-info" data-info="${item.id}" aria-label="Details zu ${item.name}" title="Details">i</button><span class="feature-check" aria-hidden="true">✓</span></div>
         </div>`;
       }).join('');
@@ -127,7 +133,7 @@
       const active = SELECTED_SOCIAL.has(item.id);
       return `<div class="feature-row social-option-row${active ? ' selected' : ''}" role="checkbox" aria-checked="${active}" tabindex="0" data-social="${item.id}">
         <div class="feature-main"><span class="feature-glyph social-glyph" aria-hidden="true">${socialBrandIcon(item.id)}</span><span class="feature-name">${item.name}</span></div>
-        <div class="feature-end"><span class="feature-price">Kostenlos</span><span class="feature-check" aria-hidden="true">✓</span></div>
+        <div class="feature-end"><span class="feature-price">${money(PROFILE_SETUP_ONCE)} einmalig</span><span class="feature-check" aria-hidden="true">✓</span></div>
       </div>`;
     }).join('');
   }
@@ -159,6 +165,7 @@
     if (has('shop')) parts.push(`<section class="site-module" id="module-shop">${moduleHeading('SHOP',theme.shopTitle)}
       <div class="module-shop-grid"><article class="shop-card"><div class="shop-art"></div><b>Care Shampoo</b><small>Sanfte Pflege</small><strong>24 €</strong></article><article class="shop-card"><div class="shop-art"></div><b>Silk Conditioner</b><small>Glanz & Geschmeidigkeit</small><strong>29 €</strong></article><article class="shop-card"><div class="shop-art"></div><b>Studio Gutschein</b><small>Das passende Geschenk</small><strong>ab 30 €</strong></article></div></section>`);
     if (has('newsletter')) parts.push(`<section class="site-module module-newsletter" id="module-newsletter"><div class="newsletter-copy"><span class="module-kicker">STUDIO LETTER</span><h3>Post aus dem Studio.</h3><p>Neuigkeiten, Inspiration und besondere Angebote.</p></div><form class="newsletter-form"><input type="email" placeholder="Ihre E-Mail-Adresse"><button type="button">Anmelden ↗</button></form></section>`);
+    if (has('whatsapp')) parts.push(`<section class="site-module module-whatsapp" id="module-whatsapp">${moduleHeading('DIREKT ERREICHBAR','Schreiben Sie uns auf WhatsApp','Ein persönlicher Kontaktweg – ohne Warteformular.')}<a class="module-whatsapp-link" href="#siteContact"><span class="module-whatsapp-mark">${socialBrandIcon('whatsapp')}</span><span><b>WhatsApp-Nachricht senden</b><small>Wir freuen uns auf Ihre Nachricht.</small></span><i>↗</i></a></section>`);
     if (has('contactPlus')) parts.push(`<section class="site-module" id="module-contact">${moduleHeading('KONTAKT','Schreiben Sie uns')}
       <form class="module-contact-form"><input placeholder="Ihr Name"><input placeholder="E-Mail-Adresse"><textarea placeholder="Ihre Nachricht"></textarea><button type="button">Nachricht vorbereiten ↗</button></form></section>`);
     $('siteModules').innerHTML = parts.join('');
@@ -205,6 +212,8 @@
     const setText = (id, value) => { const el = $(id); if (el) el.textContent = value; };
     const demoSite = $('demoSite');
     if (demoSite) demoSite.className = `demo-site industry-${t.key || 'hair'}`;
+    const phoneScreen = $('phoneScreen');
+    if (phoneScreen) phoneScreen.className = `phone-screen industry-${t.key || 'hair'}`;
     setText('phoneServicesEyebrow',t.servicesEyebrow);
     setText('phoneAboutEyebrow',t.aboutEyebrow || 'ÜBER DAS STUDIO');
     setText('phoneAboutTitle',t.aboutTitle || 'Persönlich. Für Sie.');
@@ -238,13 +247,31 @@
   function renderPhoneModules() {
     const parts = [];
     const theme = industryTheme();
-    if (SELECTED.has('booking')) parts.push(phoneCard('booking','Termin buchen',`<small>Wählen Sie einen Service und Ihre Wunschzeit.</small><div class="phone-slot-list"><span>${escapeHTML(theme.services[0][0])}</span><span>${escapeHTML(theme.services[1][0])}</span><span>${escapeHTML(theme.services[2][0])}</span></div><div class="phone-slot-list"><span>Heute · 10:30</span><span>12:00</span><span>14:00</span></div>`));
-    if (SELECTED.has('employeeManagement')) parts.push(phoneCard('team','Team & Termine',`<small>Heute · Mittwoch, 11. Juni</small><div class="phone-slot-list"><span>Anna · 09:00</span><span>Lukas · 10:30</span><span>Sophie · 12:00</span></div>`));
-    if (SELECTED.has('whatsapp')) parts.push(phoneCard('whatsapp','WhatsApp-Kontakt',`<small>Direkt mit dem Studio schreiben.</small><div class="phone-slot-list"><span>Nachricht senden ↗</span></div>`));
-    if (SELECTED.has('contactPlus')) parts.push(phoneCard('contact','Kontaktformular',`<small>Name</small><div class="phone-slot-list"><span>Ihre Nachricht …</span><span>Senden ↗</span></div>`));
-    if (!parts.length) parts.push(`<span class="phone-module-empty">Wählen Sie rechts eine Funktion, um sie hier live zu sehen.</span>`);
-    $('phoneLiveModule').innerHTML = parts.join('');
-    updatePhoneScrollbar();
+    if (SELECTED.has('booking')) parts.push(phoneCard('booking','Online-Terminbuchung',`<small>Leistung und Wunschzeit auswählen.</small><div class="phone-slot-list">${theme.services.map(service => `<span>${escapeHTML(service[0])}</span>`).join('')}</div><div class="phone-slot-list"><span>Heute · 10:30</span><span>12:00</span><span>14:00</span></div>`));
+    if (SELECTED.has('employeeManagement')) parts.push(phoneCard('team-management','Mitarbeiter & Termine',`<small>Teamübersicht</small><div class="phone-team-row"><i></i><span>Anna · 09:00–17:00</span></div><div class="phone-team-row"><i></i><span>Lukas · 10:00–18:00</span></div><div class="phone-team-row"><i></i><span>Sophie · 09:00–16:00</span></div>`));
+    if (SELECTED.has('whatsapp')) parts.push(phoneCard('whatsapp','WhatsApp-Kontakt',`<div class="phone-whatsapp-button">${socialBrandIcon('whatsapp')} Nachricht senden</div>`));
+    if (SELECTED.has('contactPlus')) parts.push(phoneCard('contact','Kontaktformular',`<div class="phone-form-field">Ihr Name</div><div class="phone-form-field">E-Mail-Adresse</div><div class="phone-form-field phone-form-message">Ihre Nachricht …</div><div class="phone-form-submit">Nachricht senden ↗</div>`));
+    if (SELECTED.has('gallery')) parts.push(phoneCard('gallery',industryTheme().galleryTitle,`<div class="phone-gallery-grid"><i></i><i></i><i></i></div>`));
+    if (SELECTED.has('instagramFeed')) parts.push(phoneCard('instagram','Instagram-Beiträge',`<small>Ausgewählte Beiträge direkt auf Ihrer Website.</small><div class="phone-gallery-grid instagram-phone-grid"><i></i><i></i><i></i></div>`));
+    if (SELECTED.has('reviews')) parts.push(phoneCard('reviews','Google-Bewertungen',`<div class="phone-review-stars">★★★★★ <b>4,9</b></div><small>„Tolle Beratung und ein schönes Ergebnis.“</small>`));
+    if (SELECTED.has('maps')) parts.push(phoneCard('maps','Karte & Öffnungszeiten',`<div class="phone-map-mini"><i></i></div><small>Beispielstraße 12 · Münster</small><small>Mo–Fr · 09:00–18:00</small>`));
+    if (SELECTED.has('faq')) parts.push(phoneCard('faq','Häufige Fragen',`<div class="phone-faq-row">Wie kann ich buchen?　＋</div><div class="phone-faq-row">Welche Leistungen gibt es?　＋</div>`));
+    if (SELECTED.has('blog')) parts.push(phoneCard('blog','Neuigkeiten',`<div class="phone-blog-mini"></div><b>Tipps & Inspiration</b><small>Neues aus dem Studio</small>`));
+    if (SELECTED.has('shop')) parts.push(phoneCard('shop','Produkte & Gutscheine',`<div class="phone-shop-row"><i></i><span>Studio Gutschein</span><b>ab 30 €</b></div>`));
+    if (SELECTED.has('newsletter')) parts.push(phoneCard('newsletter','Newsletter',`<div class="phone-form-field">Ihre E-Mail-Adresse</div><div class="phone-form-submit">Anmelden ↗</div>`));
+    $('phoneLiveModule').innerHTML = parts.length ? parts.join('') : `<span class="phone-module-empty">Ihre ausgewählten Website-Funktionen erscheinen hier.</span>`;
+    const phoneLinks = $('phoneSocialLinks');
+    const chosenSocial = SOCIAL.filter(item => SELECTED_SOCIAL.has(item.id));
+    phoneLinks.innerHTML = chosenSocial.map(item => `<span class="phone-social-link">${socialBrandIcon(item.id)}</span>`).join('');
+    phoneLinks.hidden = chosenSocial.length === 0;
+    const floating = [];
+    if (SELECTED.has('chatbot')) floating.push(`<span class="phone-ai-action phone-ai-chat"><i>✳</i><b>KI-Chat</b></span>`);
+    if (SELECTED.has('whatsappBot')) floating.push(`<span class="phone-ai-action phone-ai-whatsapp">${socialBrandIcon('whatsapp')}<b>WhatsApp</b></span>`);
+    else if (SELECTED.has('whatsapp')) floating.push(`<span class="phone-ai-action phone-ai-whatsapp">${socialBrandIcon('whatsapp')}<b>Nachricht</b></span>`);
+    const phoneActions = $('phoneFloatingActions');
+    phoneActions.innerHTML = floating.join('');
+    phoneActions.hidden = floating.length === 0;
+    requestAnimationFrame(() => requestAnimationFrame(updatePhoneScrollbar));
   }
 
   function socialCard(item, handle) {
@@ -277,7 +304,6 @@
     const chosen = SOCIAL.filter(item => SELECTED_SOCIAL.has(item.id));
     const handle = (currentBrand().toLowerCase().replace(/[^a-z0-9äöüß._-]/g,'') || 'ihr.studio').slice(0,22);
     const cards = chosen.map(item => socialCard(item, handle));
-    if (SELECTED.has('instagramFeed')) cards.push(`<article class="network-card network-integration" id="social-integration-preview"><div class="network-card-top"><span class="network-mark">${socialBrandIcon('instagram')}</span><strong>INSTAGRAM AUF IHRER WEBSITE</strong><span class="network-live">INTEGRATION</span></div><div class="integration-preview"><div><b>Einblicke aus dem Studio</b><small>Aktuelle Beiträge direkt auf Ihrer Website</small></div><div class="integration-post-grid"><i></i><i></i><i></i></div></div></article>`);
     $('socialPreviewContent').innerHTML = cards.length ? cards.join('') : `<div class="social-empty-preview"><div class="social-empty-symbol">${socialBrandIcon('instagram')}${socialBrandIcon('facebook')}${socialBrandIcon('tiktok')}${socialBrandIcon('linkedin')}</div><h3>Ihre Social-Media-Kanäle</h3><p>Wählen Sie rechts Instagram, Facebook, TikTok oder LinkedIn aus. Jeder gewählte Kanal erscheint hier mit einer eigenen Vorschau.</p></div>`;
     $('socialTargets').innerHTML = chosen.length ? chosen.map(item => `<span class="connection-node social-node social-node-${item.id}">${socialBrandIcon(item.id)}${escapeHTML(item.name)}</span>`).join('') : `<span class="connection-node social-node">Noch kein Kanal</span>`;
     $('socialConnectionText').textContent = chosen.length ? `${chosen.length} ausgewählte${chosen.length === 1 ? 'r Kanal' : ' Kanäle'} werden mit Ihrem Webauftritt verbunden.` : 'Wählen Sie Kanäle aus, um die Verbindung zu sehen.';
@@ -334,7 +360,17 @@
   }
 
   function setScene(scene) {
+    const changed = currentScene !== scene;
     currentScene = scene;
+    document.querySelectorAll('[data-jump-scene]').forEach(button => {
+      const active = button.dataset.jumpScene === scene;
+      button.classList.toggle('active', active);
+      if (active) button.setAttribute('aria-current', 'step'); else button.removeAttribute('aria-current');
+    });
+    if (!changed) {
+      if (scene === 'phone') requestAnimationFrame(updatePhoneScrollbar);
+      return;
+    }
     document.querySelectorAll('.scene').forEach(element => {
       const active = element.dataset.scene === scene;
       element.hidden = !active;
@@ -343,25 +379,72 @@
     if (scene === 'phone') requestAnimationFrame(updatePhoneScrollbar);
   }
 
-  function animatePreviewScroll(scroller, destination, duration = 1350, token) {
+  function animatePreviewScroll(scroller, destination, duration = 2100, token) {
+    const previousValue = scroller.style.getPropertyValue('scroll-behavior');
+    const previousPriority = scroller.style.getPropertyPriority('scroll-behavior');
+    scroller.style.setProperty('scroll-behavior', 'auto', 'important');
+    const restore = () => {
+      if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
+      else scroller.style.removeProperty('scroll-behavior');
+    };
     const start = scroller.scrollTop;
     const distance = destination - start;
-    if (Math.abs(distance) < 3) return Promise.resolve();
+    if (Math.abs(distance) < 3) { restore(); return Promise.resolve(); }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       scroller.scrollTop = destination;
+      restore();
       return Promise.resolve();
     }
     return new Promise(resolve => {
       const started = performance.now();
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        restore();
+        resolve();
+      };
       const frame = now => {
-        if (token !== previewScrollToken) return resolve();
+        if (token !== previewScrollToken) { finish(); return; }
         const progress = Math.min(1, (now - started) / duration);
-        const eased = progress < .5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        const eased = progress < .5
+          ? 4 * progress * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         scroller.scrollTop = start + distance * eased;
-        if (progress < 1) requestAnimationFrame(frame); else resolve();
+        if (progress < 1) requestAnimationFrame(frame);
+        else {
+          scroller.scrollTop = destination;
+          finish();
+        }
       };
       requestAnimationFrame(frame);
     });
+  }
+
+  const arrivalTimers = new WeakMap();
+
+  function showAddedAnimation(target) {
+    if (!target) return;
+    const previousTimer = arrivalTimers.get(target);
+    if (previousTimer) window.clearTimeout(previousTimer);
+    target.classList.remove('is-highlighted');
+    // Force the pseudo-element animation to restart even when the same module is added again.
+    void target.offsetWidth;
+    target.classList.add('is-highlighted');
+    const timer = window.setTimeout(() => {
+      target.classList.remove('is-highlighted');
+      arrivalTimers.delete(target);
+    }, 2450);
+    arrivalTimers.set(target, timer);
+  }
+
+  function findPreviewScroller(target) {
+    if (target.closest('[data-scene="website"]')) return $('siteViewport');
+    if (target.closest('[data-scene="phone"]')) return $('phoneContent');
+    if (target.closest('[data-scene="social"]')) return document.querySelector('.social-presentation');
+    if (target.closest('[data-scene="ai"]')) return document.querySelector('.ai-presentation');
+    if (target.closest('[data-scene="visibility"]')) return document.querySelector('.visibility-presentation');
+    return null;
   }
 
   function scrollPreviewTo(targetId) {
@@ -370,30 +453,30 @@
     requestAnimationFrame(() => requestAnimationFrame(async () => {
       if (token !== previewScrollToken) return;
       const target = $(targetId);
-      if (!target) return;
-      let scroller = null;
-      if (target.closest('.demo-site')) scroller = $('siteViewport');
-      else if (target.closest('.phone-screen')) scroller = $('phoneScreen');
-      else if (target.closest('.social-presentation')) scroller = document.querySelector('.social-presentation');
-      else if (target.closest('.ai-presentation')) scroller = document.querySelector('.ai-presentation');
-      else if (target.closest('.visibility-presentation')) scroller = document.querySelector('.visibility-presentation');
-      if (scroller) {
-        const targetRect = target.getBoundingClientRect();
-        const scrollerRect = scroller.getBoundingClientRect();
-        const top = scroller.scrollTop + targetRect.top - scrollerRect.top - Math.max(18, scroller.clientHeight * .12);
-        scroller.style.scrollBehavior = 'auto';
-        await animatePreviewScroll(scroller, Math.max(0, Math.min(top, scroller.scrollHeight - scroller.clientHeight)), 1750, token);
-      }
+      if (!target || !target.isConnected) return;
+      const scroller = findPreviewScroller(target);
+      if (!scroller || !target.getClientRects().length) return;
+      // Measure only after the target's scene has been made visible and reflowed.
+      const targetRect = target.getBoundingClientRect();
+      const scrollerRect = scroller.getBoundingClientRect();
+      const topInset = Math.max(28, Math.min(86, scroller.clientHeight * .13));
+      const destination = scroller.scrollTop + targetRect.top - scrollerRect.top - topInset;
+      await animatePreviewScroll(
+        scroller,
+        Math.max(0, Math.min(destination, scroller.scrollHeight - scroller.clientHeight)),
+        2200,
+        token
+      );
       if (token !== previewScrollToken) return;
-      target.classList.remove('is-highlighted');
-      void target.offsetWidth;
-      target.classList.add('is-highlighted');
-      window.setTimeout(() => target.classList.remove('is-highlighted'), 2400);
+      // Wait until the destination has been painted; then pulse the exact inserted block.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (token === previewScrollToken && target.isConnected) showAddedAnimation(target);
+      }));
     }));
   }
 
   function updatePhoneScrollbar() {
-    const screen = $('phoneScreen');
+    const screen = $('phoneContent');
     const track = $('phoneScrollbar');
     const thumb = $('phoneScrollbarThumb');
     if (!screen || !track || !thumb) return;
@@ -411,17 +494,24 @@
 
   function updatePrices() {
     const total = monthlyTotal();
+    const oneTime = profileSetupTotal();
     $('monthlyTotal').textContent = money(total);
+    $('oneTimeTotal').textContent = money(oneTime);
     $('priceDialogTotal').textContent = `${money(total)} / Monat`;
+    $('priceDialogOnce').textContent = money(oneTime);
     $('contactMonthly').textContent = `${money(total)} / Monat`;
+    $('contactOnce').textContent = money(oneTime);
     const addonsList = selectedItems().filter(item => !item.mandatory);
+    const selectedProfiles = SOCIAL.filter(item => SELECTED_SOCIAL.has(item.id));
     $('contactSelected').innerHTML = [
-      `<span>Website, Hosting & Basis-Support · ${money(BASE_MONTHLY)}</span>`,
-      ...addonsList.map(item => `<span>${escapeHTML(item.name)} · ${item.price ? money(item.price) : 'kostenlos'}</span>`)
+      `<span>Website, Hosting & Basis-Support · ${money(BASE_MONTHLY)} / Monat</span>`,
+      ...addonsList.map(item => `<span>${escapeHTML(item.name)} · ${item.price ? `${money(item.price)} / Monat` : 'kostenlos'}</span>`),
+      ...selectedProfiles.map(item => `<span>${escapeHTML(item.name)}-Profil einrichten · ${money(PROFILE_SETUP_ONCE)} einmalig</span>`)
     ].join('');
     const rows = [
       `<div class="price-breakdown-row"><span>Website, Hosting & Basis-Support<small>Fester Basis-Service · nach 2 Freimonaten</small></span><b>${money(BASE_MONTHLY)} / Mon.</b></div>`,
-      ...addonsList.map(item => `<div class="price-breakdown-row"><span>${escapeHTML(item.name)}</span><b>${item.price ? `${money(item.price)} / Mon.` : 'Kostenlos'}</b></div>`)
+      ...addonsList.map(item => `<div class="price-breakdown-row"><span>${escapeHTML(item.name)}</span><b>${item.price ? `${money(item.price)} / Mon.` : 'Kostenlos'}</b></div>`),
+      ...(selectedProfiles.length ? [`<div class="price-breakdown-caption">Einmalige Einrichtung der Social-Media-Profile</div>`, ...selectedProfiles.map(item => `<div class="price-breakdown-row"><span>${escapeHTML(item.name)}-Profil einrichten</span><b>${money(PROFILE_SETUP_ONCE)} einmalig</b></div>`)] : [])
     ];
     $('priceBreakdown').innerHTML = rows.join('');
   }
@@ -445,25 +535,38 @@
     const rail = $('optionsRail');
     const section = document.querySelector(`[data-scene-section="${scene}"]`);
     if (!rail || !section) return;
-    const top = rail.scrollTop + section.getBoundingClientRect().top - rail.getBoundingClientRect().top;
+    const toolsHeight = rail.querySelector('.rail-tools')?.getBoundingClientRect().height || 0;
+    const top = rail.scrollTop + section.getBoundingClientRect().top - rail.getBoundingClientRect().top - toolsHeight + 6;
     rail.scrollTo({top:Math.max(0, top), behavior:'smooth'});
   }
 
   function toggleFeature(id) {
     const item = byId(id);
     if (!item || item.mandatory) return;
-    if (SELECTED.has(id)) SELECTED.delete(id); else SELECTED.add(id);
+    const adding = !SELECTED.has(id);
+    if (adding) SELECTED.add(id); else SELECTED.delete(id);
     refresh();
     setScene(item.scene);
-    scrollPreviewTo(item.target);
+    if (adding) scrollPreviewTo(item.target);
   }
 
   function toggleSocial(id) {
-    if (SELECTED_SOCIAL.has(id)) SELECTED_SOCIAL.delete(id); else SELECTED_SOCIAL.add(id);
+    const adding = !SELECTED_SOCIAL.has(id);
+    if (adding) SELECTED_SOCIAL.add(id); else SELECTED_SOCIAL.delete(id);
     refresh();
     setScene('social');
-    const target = SELECTED_SOCIAL.has(id) ? `social-channel-${id}` : (SOCIAL.find(item => SELECTED_SOCIAL.has(item.id)) ? `social-channel-${SOCIAL.find(item => SELECTED_SOCIAL.has(item.id)).id}` : 'socialConnection');
-    scrollPreviewTo(target);
+    if (adding) scrollPreviewTo(`social-channel-${id}`);
+  }
+
+  function applyRecommendedPreset() {
+    SELECTED.clear();
+    ['baseService','mobileOptimization','booking','employeeManagement','whatsapp','whatsappBot','chatbot','localSEO','instagramFeed'].forEach(id => SELECTED.add(id));
+    SELECTED_SOCIAL.clear();
+    SELECTED_SOCIAL.add('instagram');
+    refresh();
+    setScene('website');
+    alignRailToScene('website');
+    scrollPreviewTo('module-booking');
   }
 
   function openInfo(id) {
@@ -473,7 +576,7 @@
     $('infoArt').innerHTML = illustration(item);
     $('infoTitle').textContent = item.name;
     $('infoDescription').textContent = item.detail;
-    $('infoPrice').textContent = item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · 2 Monate kostenlos testen` : item.price ? `${money(item.price)} pro Monat · 2 Monate kostenlos testen` : 'Ohne Aufpreis enthalten';
+    $('infoPrice').textContent = item.id === 'mobileOptimization' ? 'Kostenlos · immer enthalten' : item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · 2 Monate kostenlos testen` : item.price ? `${money(item.price)} pro Monat · 2 Monate kostenlos testen` : 'Ohne Aufpreis enthalten';
     $('infoToggle').textContent = item.mandatory ? 'Immer enthalten' : SELECTED.has(id) ? 'Aus Auswahl entfernen' : 'Hinzufügen';
     $('infoToggle').disabled = !!item.mandatory;
     $('infoDialog').showModal();
@@ -516,21 +619,20 @@
   function activeRailScene() {
     const rail = $('optionsRail');
     const sections = [...document.querySelectorAll('.option-section[data-scene-section]')];
-    if (!sections.length) return;
-    // At the very end of the rail, the final category may not be able to
-    // reach the top marker because the price bar reserves viewport space.
+    if (!rail || !sections.length) return;
+    const railRect = rail.getBoundingClientRect();
+    const toolsHeight = document.querySelector('.rail-tools')?.getBoundingClientRect().height || 0;
+    const activationLine = railRect.top + toolsHeight + 10;
+    let active = sections[0];
     if (rail.scrollTop + rail.clientHeight >= rail.scrollHeight - 4) {
-      setScene(sections[sections.length - 1].dataset.sceneSection);
-      return;
+      active = sections[sections.length - 1];
+    } else {
+      // Do not break early: sticky headers and layout changes can briefly alter rect order.
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= activationLine) active = section;
+      }
     }
-    const marker = rail.getBoundingClientRect().top + Math.min(120, rail.clientHeight * .23);
-    let best = sections[0], distance = Infinity;
-    sections.forEach(section => {
-      const rect = section.getBoundingClientRect();
-      const d = marker < rect.top ? rect.top - marker : marker > rect.bottom ? marker - rect.bottom : 0;
-      if (d < distance) {distance = d;best = section;}
-    });
-    if (best) setScene(best.dataset.sceneSection);
+    setScene(active.dataset.sceneSection);
   }
 
   function getFormValue(name) {
@@ -548,11 +650,12 @@
         type:projectType(),projectKey:websiteStatus === 'Keine Website' ? 'new' : websiteStatus.startsWith('Veraltet') ? 'refresh' : 'extend',
         industry,businessName,websiteStatus,
         features:group('website'),visibilityFeatures:group('visibility'),
-        mobileFeatures:group('phone'),contactFeatures:group('phone').filter(item => ['whatsapp','whatsappBot','contactPlus'].includes(item.id)),
-        aiFeatures:group('ai'),socialProfiles:[...SELECTED_SOCIAL],
-        socialFeatures:group('social'),
-        pricing:{setupPrice:0,baseMonthly:BASE_MONTHLY,addonsMonthly:addonsTotal(),monthlyAfterTrial:monthlyTotal(),freeTrialMonths:FREE_TRIAL_MONTHS,trialTotal:0,currency:'EUR',status:PRICE_STATUS,note:'Unverbindliche monatliche Richtwerte. Ein kostenpflichtiger Vertrag entsteht nur nach individuellem Angebot und ausdrücklicher Zustimmung.'},
-        selectedFeatures:selected.map(item=>({id:item.id,name:item.name,category:categoryOf(item.id),monthlyPrice:item.price}))
+        mobileFeatures:group('phone'),contactFeatures:group('website').filter(item => ['whatsapp','contactPlus'].includes(item.id)),
+        aiFeatures:group('ai'),socialProfiles:SOCIAL.filter(item=>SELECTED_SOCIAL.has(item.id)).map(item=>({id:item.id,name:item.name,setupPrice:PROFILE_SETUP_ONCE})),
+        socialFeatures:[],
+        pricing:{setupPrice:0,profileSetupOnce:profileSetupTotal(),oneTimeTotal:profileSetupTotal(),baseMonthly:BASE_MONTHLY,addonsMonthly:addonsTotal(),monthlyAfterTrial:monthlyTotal(),freeTrialMonths:FREE_TRIAL_MONTHS,trialTotal:0,currency:'EUR',status:PRICE_STATUS,note:'Unverbindliche monatliche Richtwerte. Die Profileinrichtung wird einmalig mit 5 € je ausgewähltem Profil berechnet. Ein kostenpflichtiger Vertrag entsteht nur nach individuellem Angebot und ausdrücklicher Zustimmung.'},
+        selectedFeatures:selected.map(item=>({id:item.id,name:item.name,category:categoryOf(item.id),monthlyPrice:item.price})),
+        socialProfileSetup:{profiles:SOCIAL.filter(item=>SELECTED_SOCIAL.has(item.id)).map(item=>item.name),pricePerProfile:PROFILE_SETUP_ONCE,totalOnce:profileSetupTotal()}
       },
       contact:{name:getFormValue('contactName'),company:businessName,email:getFormValue('email'),phone:getFormValue('phone'),currentWebsite:'',message:getFormValue('message')},
       website:getFormValue('website')
@@ -575,6 +678,12 @@
       document.querySelectorAll('[data-website]').forEach(item => item.classList.toggle('selected', item === button));
     }));
     $('startConfigurator').addEventListener('click', openConfigurator);
+    document.querySelectorAll('[data-jump-scene]').forEach(button => button.addEventListener('click', () => {
+      // The live preview changes as the corresponding option section reaches the active line.
+      // This avoids briefly showing a different scene while the rail is still scrolling.
+      alignRailToScene(button.dataset.jumpScene);
+    }));
+    $('recommendPreset').addEventListener('click', applyRecommendedPreset);
 
     $('optionsRail').addEventListener('click', event => {
       const info = event.target.closest('[data-info]');
@@ -596,8 +705,9 @@
       railFrame = true;
       requestAnimationFrame(() => {activeRailScene();railFrame=false;});
     },{passive:true});
+    $('optionsRail').addEventListener('scrollend', activeRailScene, {passive:true});
     const rail = $('optionsRail');
-    const phoneScreen = $('phoneScreen');
+    const phoneScreen = $('phoneContent');
     const phoneTrack = $('phoneScrollbar');
     const phoneThumb = $('phoneScrollbarThumb');
     let draggingPhoneThumb = false;

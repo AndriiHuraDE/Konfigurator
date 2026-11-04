@@ -1,66 +1,69 @@
 # pimentaGROUP Website-Konfigurator
 
-Deutschsprachiger Konfigurator mit großem Live-Preview, einer einzigen scrollbareren Funktionsleiste und einer festen Preisleiste nach dem Tesla-Prinzip.
+Tesla-inspirierter, deutschsprachiger Website-Konfigurator mit großem Live-Preview, unabhängig scrollender Optionsleiste, Abschnittsnavigation und fixer Preisleiste.
+
+## Geschäftsmodell
+- Individuelle Website-Erstellung: 0 €.
+- Zwei Monate kostenlose Testphase für die vereinbarten Leistungen.
+- Website, Hosting & Basis-Support: 35 €/Monat nach der Testphase; fest ausgewählt und nicht abwählbar.
+- Zusätzliche Website-, KI- und Sichtbarkeitsmodule werden als monatliche Richtwerte ausgewiesen.
+- Social-Media-Profil-Einrichtung: 5 € einmalig je ausgewähltem Profil.
+- Instagram-Integration ist eine Website-Funktion: 4 €/Monat. Sie zeigt einen eigenen Instagram-Beitragsbereich auf Desktop und Smartphone.
+- Kostenlose Mobiloptimierung ist fest ausgewählt und nicht abwählbar. Die Smartphone-Vorschau zeigt dieselben ausgewählten Inhalte und Module in einem responsiven Layout.
+- Ein kostenpflichtiger Vertrag entsteht ausschließlich nach einem individuellen Angebot und ausdrücklicher Zustimmung.
+
+Alle Preise sind vorläufige Orientierungswerte und müssen intern freigegeben werden. Externe Kosten für Hosting-Anbieter, Domains, Buchungssysteme, Telefonie, CRM, KI-APIs oder Plattformen können je nach Projekt zusätzlich anfallen.
+
+## Interaktion und Vorschau
+- Der Einstieg fragt nur Branche und aktuellen Website-Status ab.
+- Website, Mobil, Social Media, KI sowie Sichtbarkeit & Sprachen sind über eine Abschnittsnavigation erreichbar.
+- Die Live-Vorschau folgt der aktiven Position in der Optionsleiste; die Abschnitte werden per Scroll-Snap sauber angesteuert.
+- Beim Hinzufügen eines Moduls scrollt die passende Vorschau langsam zum neuen Modul. Erst danach erhält genau dieses Modul einen expandierenden weißen Fokusrahmen.
+- Die Scrollbewegung wird über eine einzelne `requestAnimationFrame`-Animation gesteuert. Währenddessen wird CSS-Smooth-Scrolling temporär deaktiviert, damit sich keine zweite Browseranimation darüberlegt.
+- Der Fokusrahmen wird über eine CSS-Pseudoebene des Zielmoduls ausgelöst. Es wird kein zusätzliches Element über die Vorschau gelegt.
+- Die Smartphone-Vorschau enthält einen eigenen Scrollbereich. Die untere Smartphone-Navigation bleibt außerhalb dieses Scrollbereichs fixiert; der sichtbare Scrollbalken gehört zum Smartphone selbst.
+- Website-Chatbot und WhatsApp-Aktionen liegen innerhalb der Desktop- bzw. Smartphone-Vorschau und sind vertikal angeordnet, damit sie sich nicht überlappen.
+- Social-Media-Profile verwenden eingebettete SVG-Markenlogos. Die Einrichtung kostet 5 € je ausgewähltem Profil einmalig.
+- Die Schaltfläche „Empfohlene Auswahl“ lädt das Demo-Paket mit 120 €/Monat und 5 € einmaliger Instagram-Profil-Einrichtung.
+
+## Lokale Vorschau
+Projektstruktur beibehalten und `index.html` über einen lokalen Webserver öffnen:
+
+```bash
+python -m http.server 8000
+```
+
+Danach `http://localhost:8000` öffnen.
+
+## Google Sheets und E-Mail
+1. Neue Google-Tabelle erstellen.
+2. Erweiterungen → Apps Script öffnen.
+3. `google-apps-script/Code.gs` vollständig einfügen.
+4. Optional `SETTINGS.NOTIFICATION_EMAIL` setzen.
+5. Als Web-App bereitstellen und die `/exec`-URL kopieren.
+6. Die URL in `js/configurator.js` bei `CONFIG.FORM_ENDPOINT` eintragen.
+7. Eine Testanfrage senden und die Speicherung in Google Sheets sowie den E-Mail-Eingang prüfen.
+
+Der Browser sendet an Apps Script im `no-cors`-Modus. Daher kann die Website die tatsächliche Speicherung nicht selbst bestätigen; die erste Testanfrage muss im Sheet kontrolliert werden. Ohne eingerichteten Endpunkt wird die vollständige Konfiguration als JSON-Datei exportiert.
+
+## Preise bearbeiten
+Alle Preiswerte befinden sich in `js/configurator.js`:
+- `BASE_MONTHLY`
+- `PROFILE_SETUP_ONCE`
+- `FEATURES`
+- `PRICE_STATUS`
 
 ## Dateien
+- `index.html` – Einstieg, Vorschau-Szenen und Optionsleiste
+- `css/styles.css` – responsives Design, Vorschau und Animationen
+- `js/configurator.js` – Auswahl, Live-Preview, Preisberechnung, Navigation und Formular
+- `google-apps-script/Code.gs` – optionaler Empfang in Google Sheets und per E-Mail
 
-- `index.html` – zwei kurze Einstiegsfragen und die Konfigurator-Oberfläche
-- `css/styles.css` – Desktop-/Mobile-Layout, Preview-Szenen, Responsivität und Animationen
-- `js/configurator.js` – Funktionsauswahl, Preislogik, Live-Preview, Kontaktformular und JSON-Export
-- `google-apps-script/Code.gs` – optionaler Eingang in Google Sheets und E-Mail-Benachrichtigung
-
-Im Paket sind bewusst keine Impressum- oder Datenschutzseiten enthalten. Diese werden separat an einer passenden Stelle ergänzt.
-
-## Bedienung
-
-1. Branche auswählen: Friseursalon/Barbershop, Nagelstudio, Massage/Wellness oder anderer Betrieb.
-2. Angeben, ob bereits eine Website vorhanden ist.
-3. Im Konfigurator rechts die gewünschten Funktionen auswählen. Die linke Preview wechselt passend zur Kategorie.
-4. Der neu hinzugefügte Bereich wird in der Preview langsam angefahren und anschließend mit einem expandierenden Rahmen hervorgehoben.
-5. Im Bereich Smartphone kann der sichtbare Scrollbalken direkt am Mockup gezogen werden; zusätzlich funktionieren Mausrad und Touch-Scroll.
-6. Mit `i` lassen sich ausführliche Funktionsdetails öffnen.
-7. Die feste untere Preisleiste zeigt die Gesamtsumme nach den zwei kostenlosen Monaten.
-8. Über „Konfiguration anfragen“ öffnet sich das Kontaktformular als Dialog.
-
-## Live-Preview
-
-- **Website:** echte Inhaltsmodule, zum Beispiel Galerie, Bewertungen, Karte, FAQ, Blog, Shop und Newsletter.
-- **Smartphone:** mobile Darstellung mit eigenen Modulen für Buchung, Team, WhatsApp-Kontakt und Formular.
-- **Social Media:** getrennte Vorschauen für Instagram, Facebook, TikTok und LinkedIn. Die Markenlogos sind inline-SVGs; es findet keine Anmeldung bei den Plattformen statt.
-- **KI & Automatisierung:** kompakte, einzelne Produktvorschauen für Website-Chatbot, WhatsApp-Bot, Anfrage-Assistent, E-Mail, CRM, Telefonie und Workflow.
-- **Sichtbarkeit & Sprachen:** visuelle Beispiele für lokale SEO und Sprachumschaltung.
-
-Die Social-Profile selbst können kostenlos als Links ausgewählt werden. Die monatlichen 4 € bei „Instagram-Integration“ beziehen sich auf die Darstellung ausgewählter Instagram-Beiträge auf der Website, nicht auf die laufende Betreuung des Social-Media-Kanals.
-
-## Preislogik
-
-- Erstellung der Website: **0 €**.
-- Erste **2 Monate kostenlos** für die vereinbarten Funktionen.
-- Fester Basis-Service „Website, Hosting & Basis-Support“: **35 €/Monat**, standardmäßig ausgewählt und nicht abwählbar.
-- Weitere Module: monatliche Zusatzpreise gemäß Konfigurator.
-- Die Preisangaben sind weiterhin vorläufige Richtwerte und noch nicht intern freigegeben. Ein kostenpflichtiger Vertrag entsteht ausschließlich nach einem individuellen Angebot und ausdrücklicher Zustimmung.
-
-Preise und Module werden am Anfang von `js/configurator.js` verwaltet: `BASE_MONTHLY`, `FEATURES` und `PRICE_STATUS`.
-
-## Anfrageempfang über Google Sheets
-
-Ohne eingerichteten Endpunkt exportiert das Kontaktformular die vollständige Konfiguration als JSON-Datei. Es wird dann nichts automatisch an pimentaGROUP übermittelt.
-
-Zum Einrichten:
-
-1. Eine Google-Tabelle erstellen.
-2. In der Tabelle **Erweiterungen → Apps Script** öffnen.
-3. Den gesamten Inhalt aus `google-apps-script/Code.gs` einfügen.
-4. Optional `SETTINGS.NOTIFICATION_EMAIL` auf eine Empfangsadresse setzen.
-5. Als Web-App bereitstellen (Ausführen als: Ich; Zugriff: Jeder, soweit für das Konto verfügbar).
-6. Die bereitgestellte `/exec`-URL in `js/configurator.js` bei `CONFIG.FORM_ENDPOINT` eintragen.
-7. Eine Testanfrage absenden und Tabellenblatt sowie E-Mail-Eingang kontrollieren.
-
-Der Browser nutzt `no-cors`; eine Client-Erfolgsmeldung ist kein Beweis für die Speicherung durch Google. Die erste Testanfrage muss im Tabellenblatt geprüft werden.
-
-## Wichtige Grenzen
-
-- Social-Media-Vorschauen sind Demo-Oberflächen ohne Live-Feed oder Plattform-Anmeldung.
-- KI-Vorschauen zeigen beispielhafte Abläufe; es sind noch keine KI-Dienste verbunden.
-- Externe Plattformgebühren, KI-API-Verbrauch, Telefonie-Minuten, WhatsApp-/Meta-Kosten, Hosting-Mehrkosten und CRM-Lizenzen sind nicht pauschal enthalten und werden projektbezogen geprüft.
-- Das KI-Chat-Widget ist außerhalb des Demo-Footers an das sichtbare Preview-Fenster gebunden, damit es beim Zurückwechseln zur Website nicht in die Footer-Zeile rutscht.
+## Aktuelle UI-Korrekturen
+- Instagram-Integration befindet sich unter Website und erscheint als eigener Website-Abschnitt auf Desktop und Smartphone.
+- Social-Media-Profile kosten 5 € einmalig je ausgewähltem Profil; die Instagram-Website-Integration kostet separat 4 €/Monat.
+- KI- und WhatsApp-Aktionen sind innerhalb der Desktop- bzw. Smartphone-Vorschau verankert und vertikal gestapelt.
+- Die Smartphone-Aktionen liegen innerhalb des Gerätebildschirms; die untere Navigation bleibt fixiert.
+- Die Vorschau nutzt pro Szene einen expliziten Scroll-Container. Nach dem langsamen Scrollen wird das neue Modul mit einem expandierenden weißen Fokusrahmen markiert.
+- Die Abschnittsnavigation wird auch nach dem Ende einer Scrollbewegung aktualisiert.
+- Die empfohlene Auswahl ergibt 120 €/Monat nach der kostenlosen Testphase sowie 5 € einmalig für das Instagram-Profil.
