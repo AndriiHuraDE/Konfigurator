@@ -3,254 +3,254 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f5ef">
-  <meta name="description" content="Stellen Sie Ihre Website mit pimentaGROUP visuell zusammen und sehen Sie sofort Ihre Preisübersicht.">
-  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#f2f2f0">
+  <meta name="description" content="Stellen Sie Ihren digitalen Auftritt interaktiv zusammen.">
+  <meta name="robots" content="noindex,nofollow">
   <title>Website-Konfigurator | pimentaGROUP</title>
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/configurator.js" defer></script>
 </head>
 <body>
-  <div class="app-shell" id="top">
-    <header class="topbar">
-      <a class="brand" href="#top" aria-label="pimentaGROUP Startseite">
-        <span class="brand-mark">p<span>.</span></span>
-        <span class="brand-name">pimenta<span>GROUP</span></span>
-      </a>
-      <div class="topbar-right">
-        <span class="secure-label"><i></i> Unverbindlich konfigurieren</span>
-        <a class="top-link" href="#how-it-works">So funktioniert's <b>↗</b></a>
+  <main class="app" id="app">
+    <!-- Minimal onboarding: exactly the two initial questions -->
+    <section class="intro-screen" id="introScreen" aria-labelledby="introTitle">
+      <div class="intro-card">
+        <div class="intro-progress"><span class="progress-active"></span><span></span></div>
+        <div class="intro-number">01 / 02</div>
+        <h1 id="introTitle">Welchen Betrieb führen Sie?</h1>
+        <div class="choice-grid industry-choices" role="group" aria-label="Branche">
+          <button type="button" class="choice-card selected" data-industry="Friseursalon / Barbershop">
+            <span class="choice-illustration salon-illustration" aria-hidden="true"><i></i><b></b><em></em></span>
+            <span>Friseursalon</span>
+          </button>
+          <button type="button" class="choice-card" data-industry="Nagelstudio">
+            <span class="choice-illustration nails-illustration" aria-hidden="true"><i></i><b></b><em></em></span>
+            <span>Nagelstudio</span>
+          </button>
+          <button type="button" class="choice-card" data-industry="Massage / Wellness">
+            <span class="choice-illustration wellness-illustration" aria-hidden="true"><i></i><b></b><em></em></span>
+            <span>Massage & Wellness</span>
+          </button>
+          <button type="button" class="choice-card" data-industry="Sonstiges">
+            <span class="choice-illustration other-illustration" aria-hidden="true"><i></i><b></b><em></em></span>
+            <span>Anderer Betrieb</span>
+          </button>
+        </div>
+
+        <div class="intro-number second-number">02 / 02</div>
+        <h2>Haben Sie bereits eine Website?</h2>
+        <div class="website-choices" role="group" aria-label="Website-Status">
+          <button type="button" class="website-choice selected" data-website="Keine Website"><span class="radio-mark"></span><span>Nein, noch nicht</span></button>
+          <button type="button" class="website-choice" data-website="Veraltet / nicht mobiloptimiert"><span class="radio-mark"></span><span>Ja, aber sie ist veraltet</span></button>
+          <button type="button" class="website-choice" data-website="Vorhanden und aktuell"><span class="radio-mark"></span><span>Ja, sie ist aktuell</span></button>
+        </div>
+        <button type="button" class="intro-continue" id="startConfigurator">Konfigurator öffnen <span>→</span></button>
       </div>
-    </header>
+    </section>
 
-    <main>
-      <section class="intro" aria-labelledby="page-title">
-        <div class="intro-copy">
-          <div class="kicker"><span></span> DIGITALER AUFTRITT · KONFIGURATOR</div>
-          <h1 id="page-title">Ihre Website.<br><em>Ihr Bauplan.</em></h1>
-          <p>Website-Erstellung kostenlos. Zwei Monate testen. Danach entscheiden Sie selbst.</p>
-          <div class="intro-meta"><span><b>01</b> Bedarf wählen</span><span><b>02</b> Funktionen ergänzen</span><span><b>03</b> Unverbindlich anfragen</span></div>
+    <!-- Main configurator: large live website / one independently scrolling options rail -->
+    <section class="configurator-screen" id="configuratorScreen" hidden aria-label="Website-Konfigurator">
+      <section class="preview-stage" id="previewStage" aria-label="Live-Vorschau">
+        <!-- WEBSITE SCENE -->
+        <div class="scene scene-website active" data-scene="website">
+          <div class="site-viewport" id="siteViewport">
+            <div class="demo-site" id="demoSite">
+              <header class="demo-nav">
+                <a class="demo-logo" href="#siteTop"><span class="logo-monogram">S</span><span><b id="previewBrand">SÉLYS</b><small>HAIR & BEAUTY</small></span></a>
+                <nav aria-label="Website-Navigation">
+                  <a href="#siteServices">Leistungen</a>
+                  <a href="#siteTeam">Team</a>
+                  <a href="#siteModules">Mehr entdecken</a>
+                  <a href="#siteContact">Kontakt</a>
+                </nav>
+                <a class="nav-book" href="#module-booking">Termin buchen <span>↗</span></a>
+              </header>
+
+              <section class="demo-hero" id="siteTop">
+                <div class="hero-copy">
+                  <span class="site-eyebrow">MÜNSTER · PREMIUM HAIR STUDIO</span>
+                  <h2>Ihr Stil.<br><em>Ihr Moment.</em></h2>
+                  <p>Individuelle Looks, persönliche Beratung und ein gutes Gefühl bei jedem Besuch.</p>
+                  <div class="hero-actions"><a class="hero-primary" href="#module-booking">Termin entdecken <span>↗</span></a><a class="hero-secondary" href="#siteServices">Leistungen ansehen</a></div>
+                  <div class="hero-proof"><span>✦ Persönliche Beratung</span><span>✦ Zeit für Ihren Look</span></div>
+                </div>
+                <div class="hero-art" aria-label="Abstrakte Salon-Bildkomposition">
+                  <div class="hero-art-photo"><div class="portrait-halo"></div><div class="portrait-head"></div><div class="portrait-body"></div><span class="portrait-caption">YOUR BEAUTY<br>YOUR STYLE</span></div>
+                  <div class="hero-art-note"><i></i><span>EST. WITH<br>CARE & DETAIL</span></div>
+                </div>
+              </section>
+
+              <section class="site-services" id="siteServices">
+                <div class="site-section-heading"><span>UNSERE LEISTUNGEN</span><h3>Für Ihren ganz<br><em>eigenen Stil.</em></h3></div>
+                <div class="service-preview-grid">
+                  <article class="service-preview"><span class="service-number">01</span><b>Cut & Styling</b><small>Individuell. Präzise. Persönlich.</small><i>↗</i></article>
+                  <article class="service-preview"><span class="service-number">02</span><b>Color & Care</b><small>Farbe, die zu Ihnen passt.</small><i>↗</i></article>
+                  <article class="service-preview"><span class="service-number">03</span><b>Beauty Rituals</b><small>Zeit für Pflege und Wohlgefühl.</small><i>↗</i></article>
+                </div>
+              </section>
+
+              <section class="site-team" id="siteTeam">
+                <div class="site-section-heading compact"><span>MIT LIEBE ZUM DETAIL</span><h3>Menschen hinter<br><em>dem Handwerk.</em></h3></div>
+                <div class="team-preview-grid">
+                  <article class="team-preview"><div class="team-person person-one"><i></i></div><b>Anna</b><small>Creative Director</small></article>
+                  <article class="team-preview"><div class="team-person person-two"><i></i></div><b>Lukas</b><small>Master Stylist</small></article>
+                  <article class="team-preview"><div class="team-person person-three"><i></i></div><b>Sophie</b><small>Color Expert</small></article>
+                </div>
+              </section>
+
+              <div id="siteModules" class="site-modules" aria-live="polite"></div>
+              <footer class="demo-site-footer" id="siteContact"><span class="footer-wordmark" id="footerBrand">SÉLYS</span><span>HAIR & BEAUTY · MÜNSTER</span><span>Ein Ort für Ihren Stil.</span></footer>
+              <a class="site-whatsapp-float" id="siteWhatsApp" href="#" aria-label="WhatsApp-Kontakt" hidden>◔</a>
+              <div class="site-chat-float" id="siteChatFloat" hidden><span>✳</span><div><b>Wie können wir helfen?</b><small>Unser digitaler Assistent</small></div></div>
+            </div>
+          </div>
         </div>
-        <div class="intro-stamp" aria-hidden="true">
-          <div class="stamp-ring"><span>DESIGNED AROUND<br>YOUR BUSINESS</span><b>p.</b><small>WEB · AI · AUTOMATION</small></div>
-          <div class="stamp-spark">✳</div>
-        </div>
-      </section>
 
-      <section class="builder" id="konfigurator">
-        <div class="builder-topline">
-          <div class="builder-heading"><span class="kicker"><span></span> IHR KONFIGURATOR</span><h2>Zusammenstellen <em>statt raten.</em></h2></div>
-          <nav class="stepper" aria-label="Konfigurationsschritte">
-            <button type="button" class="stepper-step active" data-step-jump="0"><i>1</i><span>Basis</span></button>
-            <span class="stepper-line"></span>
-            <button type="button" class="stepper-step" data-step-jump="1"><i>2</i><span>Ausstattung</span></button>
-            <span class="stepper-line"></span>
-            <button type="button" class="stepper-step" data-step-jump="2"><i>3</i><span>Anfrage</span></button>
-          </nav>
-        </div>
-
-        <form id="configForm" novalidate>
-          <!-- STEP 1: BASE PACKAGE -->
-          <section class="step-panel active" data-step="0" aria-labelledby="base-title">
-            <div class="panel-heading">
-              <div><span class="step-eyebrow">01 / IHR BETRIEB</span><h3 id="base-title">Was passt zu Ihrer Situation?</h3></div>
-              <span class="step-note">Erstellung kostenlos</span>
-            </div>
-            <div class="package-grid project-grid" id="packageGrid">
-              <label class="package-card selected" data-package="new">
-                <input type="radio" name="projectType" value="new" checked>
-                <span class="package-visual visual-landing"><i></i><i></i><i></i><b></b></span>
-                <span class="package-card-bottom"><span><strong>Neue Website</strong><small>Sie haben noch keine Website.</small></span><b class="package-price">0 €<small>Erstellung</small></b></span>
-                <span class="package-check">✓</span>
-              </label>
-              <label class="package-card" data-package="refresh">
-                <input type="radio" name="projectType" value="refresh">
-                <span class="package-visual visual-relaunch"><i></i><i></i><i></i><b></b></span>
-                <span class="package-card-bottom"><span><strong>Website erneuern</strong><small>Ihr Auftritt braucht ein Update.</small></span><b class="package-price">0 €<small>Erstellung</small></b></span>
-                <span class="package-check">✓</span>
-              </label>
-              <label class="package-card" data-package="extend">
-                <input type="radio" name="projectType" value="extend">
-                <span class="package-visual visual-business"><i></i><i></i><i></i><i></i><b></b></span>
-                <span class="package-card-bottom"><span><strong>Website erweitern</strong><small>Neue Funktionen ergänzen.</small></span><b class="package-price">0 €<small>Einrichtung</small></b></span>
-                <span class="package-check">✓</span>
-              </label>
-            </div>
-            <div class="base-bottom-grid">
-              <section class="mini-section">
-                <div class="mini-heading"><span>DESIGNRICHTUNG</span><small>Später noch veränderbar</small></div>
-                <div class="design-choices">
-                  <label class="design-choice selected"><input type="radio" name="designStyle" value="Modern & klar" checked><span class="design-swatch swatch-modern"><i></i><i></i><i></i></span><b>Modern</b></label>
-                  <label class="design-choice"><input type="radio" name="designStyle" value="Elegant & ruhig"><span class="design-swatch swatch-elegant"><i></i><i></i><i></i></span><b>Elegant</b></label>
-                  <label class="design-choice"><input type="radio" name="designStyle" value="Mutig & kreativ"><span class="design-swatch swatch-bold"><i></i><i></i><i></i></span><b>Kreativ</b></label>
-                </div>
-              </section>
-              <section class="mini-section included-section">
-                <div class="mini-heading"><span>IM BASISDIENST</span><small>Immer dabei</small></div>
-                <div class="included-pills"><span>Individuelle Website</span><span>Hosting & SSL</span><span>Domainverwaltung</span><span>Wartung & Support</span></div>
-                <p>Die Website-Erstellung ist kostenlos. Technische Details und externe Kosten klären wir vor dem Start.</p>
-              </section>
-            </div>
-
-            <div class="field-grid base-fields">
-              <label class="field"><span>Branche <b>*</b></span><select name="industry" required><option value="">Bitte auswählen</option><option>Friseursalon / Barbershop</option><option>Nagelstudio</option><option>Massage / Wellness</option><option>Sonstiges</option></select></label>
-              <label class="field"><span>Unternehmen <b>*</b></span><input name="businessName" type="text" maxlength="100" placeholder="Name Ihres Betriebs" required></label>
-              <label class="field"><span>Teamgröße</span><select name="employeeCount"><option value="">Bitte auswählen</option><option>1 Person</option><option>2–5 Personen</option><option>6–10 Personen</option><option>Mehr als 10</option></select></label>
-              <label class="field"><span>Aktuelle Website</span><select name="websiteStatus"><option value="Keine Website">Keine Website</option><option value="Veraltet / nicht mobiloptimiert">Veraltet / nicht mobiloptimiert</option><option value="Vorhanden und aktuell">Vorhanden und aktuell</option><option value="Unbekannt">Weiß ich nicht</option></select></label>
-              <label class="field field-wide"><span>Was möchten Sie verbessern?</span><select name="mainGoal"><option value="Mehr Online-Termine">Mehr Online-Termine</option><option value="Ein professioneller Webauftritt">Ein professioneller Webauftritt</option><option value="Weniger Verwaltungsaufwand">Weniger Verwaltungsaufwand</option><option value="Bessere Kundenkommunikation">Bessere Kundenkommunikation</option><option value="Lokale Sichtbarkeit">Lokale Sichtbarkeit</option><option value="Noch unsicher">Noch unsicher</option></select></label>
-            </div>
-            <div class="panel-actions"><span class="quiet-note">Website-Erstellung kostenlos · 2 Monate gratis testen</span><button type="button" class="btn btn-primary" id="toFeatures">Funktionen auswählen <span>→</span></button></div>
-          </section>
-
-          <!-- STEP 2: VISUAL BUILDER -->
-          <section class="step-panel" data-step="1" aria-labelledby="features-title" hidden>
-            <div class="panel-heading feature-heading">
-              <div><span class="step-eyebrow">02 / IHRE FUNKTIONEN</span><h3 id="features-title">Welche Funktionen brauchen Sie?</h3></div>
-              <div class="feature-heading-actions"><button type="button" class="text-button" id="recommendedSet">Salon-Empfehlung · ca. 120 € / Mon.</button><button type="button" class="text-button" id="resetFeatures">Zurücksetzen ↺</button></div>
-            </div>
-            <div class="builder-layout">
-              <section class="options-panel" aria-label="Funktionen auswählen">
-                <div class="category-tabs" role="tablist" aria-label="Funktionskategorien">
-                  <button type="button" class="category-tab active" data-category="web" role="tab" aria-selected="true"><span class="tab-symbol">▤</span> Website</button>
-                  <button type="button" class="category-tab" data-category="contact" role="tab" aria-selected="false"><span class="tab-symbol">↗</span> Kontakt</button>
-                  <button type="button" class="category-tab" data-category="ai" role="tab" aria-selected="false"><span class="tab-symbol">✳</span> KI & Automatik</button>
-                  <button type="button" class="category-tab" data-category="social" role="tab" aria-selected="false"><span class="tab-symbol">◎</span> Social</button>
-                </div>
-                <div class="option-panel-heading"><div><b id="categoryTitle">Website-Funktionen</b><small id="categorySubtitle">Bausteine für Ihren Webauftritt</small></div><span class="category-count" id="categoryCount">0 ausgewählt</span></div>
-                <div class="feature-grid" id="featureGrid"></div>
-                <div class="options-footnote" id="optionsFootnote">Jede Funktion lässt sich einzeln ergänzen. Tippen Sie auf „i“ für Details.</div>
-              </section>
-
-              <section class="visual-panel" aria-labelledby="visual-title">
-                <div class="visual-panel-top"><div><span class="live-indicator"></span><span id="visual-title">LIVE-VORSCHAU</span></div><span class="preview-scale">RESPONSIVE · DESKTOP + MOBILE</span></div>
-                <div class="blueprint-canvas" id="blueprintCanvas">
-                  <div class="canvas-grid"></div>
-                  <svg class="connection-lines" viewBox="0 0 640 450" preserveAspectRatio="none" aria-hidden="true">
-                    <path d="M314 202 C395 202 400 90 476 90"/><path d="M315 225 C400 225 395 343 478 343"/><path d="M143 350 C175 350 192 320 225 320"/>
-                    <circle cx="314" cy="202" r="4"/><circle cx="476" cy="90" r="4"/><circle cx="478" cy="343" r="4"/>
-                  </svg>
-                  <div class="device-desktop">
-                    <div class="device-toolbar"><div class="browser-lights"><i></i><i></i><i></i></div><span>ihre-website.de</span><b>•••</b></div>
-                    <div class="web-mock" id="webMock">
-                      <div class="mock-nav"><div class="mock-logo"><i></i><b id="mockBrand">IHR UNTERNEHMEN</b></div><div class="mock-navlinks"><i></i><i></i><i></i></div></div>
-                      <div class="mock-hero"><div class="mock-eyebrow">WILLKOMMEN</div><div class="mock-headline">Ein Auftritt,<br><em>der wirkt.</em></div><div class="mock-copy-lines"><i></i><i></i></div><div class="mock-cta" id="mockCta">Jetzt entdecken <b>↗</b></div></div>
-                      <div class="mock-photo-grid"><div class="mock-photo mock-photo-a"></div><div class="mock-photo mock-photo-b"></div><div class="mock-photo mock-photo-c"></div></div>
-                      <div class="mock-modules" id="mockModules"></div>
-                      <div class="mock-footer"><i></i><i></i><i></i></div>
-                    </div>
-                    <span class="device-caption">WEBSITE</span>
-                  </div>
-                  <div class="device-phone">
-                    <div class="phone-speaker"></div><div class="phone-screen">
-                      <div class="phone-top"><b id="phoneBrand">IHR STUDIO</b><span>•••</span></div>
-                      <div class="phone-cover"><i></i><b>Schön, dass<br>Sie da sind.</b><small>ENTDECKEN SIE MEHR</small></div>
-                      <div class="phone-phone-module" id="phoneModules"><span class="phone-mini-line"></span><span class="phone-mini-line short"></span></div>
-                      <div class="phone-action" id="phoneAction">Kontakt aufnehmen <b>↗</b></div>
-                      <div class="phone-whatsapp" id="phoneWhatsapp" hidden>◔</div>
-                    </div>
-                    <span class="device-caption">MOBILE</span>
-                  </div>
-                  <div class="channel-node social-node">
-                    <span class="node-caption">SOCIAL CHANNELS</span>
-                    <div class="social-icons" id="socialPreview"><i class="social-instagram">◎</i><i class="social-facebook">f</i><i class="social-tiktok">♪</i></div>
-                    <small>Ihre Profile</small>
-                  </div>
-                  <div class="channel-node ai-node" id="aiNode">
-                    <span class="node-icon">✳</span><div><b id="aiNodeTitle">AI READY</b><small id="aiNodeText">Assistenten optional ergänzen</small></div>
-                  </div>
-                  <div class="preview-badge" id="previewBadge"><span>✓</span> Ihre Auswahl wird live angezeigt</div>
-                </div>
-                <div class="visual-selection-row"><div><span class="selection-dot"></span><b id="visualSelectedCount">0 Funktionen aktiv</b></div><span id="visualSelectedHint">Wählen Sie links Ihre Bausteine.</span></div>
-                <div class="selected-chips" id="selectedChips"><span class="empty-chip">Noch keine Zusatzfunktion ausgewählt</span></div>
-              </section>
-
-              <aside class="quote-panel" aria-label="Preisübersicht">
-                <div class="quote-panel-head"><div><span class="quote-eyebrow">IHR KONZEPT</span><h3>Monatlicher Richtwert</h3></div><span class="quote-live"><i></i> LIVE</span></div>
-                <div class="quote-base"><span class="quote-base-icon">p.</span><div><b id="quotePackageName">Neue Website</b><small>Website, Hosting & Basis-Support</small></div><strong id="quoteBasePrice">35 € / Monat</strong></div>
-                <div class="quote-lines" id="quoteLines"><div class="quote-empty">Wählen Sie Funktionen aus – der Preis aktualisiert sich live.</div></div>
-                <div class="quote-total"><span>Nach 2 Freimonaten</span><strong id="quoteTotal">35 € / Monat</strong></div>
-                <div class="quote-monthly"><span>Erstellung & Testphase</span><b id="quoteMonthly">0 €</b></div>
-                <div class="free-trial-card"><strong>2 Monate kostenlos</strong><span>Keine automatische kostenpflichtige Verlängerung. Sie entscheiden ausdrücklich, ob Sie weitermachen.</span></div>
-                <div class="quote-disclaimer">Vorläufige Preisorientierung, keine verbindliche Preisliste. API-, Plattform-, Telefonie- und sonstige Fremdkosten können hinzukommen. Netto-/Brutto-Ausweis im individuellen Angebot.</div>
-                <button type="button" class="btn btn-primary quote-continue" id="toInquiry">Unverbindlich anfragen <span>→</span></button>
-              </aside>
-            </div>
-            <div class="panel-actions feature-actions"><button type="button" class="btn btn-quiet" id="backToBase">← Ausgangslage ändern</button><span class="quiet-note">Sie können Ihre Auswahl jederzeit anpassen.</span><button type="button" class="btn btn-primary" id="toInquiryBottom">Weiter zur Anfrage <span>→</span></button></div>
-          </section>
-
-          <!-- STEP 3: CONTACT -->
-          <section class="step-panel" data-step="2" aria-labelledby="inquiry-title" hidden>
-            <div class="panel-heading">
-              <div><span class="step-eyebrow">03 / FAST GESCHAFFT</span><h3 id="inquiry-title">Wohin dürfen wir Ihr Konzept schicken?</h3></div>
-              <span class="step-note">Unverbindliche Anfrage</span>
-            </div>
-            <div class="inquiry-grid">
-              <div class="inquiry-fields">
-                <div class="contact-intro"><span class="contact-mark">✳</span><div><b>Ihr Projekt ist fast fertig.</b><p>Hinterlassen Sie Ihre Kontaktdaten. Wir besprechen die Details persönlich.</p></div></div>
-                <div class="field-grid">
-                  <label class="field"><span>Name <b>*</b></span><input name="contactName" type="text" autocomplete="name" maxlength="120" placeholder="Vor- und Nachname" required></label>
-                  <label class="field"><span>Unternehmen</span><input name="contactCompany" type="text" autocomplete="organization" maxlength="120" placeholder="Unternehmen / Marke"></label>
-                  <label class="field"><span>E-Mail <b>*</b></span><input name="email" type="email" autocomplete="email" maxlength="160" placeholder="name@unternehmen.de" required></label>
-                  <label class="field"><span>Telefon</span><input name="phone" type="tel" autocomplete="tel" maxlength="50" placeholder="+49 …"></label>
-                  <label class="field field-wide"><span>Bestehende Website (optional)</span><input name="currentWebsite" type="url" placeholder="https://www.ihre-website.de" maxlength="300"></label>
-                  <label class="field field-wide"><span>Was sollten wir noch wissen?</span><textarea name="message" rows="3" maxlength="2000" placeholder="Ihre Wünsche oder Fragen (optional)"></textarea></label>
-                </div>
-                <label class="privacy-check"><input type="checkbox" name="privacyConsent" required><span class="custom-check"></span><span>Ich habe die <a href="datenschutz.html" target="_blank" rel="noopener">Datenschutzhinweise</a> zur Kenntnis genommen. <b>*</b></span></label>
-                <input type="text" name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
-                <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
-                <div class="submission-note">Die Anfrage ist unverbindlich. Die Testphase startet erst nach Vereinbarung; eine kostenpflichtige Fortsetzung erfolgt nur mit Ihrer ausdrücklichen Zustimmung.</div>
+        <!-- SMARTPHONE SCENE -->
+        <div class="scene scene-phone" data-scene="phone" hidden>
+          <div class="phone-presentation">
+            <div class="phone-copy"><span class="scene-kicker">MOBIL OPTIMIERT</span><h2>Alles Wichtige.<br><em>In Ihrer Hand.</em></h2><p>So erleben Ihre Kunden die Website auf dem Smartphone.</p></div>
+            <div class="phone-device" id="phoneDevice">
+              <div class="phone-island"></div>
+              <div class="phone-screen">
+                <div class="phone-status"><span>9:41</span><span>●●● ▰</span></div>
+                <div class="phone-site-head"><b id="phoneBrand">SÉLYS</b><span>☰</span></div>
+                <div class="phone-hero"><small>HAIR & BEAUTY</small><b>Ihr Stil.<br><em>Ihr Moment.</em></b><span>Persönlich. Modern. Für Sie.</span><i>Termin entdecken ↗</i></div>
+                <div class="phone-mini-services"><span>UNSERE LEISTUNGEN</span><div><i></i><i></i><i></i></div></div>
+                <div class="phone-live-module" id="phoneLiveModule"><span class="phone-module-empty">Ihre mobile Funktion erscheint hier.</span></div>
+                <div class="phone-bottom-nav"><span>⌂</span><span>♡</span><span>▦</span><span>☻</span></div>
               </div>
-              <aside class="final-summary">
-                <div class="final-summary-top"><span class="quote-eyebrow">ZUSAMMENFASSUNG</span><b>Ihr Bauplan</b></div>
-                <div id="finalSummary"></div>
-                <div class="final-total"><span>Website-Erstellung</span><strong id="finalTotal">0 €</strong></div>
-                <div class="final-monthly"><span>Nach 2 Freimonaten</span><b id="finalMonthly">35 € / Monat</b></div>
-                <p class="final-trial-note" id="finalTrialNote">2 Monate kostenlos testen. Danach nur bei ausdrücklicher Vereinbarung.</p>
-                <button type="button" class="text-button edit-config" id="editConfig">Auswahl bearbeiten ↗</button>
-              </aside>
             </div>
-            <div class="panel-actions"><button type="button" class="btn btn-quiet" id="backToFeatures">← Zurück</button><span class="quiet-note">Ihre Angaben werden zur Bearbeitung Ihrer Anfrage verwendet.</span><button type="submit" class="btn btn-primary" id="submitBtn">Konfiguration abschließen <span>↗</span></button></div>
-          </section>
-        </form>
-      </section>
+          </div>
+        </div>
 
-      <section class="how-section" id="how-it-works">
-        <div><span class="kicker"><span></span> UND DANACH?</span><h2>Einfach vom Bauplan<br><em>zur Umsetzung.</em></h2></div>
-        <div class="how-grid">
-          <article><span>01</span><b>Sie konfigurieren</b><p>Sie wählen die passenden Funktionen.</p></article>
-          <article><span>02</span><b>Wir erstellen Ihre Demo</b><p>Wir besprechen Design, Bedarf und Umfang gemeinsam.</p></article>
-          <article><span>03</span><b>2 Monate kostenlos testen</b><p>Nach Vereinbarung nutzen Sie die abgestimmten Funktionen kostenfrei.</p></article>
-          <article><span>04</span><b>Sie entscheiden</b><p>Erst mit Ihrer ausdrücklichen Zustimmung startet ein kostenpflichtiges Abo.</p></article>
+        <!-- SOCIAL SCENE -->
+        <div class="scene scene-social" data-scene="social" hidden>
+          <div class="social-presentation">
+            <div class="scene-heading"><span class="scene-kicker">SOCIAL MEDIA</span><h2>Ihre Kanäle.<br><em>Ein Auftritt.</em></h2></div>
+            <div class="social-workspace">
+              <div class="social-profile-window" id="socialProfile">
+                <div class="social-window-top"><span></span><span></span><span></span><b>instagram</b></div>
+                <div class="social-profile-info"><div class="social-profile-avatar">S</div><div><b id="socialHandle">ihr.studio</b><small>Hair · Beauty · Münster</small></div><button>Folgen</button></div>
+                <div class="social-profile-stats"><span><b>128</b> Beiträge</span><span><b>2.4k</b> Follower</span><span><b>340</b> Gefolgt</span></div>
+                <div class="social-posts" id="socialPosts"><i class="post-art post-one"></i><i class="post-art post-two"></i><i class="post-art post-three"></i><i class="post-art post-four"></i><i class="post-art post-five"></i><i class="post-art post-six"></i></div>
+                <div class="social-network-links" id="socialNetworkLinks"><span>Instagram</span><span>Facebook</span><span>TikTok</span><span>LinkedIn</span></div>
+              </div>
+              <div class="social-connection" id="socialConnection"><div class="connection-node web-node">Ihre Website</div><div class="connection-line"><i></i><i></i><i></i></div><div class="connection-node social-node">Social Media</div><p>Profile und Website sinnvoll verbinden.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI SCENE -->
+        <div class="scene scene-ai" data-scene="ai" hidden>
+          <div class="ai-presentation">
+            <div class="scene-heading"><span class="scene-kicker">KI & AUTOMATISIERUNG</span><h2>Mehr Zeit für<br><em>Ihr Unternehmen.</em></h2></div>
+            <div class="ai-workspace">
+              <div class="ai-chat-demo" id="aiChatDemo">
+                <div class="ai-chat-top"><span class="ai-avatar">✳</span><div><b>Digitaler Assistent</b><small><i></i> Demo-Unterhaltung</small></div><span>•••</span></div>
+                <div class="ai-chat-body" id="aiChatBody"><div class="chat-time">HEUTE · 10:42</div><div class="chat-message bot">Hallo! Wie kann ich Ihnen helfen?</div><div class="chat-message user">Ich möchte einen Termin buchen.</div><div class="chat-message bot">Sehr gern. Ich zeige Ihnen die nächsten freien Zeiten.</div></div>
+                <div class="ai-chat-input"><span>Nachricht eingeben …</span><b>↑</b></div>
+              </div>
+              <div class="automation-demo" id="automationDemo"><div class="automation-step"><span>01</span><div><b>Kundenanfrage</b><small>Website · WhatsApp · Telefon</small></div></div><div class="automation-connector"><i></i><i></i><i></i></div><div class="automation-step automation-active"><span>✳</span><div><b>Assistent</b><small>Erkennen · Antworten · Sortieren</small></div></div><div class="automation-connector"><i></i><i></i><i></i></div><div class="automation-step"><span>✓</span><div><b>Ihr Team</b><small>Übersichtlich vorbereitet</small></div></div></div>
+            </div>
+            <div class="ai-active-label" id="aiActiveLabel">Wählen Sie rechts eine Automatisierung.</div>
+          </div>
+        </div>
+
+        <!-- ACCESSORIES / ABSTRACT FUNCTIONS -->
+        <div class="scene scene-extras" data-scene="extras" hidden>
+          <div class="extras-presentation">
+            <span class="scene-kicker">IM HINTERGRUND</span>
+            <h2>Das Unsichtbare,<br><em>das mitarbeitet.</em></h2>
+            <div class="extras-visual" id="extrasVisual">
+              <div class="extras-search"><span>⌕</span><div><small>GOOGLE-SUCHE</small><b>Friseursalon in Ihrer Nähe</b><i>Ihre Website · Öffnungszeiten · Leistungen</i></div><strong>✓</strong></div>
+              <div class="extras-language"><span>DE</span><span>EN</span><span>FR</span></div>
+              <div class="extras-orbit orbit-one"></div><div class="extras-orbit orbit-two"></div>
+            </div>
+            <div class="extras-active" id="extrasActive"><span>Keine Zusatzoption ausgewählt</span></div>
+          </div>
         </div>
       </section>
-    </main>
 
-    <footer class="footer">
-      <a class="brand" href="#top"><span class="brand-mark">p<span>.</span></span><span class="brand-name">pimenta<span>GROUP</span></span></a>
-      <span class="footer-line">Digitale Lösungen. Klar zusammengestellt.</span>
-      <div class="footer-links"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></div>
-      <small>© <span id="year"></span> pimentaGROUP</small>
-    </footer>
-  </div>
+      <!-- Only this pane scrolls on desktop -->
+      <aside class="options-rail" id="optionsRail" aria-label="Funktionen auswählen">
+        <section class="option-section" data-scene-section="website" id="optionsWebsite">
+          <h2>Website</h2>
+          <div class="option-list" id="listWebsite"></div>
+        </section>
+        <section class="option-section" data-scene-section="phone" id="optionsPhone">
+          <h2>Smartphone</h2>
+          <div class="option-list" id="listPhone"></div>
+        </section>
+        <section class="option-section" data-scene-section="social" id="optionsSocial">
+          <h2>Social Media</h2>
+          <div class="social-choice-list" id="socialChoices"></div>
+          <div class="option-list" id="listSocial"></div>
+        </section>
+        <section class="option-section" data-scene-section="ai" id="optionsAI">
+          <h2>KI & Automatisierung</h2>
+          <div class="option-list" id="listAI"></div>
+        </section>
+        <section class="option-section option-section-last" data-scene-section="extras" id="optionsExtras">
+          <h2>Zubehör</h2>
+          <div class="option-list" id="listExtras"></div>
+          <button class="change-basics" id="changeBasics" type="button">← Betriebsangaben ändern</button>
+        </section>
+      </aside>
+    </section>
 
-  <div class="mobile-quote-bar" id="mobileQuoteBar" hidden>
-    <div><small>Ihre Konfiguration</small><b id="mobileTotal">35 € / Monat</b><span id="mobileMonthly">2 Monate kostenlos</span></div>
-    <button type="button" class="btn btn-primary" id="mobileContinue">Weiter <span>→</span></button>
-  </div>
+    <!-- Tesla-like sticky price / action bar -->
+    <section class="price-bar" id="priceBar" hidden aria-label="Preisübersicht">
+      <div class="price-bar-left">
+        <div class="price-item"><small>Erstellung</small><b>0 €</b></div>
+        <span class="price-divider"></span>
+        <div class="price-item trial-price"><small>Ihre Testphase</small><b>2 Monate kostenlos</b></div>
+        <span class="price-divider"></span>
+        <button type="button" class="price-details-button" id="priceDetailsButton">Auswahl & Preise <span>↗</span></button>
+      </div>
+      <div class="price-bar-right"><div class="monthly-total"><small>Danach pro Monat</small><b id="monthlyTotal">35 €</b></div><button type="button" class="price-cta" id="requestButton">Konfiguration anfragen <span>→</span></button></div>
+    </section>
 
-  <dialog class="detail-dialog" id="featureDialog" aria-labelledby="detailTitle">
-    <form method="dialog"><button class="dialog-close" aria-label="Schließen">×</button></form>
-    <span class="dialog-icon" id="detailIcon">✳</span>
-    <span class="step-eyebrow">FUNKTIONSDETAILS</span>
-    <h3 id="detailTitle">Funktion</h3>
-    <p id="detailDescription"></p>
-    <div class="detail-meta" id="detailMeta"></div>
-    <button type="button" class="btn btn-primary" id="detailSelect">Funktion hinzufügen <span>+</span></button>
-  </dialog>
+    <!-- Information modal: long copy lives here, not in the options list -->
+    <dialog class="info-dialog" id="infoDialog">
+      <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
+      <div class="info-art" id="infoArt"></div>
+      <div class="info-copy"><span class="info-kicker">FUNKTIONSDETAILS</span><h2 id="infoTitle"></h2><p id="infoDescription"></p><div class="info-price" id="infoPrice"></div><button type="button" class="dialog-add" id="infoToggle">Hinzufügen</button></div>
+    </dialog>
 
-  <dialog class="success-dialog" id="successDialog" aria-labelledby="successTitle">
-    <div class="success-icon">✓</div><span class="step-eyebrow">FERTIG</span><h3 id="successTitle">Ihre Konfiguration ist bereit.</h3><p id="successMessage"></p>
-    <form method="dialog"><button class="btn btn-primary">Schließen</button></form>
-  </dialog>
+    <!-- Price details modal -->
+    <dialog class="price-dialog" id="priceDialog">
+      <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
+      <span class="info-kicker">IHRE AUSWAHL</span><h2>Preisübersicht</h2>
+      <div id="priceBreakdown" class="price-breakdown"></div>
+      <div class="price-dialog-total"><span>Monatlich nach 2 Freimonaten</span><b id="priceDialogTotal">35 €</b></div>
+      <p>Die Preisangaben sind vorläufige Richtwerte. Ein kostenpflichtiger Vertrag entsteht ausschließlich nach einem individuellen Angebot und Ihrer ausdrücklichen Zustimmung.</p>
+    </dialog>
+
+    <!-- Contact form appears from the fixed bottom bar; no separate third configurator page -->
+    <dialog class="contact-dialog" id="contactDialog">
+      <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
+      <div class="contact-dialog-head"><span class="info-kicker">FAST GESCHAFFT</span><h2>Ihre Konfiguration.</h2><p>Hinterlassen Sie Ihre Kontaktdaten. Wir melden uns persönlich.</p></div>
+      <div class="contact-layout">
+        <form id="contactForm" novalidate>
+          <label class="contact-field"><span>Name *</span><input name="contactName" autocomplete="name" required maxlength="120" placeholder="Vor- und Nachname"></label>
+          <label class="contact-field"><span>Unternehmen</span><input name="contactCompany" autocomplete="organization" maxlength="120" placeholder="Name Ihres Betriebs"></label>
+          <label class="contact-field"><span>E-Mail *</span><input name="email" type="email" autocomplete="email" required maxlength="160" placeholder="name@unternehmen.de"></label>
+          <label class="contact-field"><span>Telefon</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+49 …"></label>
+          <label class="contact-field"><span>Nachricht</span><textarea name="message" rows="3" maxlength="1500" placeholder="Was sollten wir noch wissen?"></textarea></label>
+          <label class="contact-consent"><input type="checkbox" name="contactConsent" required><span>Ich bin mit der Kontaktaufnahme zu meiner Anfrage einverstanden. *</span></label>
+          <input name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="contact-error" id="contactError" role="alert" aria-live="polite"></div>
+          <button class="contact-submit" id="contactSubmit" type="submit">Anfrage senden <span>↗</span></button>
+        </form>
+        <aside class="contact-summary"><small>IHRE AUSWAHL</small><b id="contactMonthly">35 € / Monat</b><span>nach 2 Freimonaten</span><div id="contactSelected"></div><strong>Erstellung & Testphase: 0 €</strong></aside>
+      </div>
+    </dialog>
+
+    <dialog class="success-dialog" id="successDialog">
+      <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
+      <div class="success-symbol">✓</div><span class="info-kicker">VIELEN DANK</span><h2>Ihre Konfiguration ist bereit.</h2><p id="successMessage"></p><button type="button" class="dialog-add" data-close-dialog>Schließen</button>
+    </dialog>
+  </main>
 </body>
 </html>
