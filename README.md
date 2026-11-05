@@ -1,4 +1,4 @@
-# pimentaGROUP Website-Konfigurator – Version 10
+# pimentaGROUP Website-Konfigurator – Version 14
 
 Tesla-inspirierter Website-Konfigurator mit großer Live-Vorschau, unabhängig scrollender Optionsleiste, Abschnittsnavigation und fixer Preisleiste.
 
@@ -85,3 +85,27 @@ Impressum und Datenschutzerklärung sind in dieser Version absichtlich nicht ent
 - KI-Karten erscheinen mit der umgekehrten Links-und-Ausblenden-Animation der bestehenden Löschbewegung.
 - Der leere Social-Media-Zustand zeigt die vier Plattform-Icons nebeneinander in einer stabilen, zentrierten Reihe.
 - Die obligatorische Smartphone-Darstellung heißt jetzt „Mobile Website-Ansicht“. Die Desktop-Bausteine werden weiterhin vollständig in die mobile Website übernommen; die Option wird als „Immer enthalten“ statt mit wiederholten Kostenlos-Labels dargestellt.
+
+
+## Version 13 – Reflow, WhatsApp und Responsive-Feinschliff
+
+- Preview-Module behalten beim Aktualisieren ihre DOM-Elemente; dadurch werden Positionsänderungen aller betroffenen Geschwister zuverlässig per FLIP animiert.
+- Entfernte Module erhalten nur die eigene Links-/Fade-out-Animation. Die verbleibenden Module schließen den freien Platz über eine einzelne Positionsanimation; es gibt keine zusätzliche Höhen-/Skalierungsanimation des Containers.
+- Der WhatsApp-Floating-Button verwendet ein einzelnes gefülltes WhatsApp-Markenzeichen, ist exakt zentriert und wird unabhängig vom Website-Chatbot ein- bzw. ausgeblendet.
+- Die Floating-Actions werden anhand der tatsächlichen Kanten der Demo-Website positioniert, nicht anhand des äußeren Preview-Rahmens.
+- Kostenlose Zusatzfunktionen werden in der Optionsliste mit „0 €“ ausgewiesen.
+- Kleine Displays erhalten verbesserte Mindestgrößen und lesbarere Options-/Preiszeilen.
+
+
+## Version 14 – Animationen, Scroll-Verhalten und Responsive-Feinschliff
+
+- Das Optionspanel verwendet kein verpflichtendes Scroll-Snap mehr. Lange Funktionslisten – insbesondere im ersten Website-Abschnitt – lassen sich vollständig innerhalb des Panels durchscrollen, ohne ungewollt zum nächsten Abschnitt zu springen.
+- Die Navigation per Abschnittsschaltfläche wechselt die Vorschau sofort zum Zielbereich. Beim programmgesteuerten Scrollen durch dazwischenliegende Abschnitte wird die Vorschau nicht mehr kurzzeitig auf jede Zwischenkategorie umgeschaltet.
+- Vorschau-Scrollbewegungen werden einzeln per `requestAnimationFrame` ausgeführt und bei manueller Bedienung (Mausrad, Touch oder Pointer) sofort abgebrochen.
+- Das FLIP-Verfahren verwendet beim Hinzufügen Inhaltskoordinaten und beim Entfernen sichtbare Viewport-Koordinaten. Dadurch werden Scrollbewegungen nicht als Layoutverschiebung fehlinterpretiert; insbesondere wird ein browserseitiges Begrenzen von `scrollTop` nach dem Entfernen berücksichtigt.
+- Beim Hinzufügen wird zuerst die Vorschau zum neuen Modul bewegt; erst danach laufen Slide-in und die gleichzeitige Positionsänderung betroffener Module. So ist die Einblendung auch bei tiefer liegenden Modulen sichtbar.
+- Layoutverschiebungen laufen mit 720 ms und einer ruhigeren Ease-in-out-Kurve. Die eigenständige Links-/Fade-out-Animation des entfernten Moduls bleibt erhalten.
+- KI-Karten werden in einer stabilen einspaltigen Vorschau dargestellt. Mehrfach schnelle Auswahlklicks werden nacheinander verarbeitet, statt während einer laufenden Animation verloren zu gehen.
+- Social-, Website- und Sichtbarkeitsvorschau verwenden dieselbe scrollsichere Übergangslogik.
+- Doppelte Scroll-Listener am Smartphone-Bildschirm wurden entfernt. `prefers-reduced-motion` wird bei den JavaScript-Animationen berücksichtigt.
+- Getestet in Chromium bei 320, 360, 390, 768, 1024 und 1440 px Breite: kein horizontaler Seitenüberlauf. Zusätzlich wurden schnelles Hinzufügen, Entfernen mittlerer Elemente, manuelles Unterbrechen des automatischen Scrollens und reduzierte Bewegung geprüft.

@@ -1153,3 +1153,310 @@ dialog{border:1px solid #dededb;box-shadow:0 30px 100px #0003;padding:0;color:#2
 
 /* AI cards enter with the exact reverse motion of the existing left-and-fade removal. */
 .ai-workspace {align-items:start!important;align-content:start!important;}
+
+
+/* V13 — stable, single-pass module reflow and properly aligned WhatsApp control. */
+.site-modules,
+#socialPreviewContent,
+#aiPreviewContent,
+#visibilityPreview {
+  min-width:0;
+  overflow:visible;
+  align-content:start;
+}
+.site-modules > .site-module,
+#socialPreviewContent > .network-card,
+#aiPreviewContent > .ai-service-card,
+#visibilityPreview > .visibility-card {
+  transform-origin:center center;
+  backface-visibility:hidden;
+}
+/* The button stack is positioned by JS against the actual .demo-site bounds. */
+.website-preview-shell .site-floating-actions {
+  position:absolute!important;
+  z-index:60!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  gap:11px!important;
+  width:max-content!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:calc(100% - 24px)!important;
+  overflow:visible!important;
+  pointer-events:none!important;
+  isolation:isolate;
+}
+.website-preview-shell .site-floating-actions[hidden],
+.website-preview-shell .site-floating-actions > [hidden],
+.website-preview-shell .site-chat-float[hidden],
+.website-preview-shell .site-whatsapp-float[hidden] {
+  display:none!important;
+}
+.website-preview-shell .site-floating-actions > * {
+  position:relative!important;
+  inset:auto!important;
+  display:flex!important;
+  flex:0 0 auto!important;
+  float:none!important;
+  clear:both!important;
+  margin:0!important;
+  transform:none;
+  max-width:100%!important;
+  min-width:0!important;
+  pointer-events:auto!important;
+}
+.website-preview-shell .site-whatsapp-float {
+  display:grid!important;
+  place-items:center!important;
+  align-content:center!important;
+  justify-items:center!important;
+  width:50px!important;
+  height:50px!important;
+  min-width:50px!important;
+  min-height:50px!important;
+  box-sizing:border-box!important;
+  padding:0!important;
+  margin:0!important;
+  overflow:hidden!important;
+  line-height:0!important;
+  font-size:0!important;
+  color:#fff!important;
+  background:#218c4c!important;
+  border:2px solid #fff!important;
+  border-radius:50%!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.22)!important;
+  text-decoration:none!important;
+}
+.website-preview-shell .site-whatsapp-float::before,
+.website-preview-shell .site-whatsapp-float::after { content:none!important;display:none!important; }
+.website-preview-shell .site-whatsapp-float svg {
+  display:block!important;
+  width:25px!important;
+  height:29px!important;
+  flex:0 0 auto!important;
+  fill:currentColor!important;
+  stroke:none!important;
+  transform:none!important;
+  margin:0!important;
+}
+.website-preview-shell .site-whatsapp-float svg path { fill:currentColor!important;stroke:none!important; }
+.website-preview-shell .site-chat-float { order:1; }
+.website-preview-shell .site-whatsapp-float { order:2; }
+
+/* Only one object is removed: it slides left and fades; the following flow repositions once. */
+.site-module,.network-card,.ai-service-card,.visibility-card {
+  transition:none!important;
+  animation:none!important;
+}
+@media(max-width:820px) {
+  .website-preview-shell .site-floating-actions { gap:8px!important; }
+  .website-preview-shell .site-whatsapp-float { width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important; }
+  .website-preview-shell .site-whatsapp-float svg { width:21px!important;height:25px!important; }
+  .website-preview-shell .site-chat-float { max-width:150px!important;min-height:42px!important;padding:7px 9px!important; }
+}
+@media(max-width:560px) {
+  .website-preview-shell .site-floating-actions { gap:6px!important;max-width:122px!important; }
+  .website-preview-shell .site-whatsapp-float { width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important; }
+  .website-preview-shell .site-whatsapp-float svg { width:18px!important;height:22px!important; }
+  .website-preview-shell .site-chat-float { max-width:122px!important;min-height:36px!important;padding:6px 7px!important; }
+  .website-preview-shell .site-chat-float b { font-size:8px!important; }
+  .website-preview-shell .site-chat-float small { font-size:7px!important; }
+
+  /* Keep option labels and prices legible rather than squeezing them to 7px. */
+  .options-rail { padding-left:12px!important;padding-right:12px!important; }
+  .feature-row { grid-template-columns:minmax(0,1fr) auto;gap:7px!important; }
+  .feature-main { gap:8px!important;min-width:0; }
+  .feature-name { font-size:11px!important;line-height:1.25!important;overflow-wrap:anywhere; }
+  .feature-price { font-size:9px!important; }
+  .feature-end { gap:5px!important; }
+  .feature-info { width:21px!important;height:21px!important;flex:none; }
+  .feature-check { width:18px!important;height:18px!important;flex:none; }
+  .social-option-row .feature-main { gap:8px!important; }
+  .social-option-row .feature-name { font-size:11px!important; }
+  .social-option-row .feature-price { font-size:9px!important; }
+}
+@media(max-width:380px) {
+  .price-bar { padding:0 6px!important;gap:5px!important; }
+  .price-bar-left { gap:5px!important;max-width:52%!important; }
+  .price-item b { font-size:8px!important; }
+  .price-item small,.monthly-total small { font-size:5px!important; }
+  .price-divider { height:18px!important; }
+  .monthly-total b { font-size:15px!important; }
+  .price-bar-right { gap:5px!important; }
+  .price-cta { min-width:96px!important;height:34px!important;padding:0 6px!important;font-size:7px!important; }
+  .price-cta span { font-size:10px!important; }
+  .feature-end { gap:4px!important; }
+  .feature-price { font-size:8px!important; }
+}
+
+/* V14 — stable scrolling, non-snapping option rail, and predictable preview motion. */
+.options-rail {
+  scroll-snap-type:none!important;
+  scroll-behavior:auto!important;
+  overscroll-behavior-y:contain;
+  touch-action:pan-y;
+  min-height:0;
+}
+.option-section,
+.option-section[data-scene-section="phone"] {
+  min-height:0!important;
+  scroll-snap-align:none!important;
+  scroll-snap-stop:normal!important;
+  scroll-margin-top:0!important;
+}
+.option-section:first-of-type { padding-top:14px; }
+
+/* Prevent native scroll anchoring from competing with JS-driven preview transitions. */
+.site-viewport,
+.social-presentation,
+.ai-presentation,
+.visibility-presentation,
+.phone-scroll-content {
+  scroll-behavior:auto!important;
+  overflow-anchor:none!important;
+  overscroll-behavior:contain;
+}
+@media(min-width:821px) {
+  .options-rail,
+  .site-viewport,
+  .social-presentation,
+  .ai-presentation,
+  .visibility-presentation { scrollbar-gutter:stable; }
+}
+
+/* AI previews use one stable vertical track. This avoids grid-column reshuffling
+   when the number of selected cards changes and makes the scroll target predictable. */
+.ai-presentation {
+  display:block!important;
+  height:100%!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  padding:clamp(18px,2.8vw,38px) clamp(14px,3vw,42px) 30px!important;
+}
+.ai-presentation .scene-heading {
+  width:100%;
+  max-width:620px;
+  margin:0 auto 18px!important;
+}
+.ai-workspace {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  align-content:start!important;
+  justify-items:center!important;
+  align-items:start!important;
+  gap:14px!important;
+  width:100%!important;
+  max-width:620px!important;
+  margin:0 auto!important;
+  padding:0 0 8px!important;
+}
+.ai-workspace>.ai-service-card {
+  width:100%!important;
+  max-width:560px!important;
+  min-width:0!important;
+  justify-self:center!important;
+  align-self:start!important;
+  margin:0!important;
+  animation:none!important;
+  transition:none!important;
+}
+.ai-service-body { padding:12px!important; }
+.ai-active-label {
+  width:100%;
+  max-width:620px;
+  margin:8px auto 12px!important;
+  line-height:1.45;
+}
+
+/* Keep animation effects on the individual moving elements, never on parent height. */
+.site-modules,.social-preview-grid,.ai-workspace,.visibility-preview-grid {
+  overflow-anchor:none;
+}
+.site-module,.network-card,.ai-service-card,.visibility-card {
+  transition:none!important;
+  animation:none!important;
+  will-change:auto;
+}
+
+@media(max-width:820px) {
+  .options-rail {
+    min-height:0!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    scroll-snap-type:none!important;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom))!important;
+  }
+  .option-section { min-height:0!important; padding-top:16px!important; padding-bottom:16px!important; }
+  .ai-presentation { padding:16px 14px 24px!important; }
+  .ai-workspace { gap:11px!important; max-width:560px!important; }
+  .ai-workspace>.ai-service-card { max-width:100%!important; }
+  .ai-service-body { padding:10px!important; }
+}
+
+@media(max-width:560px) {
+  .configurator-screen { grid-template-rows:minmax(190px,36dvh) minmax(0,1fr)!important; }
+  .preview-stage,.options-rail { min-height:0!important; }
+  .options-rail { padding-left:13px!important; padding-right:13px!important; }
+  .rail-tools { top:0!important; }
+  .option-section { min-height:0!important; scroll-snap-align:none!important; }
+  .feature-row { min-height:48px!important; }
+  .feature-name { font-size:12px!important; line-height:1.3!important; }
+  .feature-price { font-size:10px!important; }
+  .ai-presentation { padding:14px 11px 22px!important; }
+  .ai-presentation .scene-heading h2 { font-size:24px!important; }
+  .ai-workspace { gap:10px!important; }
+  .ai-service-head { min-height:48px!important; }
+  .ai-service-head b { font-size:12px!important; }
+  .ai-service-head small { font-size:8px!important; }
+  .ai-service-body { padding:9px!important; }
+}
+
+@media(max-width:380px) {
+  .configurator-screen { grid-template-rows:minmax(175px,34dvh) minmax(0,1fr)!important; }
+  .options-rail { padding-left:10px!important; padding-right:10px!important; }
+  .feature-row { grid-template-columns:minmax(0,1fr) auto!important; gap:5px!important; }
+  .feature-name { font-size:11px!important; }
+  .feature-price { font-size:9px!important; }
+  .feature-actions { gap:4px!important; }
+  .feature-info { width:21px!important; height:21px!important; }
+  .feature-check { width:17px!important; height:17px!important; }
+  .price-bar { padding-left:6px!important; padding-right:6px!important; gap:5px!important; }
+  .price-cta { min-width:102px!important; }
+}
+
+@media(max-width:820px) and (max-height:620px) {
+  :root { --bar-h:58px; }
+  .configurator-screen { grid-template-rows:minmax(150px,34dvh) minmax(0,1fr)!important; }
+  .phone-presentation { padding-top:4px!important; padding-bottom:4px!important; }
+  .phone-device { height:min(31dvh,270px)!important; }
+  .price-bar { height:var(--bar-h)!important; }
+}
+
+@media(max-width:900px) and (orientation:landscape) {
+  .configurator-screen { grid-template-rows:minmax(160px,39dvh) minmax(0,1fr)!important; }
+  .preview-stage { min-height:0!important; }
+  .options-rail { min-height:0!important; }
+}
+
+/* Compact but readable option rows: reserve the right edge for price and controls. */
+.feature-row { grid-template-columns:minmax(0,1fr) auto; gap:6px!important; }
+.feature-main { min-width:0; gap:8px!important; }
+.feature-glyph { width:23px!important; height:23px!important; flex:0 0 23px!important; }
+.feature-name { font-size:13px!important; line-height:1.28!important; hyphens:auto; overflow-wrap:normal!important; word-break:normal; }
+.feature-end { gap:6px!important; }
+.feature-price { font-size:11px!important; line-height:1.2!important; white-space:nowrap; }
+.feature-info { width:22px!important; height:22px!important; flex:0 0 22px!important; }
+.feature-check { width:18px!important; height:18px!important; flex:0 0 18px!important; }
+@media(max-width:820px) {
+  .feature-name { font-size:12px!important; }
+  .feature-price { font-size:10px!important; }
+  .feature-row { min-height:47px!important; }
+}
+@media(max-width:380px) {
+  .feature-name { font-size:11px!important; }
+  .feature-price { font-size:9px!important; }
+  .feature-info { width:20px!important;height:20px!important;flex-basis:20px!important; }
+  .feature-check { width:17px!important;height:17px!important;flex-basis:17px!important; }
+}

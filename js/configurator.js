@@ -61,6 +61,9 @@
   let currentScene = 'website';
   let railFrame = false;
   let previewScrollToken = 0;
+  let activePreviewScrollCancel = null;
+  let previewUserIntentVersion = 0;
+  let railNavigationTarget = null;
 
   const allFeatures = Object.values(FEATURES).flat();
   const byId = id => allFeatures.find(item => item.id === id);
@@ -120,7 +123,7 @@
       const container = $(containerId);
       container.innerHTML = FEATURES[category].map(item => {
         const active = SELECTED.has(item.id);
-        const price = item.mandatory ? (item.price ? `${money(item.price)} / Mon.` : 'Immer enthalten') : item.price ? `+ ${money(item.price)} / Mon.` : 'Ohne Aufpreis';
+        const price = item.mandatory ? (item.price ? `${money(item.price)}/Mon.` : 'Immer enthalten') : item.price ? `+ ${money(item.price)}/Mon.` : '0 €';
         const mandatory = item.mandatory ? ' mandatory' : '';
         const rowIcon = item.id === 'baseService' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21H3Z"/><path d="M9 21v-7h6v7"/></svg>' : featureIcon(item);
         return `<div class="feature-row${active ? ' selected' : ''}${mandatory}" role="checkbox" aria-checked="${active}" aria-disabled="${!!item.mandatory}" tabindex="0" data-feature="${item.id}">
@@ -138,8 +141,48 @@
     }).join('');
   }
 
+  // Update a preview container without destroying unchanged module elements.
+  // Keeping node identity is essential for reliable FLIP reflow animations.
+  function syncDirectChildren(host, markup) {
+    if (!host) return;
+    const template = document.createElement('template');
+    template.innerHTML = String(markup || '').trim();
+    const currentById = new Map([...host.children].filter(node => node.id).map(node => [node.id, node]));
+    const nextNodes = [...template.content.children].map(nextNode => {
+      const currentNode = nextNode.id ? currentById.get(nextNode.id) : null;
+      if (!currentNode || currentNode.tagName !== nextNode.tagName) return nextNode;
+
+      // Keep the outer element (and its measured position), while refreshing its contents.
+      for (const attribute of [...currentNode.attributes]) {
+        if (!nextNode.hasAttribute(attribute.name)) currentNode.removeAttribute(attribute.name);
+      }
+      for (const attribute of [...nextNode.attributes]) {
+        currentNode.setAttribute(attribute.name, attribute.value);
+      }
+      if (currentNode.innerHTML !== nextNode.innerHTML) currentNode.innerHTML = nextNode.innerHTML;
+      return currentNode;
+    });
+    host.replaceChildren(...nextNodes);
+  }
+
   function moduleHeading(eyebrow, title, subtitle = '') {
     return `<span class="module-kicker">${eyebrow}</span><h3 class="module-title">${title}</h3>${subtitle ? `<p class="module-subtitle">${subtitle}</p>` : ''}`;
+  }
+
+  function positionSiteFloatingActions() {
+    const shell = document.querySelector('.website-preview-shell');
+    const site = $('demoSite');
+    const viewport = $('siteViewport');
+    const actions = $('siteFloatingActions');
+    if (!shell || !site || !viewport || !actions) return;
+    const shellRect = shell.getBoundingClientRect();
+    const siteRect = site.getBoundingClientRect();
+    const viewportRect = viewport.getBoundingClientRect();
+    if (!shellRect.width || !siteRect.width || !viewportRect.height) return;
+    const right = Math.max(8, shellRect.right - siteRect.right + 18);
+    const bottom = Math.max(8, shellRect.bottom - viewportRect.bottom + 18);
+    actions.style.setProperty('right', `${right}px`, 'important');
+    actions.style.setProperty('bottom', `${bottom}px`, 'important');
   }
 
   function renderWebsiteModules() {
@@ -168,7 +211,7 @@
     if (has('whatsapp')) parts.push(`<section class="site-module module-whatsapp" id="module-whatsapp">${moduleHeading('DIREKT ERREICHBAR','Schreiben Sie uns auf WhatsApp','Ein persönlicher Kontaktweg – ohne Warteformular.')}<a class="module-whatsapp-link" href="#siteContact"><span class="module-whatsapp-mark">${socialBrandIcon('whatsapp')}</span><span><b>WhatsApp-Nachricht senden</b><small>Wir freuen uns auf Ihre Nachricht.</small></span><i>↗</i></a></section>`);
     if (has('contactPlus')) parts.push(`<section class="site-module" id="module-contact">${moduleHeading('KONTAKT','Schreiben Sie uns')}
       <form class="module-contact-form"><input placeholder="Ihr Name"><input placeholder="E-Mail-Adresse"><textarea placeholder="Ihre Nachricht"></textarea><button type="button">Nachricht vorbereiten ↗</button></form></section>`);
-    $('siteModules').innerHTML = parts.join('');
+    syncDirectChildren($('siteModules'), parts.join(''));
     $('siteWhatsApp').hidden = !(has('whatsapp') || has('whatsappBot'));
     $('siteChatFloat').hidden = !has('chatbot');
     $('siteFloatingActions').hidden = !has('chatbot') && !has('whatsapp') && !has('whatsappBot');
@@ -177,6 +220,7 @@
     $('phoneBrand').textContent = currentBrand();
     applyIndustryTheme();
     $('siteChatFloat').hidden = !has('chatbot');
+    requestAnimationFrame(positionSiteFloatingActions);
     if (has('chatbot')) $('siteChatFloat').querySelector('b').textContent = 'Fragen? Unser KI-Assistent hilft.';
   }
 
@@ -309,7 +353,7 @@
     const chosen = SOCIAL.filter(item => SELECTED_SOCIAL.has(item.id));
     const handle = (currentBrand().toLowerCase().replace(/[^a-z0-9äöüß._-]/g,'') || 'ihr.studio').slice(0,22);
     const cards = chosen.map(item => socialCard(item, handle));
-    $('socialPreviewContent').innerHTML = cards.length ? cards.join('') : `<div class="social-empty-preview"><div class="social-empty-symbol">${socialBrandIcon('instagram')}${socialBrandIcon('facebook')}${socialBrandIcon('tiktok')}${socialBrandIcon('linkedin')}</div><h3>Ihre Social-Media-Kanäle</h3><p>Wählen Sie rechts Instagram, Facebook, TikTok oder LinkedIn aus. Jeder gewählte Kanal erscheint hier mit einer eigenen Vorschau.</p></div>`;
+    syncDirectChildren($('socialPreviewContent'), cards.length ? cards.join('') : `<div class="social-empty-preview"><div class="social-empty-symbol">${socialBrandIcon('instagram')}${socialBrandIcon('facebook')}${socialBrandIcon('tiktok')}${socialBrandIcon('linkedin')}</div><h3>Ihre Social-Media-Kanäle</h3><p>Wählen Sie rechts Instagram, Facebook, TikTok oder LinkedIn aus. Jeder gewählte Kanal erscheint hier mit einer eigenen Vorschau.</p></div>`);
     $('socialTargets').innerHTML = chosen.length ? chosen.map(item => `<span class="connection-node social-node social-node-${item.id}">${socialBrandIcon(item.id)}${escapeHTML(item.name)}</span>`).join('') : `<span class="connection-node social-node">Noch kein Kanal</span>`;
     $('socialConnectionText').textContent = chosen.length ? `${chosen.length} ausgewählte${chosen.length === 1 ? 'r Kanal' : ' Kanäle'} werden mit Ihrem Webauftritt verbunden.` : 'Wählen Sie Kanäle aus, um die Verbindung zu sehen.';
     const links = $('siteSocialLinks');
@@ -340,7 +384,7 @@
         default: return '';
       }
     });
-    $('aiPreviewContent').innerHTML = cards.length ? cards.join('') : `<div class="ai-empty-preview"><div class="ai-empty-orb">✳</div><h3>KI, die konkrete Aufgaben übernimmt.</h3><p>Wählen Sie einen KI-Baustein aus. Hier sehen Sie anschließend genau, wie er mit Ihren Kunden oder Ihrem Team arbeitet.</p><div class="ai-empty-flow"><span>Kundenanfrage</span><i>↓</i><span>KI-Assistent</span><i>↓</i><span>Ihr Team</span></div></div>`;
+    syncDirectChildren($('aiPreviewContent'), cards.length ? cards.join('') : `<div class="ai-empty-preview"><div class="ai-empty-orb">✳</div><h3>KI, die konkrete Aufgaben übernimmt.</h3><p>Wählen Sie einen KI-Baustein aus. Hier sehen Sie anschließend genau, wie er mit Ihren Kunden oder Ihrem Team arbeitet.</p><div class="ai-empty-flow"><span>Kundenanfrage</span><i>↓</i><span>KI-Assistent</span><i>↓</i><span>Ihr Team</span></div></div>`);
     $('aiActiveLabel').textContent = chosen.length ? `${chosen.length} KI-Baustein${chosen.length === 1 ? '' : 'e'} ausgewählt` : 'Noch keine KI-Funktion ausgewählt';
   }
 
@@ -352,7 +396,7 @@
     const resultTitle = /Nagelstudio/i.test(industry) ? 'Nails & Beauty' : /Massage|Wellness/i.test(industry) ? 'Massage & Wellness' : /Sonstiges/i.test(industry) ? 'Leistungen & Service' : 'Hair & Beauty';
     if (seo) parts.push(`<article class="visibility-card visibility-seo-card" id="visibility-seo"><div class="visibility-card-head"><span>⌕</span><div><b>Lokales Suchergebnis</b><small>GOOGLE-SUCHE · DEMO</small></div><i>✓</i></div><div class="search-query">${searchTerm} in Münster</div><div class="search-result"><small>www.ihr-studio.de</small><b>${escapeHTML(currentBrand())} – ${resultTitle} in Münster</b><div class="search-stars">★★★★★ <span>4,9 · Öffnungszeiten · Route</span></div><p>Leistungen, Standort und wichtige Informationen klar strukturiert.</p></div><div class="visibility-tags"><span>Lokale Angaben</span><span>Metadaten</span><span>Strukturierte Inhalte</span></div></article>`);
     if (languages) parts.push(`<article class="visibility-card visibility-language-card" id="visibility-multilingual"><div class="visibility-card-head"><span>文</span><div><b>Mehrsprachige Website</b><small>SPRACHUMSCHALTUNG</small></div><i>✓</i></div><div class="language-site-preview"><div class="language-preview-nav"><b>${escapeHTML(currentBrand())}</b><span>DE　⌄</span></div><div class="language-preview-copy"><small>WILLKOMMEN</small><strong>Ihr Stil.<br><em>Ihr Moment.</em></strong><p>Persönliche Beratung und individuelle Leistungen.</p></div><div class="language-switch-row"><span class="active">DE · Deutsch</span><span>EN · English</span><span>FR · Français</span></div></div></article>`);
-    $('visibilityPreview').innerHTML = parts.length ? parts.join('') : `<div class="visibility-empty-preview"><div class="visibility-empty-icons"><span>⌕</span><span>文</span></div><h3>Mehr Sichtbarkeit. Mehr Möglichkeiten.</h3><p>Wählen Sie lokale SEO oder zusätzliche Sprachen, um die jeweilige Wirkung hier zu sehen.</p></div>`;
+    syncDirectChildren($('visibilityPreview'), parts.length ? parts.join('') : `<div class="visibility-empty-preview"><div class="visibility-empty-icons"><span>⌕</span><span>文</span></div><h3>Mehr Sichtbarkeit. Mehr Möglichkeiten.</h3><p>Wählen Sie lokale SEO oder zusätzliche Sprachen, um die jeweilige Wirkung hier zu sehen.</p></div>`);
     $('visibilityActiveLabel').textContent = [seo ? 'Lokale SEO-Grundlagen' : '', languages ? 'Mehrsprachigkeit' : ''].filter(Boolean).join(' · ') || 'Noch keine Option ausgewählt';
   }
 
@@ -366,6 +410,7 @@
 
   function setScene(scene) {
     const changed = currentScene !== scene;
+    if (changed && activePreviewScrollCancel) activePreviewScrollCancel();
     currentScene = scene;
     document.querySelectorAll('[data-jump-scene]').forEach(button => {
       const active = button.dataset.jumpScene === scene;
@@ -382,53 +427,82 @@
       element.classList.toggle('active', active);
     });
     if (scene === 'phone') requestAnimationFrame(updatePhoneScrollbar);
+    if (scene === 'website') requestAnimationFrame(positionSiteFloatingActions);
   }
 
   function nextPaint() {
     return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   }
 
-  function animatePreviewScroll(scroller, destination, duration = 1050, token) {
-    if (!scroller) return Promise.resolve();
+  async function waitForSceneTransition(scene) {
+    await nextPaint();
+    const element = document.querySelector(`.scene[data-scene="${scene}"]`);
+    if (!element?.getAnimations) return;
+    const animations = element.getAnimations();
+    if (animations.length) await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
+  }
+
+  function animatePreviewScroll(scroller, destination, duration = 900, token) {
+    if (!scroller) return Promise.resolve({ cancelled:false });
+    if (activePreviewScrollCancel) activePreviewScrollCancel();
+
     const previousValue = scroller.style.getPropertyValue('scroll-behavior');
     const previousPriority = scroller.style.getPropertyPriority('scroll-behavior');
     scroller.style.setProperty('scroll-behavior', 'auto', 'important');
-    const restore = () => {
-      if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
-      else scroller.style.removeProperty('scroll-behavior');
-    };
     const start = scroller.scrollTop;
     const distance = destination - start;
-    if (Math.abs(distance) < 2) { restore(); return Promise.resolve(); }
+    if (Math.abs(distance) < 2) {
+      if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
+      else scroller.style.removeProperty('scroll-behavior');
+      return Promise.resolve({ cancelled:false });
+    }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       scroller.scrollTop = destination;
-      restore();
-      return Promise.resolve();
+      if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
+      else scroller.style.removeProperty('scroll-behavior');
+      return Promise.resolve({ cancelled:false });
     }
+
     return new Promise(resolve => {
       const started = performance.now();
       let settled = false;
-      const finish = () => {
+      let frameId = 0;
+      const cleanup = () => {
+        scroller.removeEventListener('wheel', cancelFromUser);
+        scroller.removeEventListener('touchstart', cancelFromUser);
+        scroller.removeEventListener('pointerdown', cancelFromUser);
+        if (frameId) cancelAnimationFrame(frameId);
+        if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
+        else scroller.style.removeProperty('scroll-behavior');
+        if (activePreviewScrollCancel === cancel) activePreviewScrollCancel = null;
+      };
+      const finish = cancelled => {
         if (settled) return;
         settled = true;
-        restore();
-        resolve();
+        cleanup();
+        resolve({ cancelled });
       };
+      const cancel = () => finish(true);
+      const cancelFromUser = () => finish(true);
+      activePreviewScrollCancel = cancel;
+      scroller.addEventListener('wheel', cancelFromUser, { passive:true });
+      scroller.addEventListener('touchstart', cancelFromUser, { passive:true });
+      scroller.addEventListener('pointerdown', cancelFromUser, { passive:true });
+
       const frame = now => {
-        if (token !== previewScrollToken) { finish(); return; }
+        if (token !== previewScrollToken) { finish(true); return; }
         const progress = Math.min(1, (now - started) / duration);
-        // Smooth ease-in/out, with a deliberate but not sluggish arrival.
         const eased = progress < .5
           ? 4 * progress * progress * progress
           : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         scroller.scrollTop = start + distance * eased;
-        if (progress < 1) requestAnimationFrame(frame);
+        if (progress < 1) frameId = requestAnimationFrame(frame);
         else {
           scroller.scrollTop = destination;
-          finish();
+          finish(false);
         }
       };
-      requestAnimationFrame(frame);
+      frameId = requestAnimationFrame(frame);
     });
   }
 
@@ -441,44 +515,90 @@
     })[scene] || null;
   }
 
-  function captureLayout(host) {
+  function captureLayout(host, coordinateMode = 'viewport') {
     if (!host) return new Map();
-    return new Map([...host.children].map(element => [element.id, element.getBoundingClientRect()]));
+    const scroller = findPreviewScroller(host);
+    const scrollTop = scroller?.scrollTop || 0;
+    const scrollLeft = scroller?.scrollLeft || 0;
+    return new Map([...host.children].map((element, index) => {
+      const rect = element.getBoundingClientRect();
+      const viewport = { left:rect.left, top:rect.top };
+      const content = { left:rect.left + scrollLeft, top:rect.top + scrollTop };
+      return [element.id || `__child_${index}`, {
+        // Adds use content coordinates because scrolling finishes before FLIP starts.
+        // Removes use viewport coordinates so browser scrollTop clamping is included
+        // and siblings keep their exact visual position at the start of the collapse.
+        rect:coordinateMode === 'content' ? content : viewport,
+        index
+      }];
+    }));
   }
 
-  function animateLayout(host, before, enteringId = '') {
-    if (!host || !before) return;
-    for (const element of host.children) {
-      const previous = before.get(element.id);
-      if (!previous) {
-        if (element.id === enteringId && element.animate) {
-          element.animate([
-            { opacity: 0, transform: 'translate3d(-42px, 0, 0)' },
-            { opacity: 1, transform: 'translate3d(0, 0, 0)' }
-          ], { duration: 430, easing: 'cubic-bezier(.2,.65,.6,1)', fill: 'both' });
-        }
-        continue;
-      }
-      const current = element.getBoundingClientRect();
-      const dx = previous.left - current.left;
-      const dy = previous.top - current.top;
-      if ((Math.abs(dx) > 1 || Math.abs(dy) > 1) && element.animate) {
-        element.animate([
-          { transform: `translate3d(${dx}px, ${dy}px, 0)` },
-          { transform: 'translate3d(0, 0, 0)' }
-        ], { duration: 860, easing: 'cubic-bezier(.22,.72,.18,1)' });
-      }
+  function playAndRelease(element, keyframes, options, scroller = null) {
+    if (!element?.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve();
+    element.getAnimations?.().forEach(animation => animation.cancel());
+    const animation = element.animate(keyframes, { ...options, fill:'both' });
+    const cancelFromUser = () => animation.cancel();
+    if (scroller) {
+      // Manual movement always wins over a scripted layout transition.
+      scroller.addEventListener('wheel', cancelFromUser, {passive:true});
+      scroller.addEventListener('touchstart', cancelFromUser, {passive:true});
+      scroller.addEventListener('pointerdown', cancelFromUser, {passive:true});
     }
+    return animation.finished.catch(() => {}).then(() => {
+      if (scroller) {
+        scroller.removeEventListener('wheel', cancelFromUser);
+        scroller.removeEventListener('touchstart', cancelFromUser);
+        scroller.removeEventListener('pointerdown', cancelFromUser);
+      }
+      // Release the WAAPI effect after its final frame so later FLIP passes start cleanly.
+      try { animation.cancel(); } catch (_) {}
+    });
+  }
+
+  function animateLayout(host, before, enteringId = '', coordinateMode = 'viewport') {
+    if (!host || !before) return Promise.resolve();
+    const jobs = [];
+    const enterDuration = 460;
+    const reflowDuration = 720;
+
+    [...host.children].forEach((element, index) => {
+      const key = element.id || `__child_${index}`;
+      const previous = before.get(key);
+      if (!previous) {
+        const isEmptyState = element.matches('.ai-empty-preview,.social-empty-preview,.visibility-empty-preview');
+        if (element.id === enteringId || (!enteringId && isEmptyState)) {
+          // Exact reverse of the removal: the element returns from the left while fading in.
+          jobs.push(playAndRelease(element, [
+            { opacity:0, transform:'translate3d(-48px,0,0)' },
+            { opacity:1, transform:'translate3d(0,0,0)' }
+          ], { duration:enterDuration, easing:'cubic-bezier(.2,.65,.6,1)' }, findPreviewScroller(host)));
+        }
+        return;
+      }
+
+      const current = element.getBoundingClientRect();
+      const scroller = findPreviewScroller(host);
+      const currentLeft = current.left + (coordinateMode === 'content' ? (scroller?.scrollLeft || 0) : 0);
+      const currentTop = current.top + (coordinateMode === 'content' ? (scroller?.scrollTop || 0) : 0);
+      const dx = previous.rect.left - currentLeft;
+      const dy = previous.rect.top - currentTop;
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+        jobs.push(playAndRelease(element, [
+          { transform:`translate3d(${dx}px, ${dy}px, 0)` },
+          { transform:'translate3d(0,0,0)' }
+        ], { duration:reflowDuration, easing:'cubic-bezier(.4,0,.2,1)' }, scroller));
+      }
+    });
+    return Promise.all(jobs);
   }
 
   async function animateRemoval(target) {
-    if (!target || !target.isConnected || !target.animate) return;
-    try {
-      await target.animate([
-        { opacity: 1, transform: 'translate3d(0,0,0)' },
-        { opacity: 0, transform: 'translate3d(-54px,0,0)' }
-      ], { duration: 430, easing: 'cubic-bezier(.4,0,.8,.35)', fill: 'forwards' }).finished;
-    } catch (_) { /* A cancelled animation should not block the selection update. */ }
+    if (!target || !target.isConnected || !target.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    await playAndRelease(target, [
+      { opacity:1, transform:'translate3d(0,0,0)' },
+      { opacity:0, transform:'translate3d(-48px,0,0)' }
+    ], { duration:460, easing:'cubic-bezier(.4,0,.8,.35)' }, findPreviewScroller(target));
   }
 
   function findPreviewScroller(target) {
@@ -490,12 +610,12 @@
     return null;
   }
 
-  function scrollPreviewTo(targetId) {
-    if (!targetId) return Promise.resolve();
+  function scrollPreviewTo(targetId, expectedIntentVersion) {
+    if (!targetId || (expectedIntentVersion !== undefined && expectedIntentVersion !== previewUserIntentVersion)) return Promise.resolve();
     const token = ++previewScrollToken;
     return new Promise(resolve => {
       requestAnimationFrame(() => requestAnimationFrame(async () => {
-        if (token !== previewScrollToken) { resolve(); return; }
+        if (token !== previewScrollToken || (expectedIntentVersion !== undefined && expectedIntentVersion !== previewUserIntentVersion)) { resolve(); return; }
         const target = $(targetId);
         if (!target || !target.isConnected || !target.getClientRects().length) { resolve(); return; }
         // Scroll the preview's own viewport (website / phone / social / AI), never the options rail.
@@ -503,14 +623,12 @@
         if (!scroller) { resolve(); return; }
         const targetRect = target.getBoundingClientRect();
         const scrollerRect = scroller.getBoundingClientRect();
-        const topInset = Math.max(22, Math.min(62, scroller.clientHeight * .09));
+        const topInset = Math.max(22, Math.min(54, scroller.clientHeight * .075));
         const destination = scroller.scrollTop + targetRect.top - scrollerRect.top - topInset;
-        await animatePreviewScroll(
-          scroller,
-          Math.max(0, Math.min(destination, scroller.scrollHeight - scroller.clientHeight)),
-          1550,
-          token
-        );
+        const boundedDestination = Math.max(0, Math.min(destination, scroller.scrollHeight - scroller.clientHeight));
+        const distance = Math.abs(boundedDestination - scroller.scrollTop);
+        const duration = Math.min(1120, Math.max(460, distance * .72));
+        await animatePreviewScroll(scroller, boundedDestination, duration, token);
         resolve();
       }));
     });
@@ -546,12 +664,12 @@
     const selectedProfiles = SOCIAL.filter(item => SELECTED_SOCIAL.has(item.id));
     $('contactSelected').innerHTML = [
       `<span>Website, Hosting & Basis-Support · ${money(BASE_MONTHLY)} / Monat</span>`,
-      ...addonsList.map(item => `<span>${escapeHTML(item.name)} · ${item.price ? `${money(item.price)} / Monat` : 'kostenlos'}</span>`),
+      ...addonsList.map(item => `<span>${escapeHTML(item.name)} · ${item.price ? `${money(item.price)} / Monat` : '0 €'}</span>`),
       ...selectedProfiles.map(item => `<span>${escapeHTML(item.name)}-Profil einrichten · ${money(PROFILE_SETUP_ONCE)} einmalig</span>`)
     ].join('');
     const rows = [
       `<div class="price-breakdown-row"><span>Website, Hosting & Basis-Support<small>Fester Basis-Service · nach 2 Freimonaten</small></span><b>${money(BASE_MONTHLY)} / Mon.</b></div>`,
-      ...addonsList.map(item => `<div class="price-breakdown-row"><span>${escapeHTML(item.name)}</span><b>${item.price ? `${money(item.price)} / Mon.` : 'Kostenlos'}</b></div>`),
+      ...addonsList.map(item => `<div class="price-breakdown-row"><span>${escapeHTML(item.name)}</span><b>${item.price ? `${money(item.price)} / Mon.` : '0 €'}</b></div>`),
       ...(selectedProfiles.length ? [`<div class="price-breakdown-caption">Einmalige Einrichtung der Social-Media-Profile</div>`, ...selectedProfiles.map(item => `<div class="price-breakdown-row"><span>${escapeHTML(item.name)}-Profil einrichten</span><b>${money(PROFILE_SETUP_ONCE)} einmalig</b></div>`)] : [])
     ];
     $('priceBreakdown').innerHTML = rows.join('');
@@ -576,72 +694,93 @@
     const rail = $('optionsRail');
     const section = document.querySelector(`[data-scene-section="${scene}"]`);
     if (!rail || !section) return;
+    railNavigationTarget = scene;
+    setScene(scene);
     const toolsHeight = rail.querySelector('.rail-tools')?.getBoundingClientRect().height || 0;
     const top = rail.scrollTop + section.getBoundingClientRect().top - rail.getBoundingClientRect().top - toolsHeight + 6;
     rail.scrollTo({top:Math.max(0, top), behavior:'smooth'});
   }
 
   const pendingChanges = new Set();
+  let previewChangeQueue = Promise.resolve();
 
   async function toggleFeature(id) {
     const item = byId(id);
     if (!item || item.mandatory || pendingChanges.has(id)) return;
     pendingChanges.add(id);
-    try {
+    const intentVersion = previewUserIntentVersion;
+    const operation = previewChangeQueue.then(async () => {
       setScene(item.scene);
-      await nextPaint();
+      await waitForSceneTransition(item.scene);
       const adding = !SELECTED.has(id);
       const host = previewHost(item.scene);
-      const before = captureLayout(host);
+
       if (!adding) {
         const target = $(item.target);
-        if (target && currentScene === item.scene) { await scrollPreviewTo(item.target); await animateRemoval(target); }
+        // First bring the block into view. Capture only after scrolling settles,
+        // and compare content coordinates so scroll clamping cannot fake movement.
+        if (target && target.isConnected) await scrollPreviewTo(item.target, intentVersion);
+        const before = captureLayout(host);
+        if (target && target.isConnected) await animateRemoval(target);
         SELECTED.delete(id);
         refresh();
         await nextPaint();
-        animateLayout(host, before);
+        await animateLayout(host, before);
         return;
       }
+
+      // Scroll to the new module before playing its entrance/reflow. Content-space
+      // measurements keep the FLIP deltas independent of the completed scroll.
+      const before = captureLayout(host, 'content');
       SELECTED.add(id);
       refresh();
       await nextPaint();
-      animateLayout(host, before, item.target);
-      await scrollPreviewTo(item.target);
-    } finally {
-      pendingChanges.delete(id);
-    }
+      await scrollPreviewTo(item.target, intentVersion);
+      await animateLayout(host, before, item.target, 'content');
+    });
+    previewChangeQueue = operation.catch(() => {});
+    try { await operation; }
+    finally { pendingChanges.delete(id); }
   }
 
   async function toggleSocial(id) {
-    if (pendingChanges.has(`social:${id}`)) return;
-    pendingChanges.add(`social:${id}`);
-    try {
+    const lockId = `social:${id}`;
+    if (pendingChanges.has(lockId)) return;
+    pendingChanges.add(lockId);
+    const intentVersion = previewUserIntentVersion;
+    const operation = previewChangeQueue.then(async () => {
       setScene('social');
-      await nextPaint();
+      await waitForSceneTransition('social');
       const adding = !SELECTED_SOCIAL.has(id);
       const host = previewHost('social');
       const targetId = `social-channel-${id}`;
-      const before = captureLayout(host);
+
       if (!adding) {
         const target = $(targetId);
-        if (target && currentScene === 'social') { await scrollPreviewTo(targetId); await animateRemoval(target); }
+        if (target && target.isConnected) await scrollPreviewTo(targetId, intentVersion);
+        const before = captureLayout(host);
+        if (target && target.isConnected) await animateRemoval(target);
         SELECTED_SOCIAL.delete(id);
         refresh();
         await nextPaint();
-        animateLayout(host, before);
+        await animateLayout(host, before);
         return;
       }
+
+      const before = captureLayout(host, 'content');
       SELECTED_SOCIAL.add(id);
       refresh();
       await nextPaint();
-      animateLayout(host, before, targetId);
-      await scrollPreviewTo(targetId);
-    } finally {
-      pendingChanges.delete(`social:${id}`);
-    }
+      await scrollPreviewTo(targetId, intentVersion);
+      await animateLayout(host, before, targetId, 'content');
+    });
+    previewChangeQueue = operation.catch(() => {});
+    try { await operation; }
+    finally { pendingChanges.delete(lockId); }
   }
 
   function applyRecommendedPreset() {
+    if (pendingChanges.size) return;
     SELECTED.clear();
     ['baseService','mobileOptimization','booking','employeeManagement','whatsapp','whatsappBot','chatbot','localSEO','instagramFeed'].forEach(id => SELECTED.add(id));
     SELECTED_SOCIAL.clear();
@@ -659,7 +798,7 @@
     $('infoArt').innerHTML = illustration(item);
     $('infoTitle').textContent = item.name;
     $('infoDescription').textContent = item.detail;
-    $('infoPrice').textContent = item.id === 'mobileOptimization' ? 'Immer enthalten · keine Zusatzkosten' : item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · 2 Monate kostenlos testen` : item.price ? `${money(item.price)} pro Monat · 2 Monate kostenlos testen` : 'Ohne Aufpreis enthalten';
+    $('infoPrice').textContent = item.id === 'mobileOptimization' ? 'Immer enthalten · keine Zusatzkosten' : item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · 2 Monate kostenlos testen` : item.price ? `${money(item.price)} pro Monat · 2 Monate kostenlos testen` : '0 € · keine laufenden Zusatzkosten';
     $('infoToggle').textContent = item.mandatory ? 'Immer enthalten' : SELECTED.has(id) ? 'Aus Auswahl entfernen' : 'Hinzufügen';
     $('infoToggle').disabled = !!item.mandatory;
     $('infoDialog').showModal();
@@ -706,11 +845,15 @@
     const railRect = rail.getBoundingClientRect();
     const toolsHeight = document.querySelector('.rail-tools')?.getBoundingClientRect().height || 0;
     const activationLine = railRect.top + toolsHeight + 10;
+
+    // During a tab-triggered smooth scroll, do not flash through intermediate scenes.
+    // The target is finalized by the rail's scrollend handler.
+    if (railNavigationTarget) return;
+
     let active = sections[0];
     if (rail.scrollTop + rail.clientHeight >= rail.scrollHeight - 4) {
       active = sections[sections.length - 1];
     } else {
-      // Do not break early: sticky headers and layout changes can briefly alter rect order.
       for (const section of sections) {
         if (section.getBoundingClientRect().top <= activationLine) active = section;
       }
@@ -762,8 +905,8 @@
     }));
     $('startConfigurator').addEventListener('click', openConfigurator);
     document.querySelectorAll('[data-jump-scene]').forEach(button => button.addEventListener('click', () => {
-      // The live preview changes as the corresponding option section reaches the active line.
-      // This avoids briefly showing a different scene while the rail is still scrolling.
+      // Open the requested preview immediately; the rail then scrolls without
+      // flashing through the intermediate categories it passes on the way.
       alignRailToScene(button.dataset.jumpScene);
     }));
     $('recommendPreset').addEventListener('click', applyRecommendedPreset);
@@ -783,13 +926,32 @@
         if (event.target.dataset.social) toggleSocial(event.target.dataset.social);
       }
     });
+    window.addEventListener('resize', positionSiteFloatingActions, {passive:true});
+    const rail = $('optionsRail');
     $('optionsRail').addEventListener('scroll', () => {
       if (railFrame) return;
       railFrame = true;
       requestAnimationFrame(() => {activeRailScene();railFrame=false;});
     },{passive:true});
-    $('optionsRail').addEventListener('scrollend', activeRailScene, {passive:true});
-    const rail = $('optionsRail');
+    ['wheel','touchstart','pointerdown'].forEach(type => rail.addEventListener(type, () => { railNavigationTarget = null; }, {passive:true}));
+    // Remember direct user intent on each preview scroller so an automatic
+    // post-animation jump never overrides a manual scroll gesture.
+    [ $('siteViewport'), document.querySelector('.social-presentation'), document.querySelector('.ai-presentation'), document.querySelector('.visibility-presentation') ]
+      .filter(Boolean).forEach(scroller => ['wheel','touchstart','pointerdown'].forEach(type =>
+        scroller.addEventListener(type, () => { previewUserIntentVersion += 1; }, {passive:true})
+      ));
+    $('optionsRail').addEventListener('scrollend', () => {
+      if (railNavigationTarget) {
+        const destination = railNavigationTarget;
+        railNavigationTarget = null;
+        setScene(destination);
+      } else {
+        activeRailScene();
+      }
+    }, {passive:true});
+    rail.addEventListener('keydown', event => {
+      if (['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(event.key)) railNavigationTarget = null;
+    });
     const phoneScreen = $('phoneContent');
     const phoneTrack = $('phoneScrollbar');
     const phoneThumb = $('phoneScrollbarThumb');
