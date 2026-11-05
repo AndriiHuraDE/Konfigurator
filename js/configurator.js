@@ -61,9 +61,6 @@
   let currentScene = 'website';
   let railFrame = false;
   let previewScrollToken = 0;
-  let activePreviewScrollCancel = null;
-  let previewUserIntentVersion = 0;
-  let railNavigationTarget = null;
 
   const allFeatures = Object.values(FEATURES).flat();
   const byId = id => allFeatures.find(item => item.id === id);
@@ -123,7 +120,7 @@
       const container = $(containerId);
       container.innerHTML = FEATURES[category].map(item => {
         const active = SELECTED.has(item.id);
-        const price = item.mandatory ? (item.price ? `${money(item.price)}/Mon.` : 'Immer enthalten') : item.price ? `+ ${money(item.price)}/Mon.` : '0 €';
+        const price = item.mandatory ? (item.price ? `${money(item.price)} / Mon.` : 'Immer enthalten') : item.price ? `+ ${money(item.price)} / Mon.` : '0 €';
         const mandatory = item.mandatory ? ' mandatory' : '';
         const rowIcon = item.id === 'baseService' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21H3Z"/><path d="M9 21v-7h6v7"/></svg>' : featureIcon(item);
         return `<div class="feature-row${active ? ' selected' : ''}${mandatory}" role="checkbox" aria-checked="${active}" aria-disabled="${!!item.mandatory}" tabindex="0" data-feature="${item.id}">
@@ -410,7 +407,6 @@
 
   function setScene(scene) {
     const changed = currentScene !== scene;
-    if (changed && activePreviewScrollCancel) activePreviewScrollCancel();
     currentScene = scene;
     document.querySelectorAll('[data-jump-scene]').forEach(button => {
       const active = button.dataset.jumpScene === scene;
@@ -434,75 +430,47 @@
     return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   }
 
-  async function waitForSceneTransition(scene) {
-    await nextPaint();
-    const element = document.querySelector(`.scene[data-scene="${scene}"]`);
-    if (!element?.getAnimations) return;
-    const animations = element.getAnimations();
-    if (animations.length) await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
-  }
-
-  function animatePreviewScroll(scroller, destination, duration = 900, token) {
-    if (!scroller) return Promise.resolve({ cancelled:false });
-    if (activePreviewScrollCancel) activePreviewScrollCancel();
-
+  function animatePreviewScroll(scroller, destination, duration = 1050, token) {
+    if (!scroller) return Promise.resolve();
     const previousValue = scroller.style.getPropertyValue('scroll-behavior');
     const previousPriority = scroller.style.getPropertyPriority('scroll-behavior');
     scroller.style.setProperty('scroll-behavior', 'auto', 'important');
+    const restore = () => {
+      if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
+      else scroller.style.removeProperty('scroll-behavior');
+    };
     const start = scroller.scrollTop;
     const distance = destination - start;
-    if (Math.abs(distance) < 2) {
-      if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
-      else scroller.style.removeProperty('scroll-behavior');
-      return Promise.resolve({ cancelled:false });
-    }
+    if (Math.abs(distance) < 2) { restore(); return Promise.resolve(); }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       scroller.scrollTop = destination;
-      if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
-      else scroller.style.removeProperty('scroll-behavior');
-      return Promise.resolve({ cancelled:false });
+      restore();
+      return Promise.resolve();
     }
-
     return new Promise(resolve => {
       const started = performance.now();
       let settled = false;
-      let frameId = 0;
-      const cleanup = () => {
-        scroller.removeEventListener('wheel', cancelFromUser);
-        scroller.removeEventListener('touchstart', cancelFromUser);
-        scroller.removeEventListener('pointerdown', cancelFromUser);
-        if (frameId) cancelAnimationFrame(frameId);
-        if (previousValue) scroller.style.setProperty('scroll-behavior', previousValue, previousPriority);
-        else scroller.style.removeProperty('scroll-behavior');
-        if (activePreviewScrollCancel === cancel) activePreviewScrollCancel = null;
-      };
-      const finish = cancelled => {
+      const finish = () => {
         if (settled) return;
         settled = true;
-        cleanup();
-        resolve({ cancelled });
+        restore();
+        resolve();
       };
-      const cancel = () => finish(true);
-      const cancelFromUser = () => finish(true);
-      activePreviewScrollCancel = cancel;
-      scroller.addEventListener('wheel', cancelFromUser, { passive:true });
-      scroller.addEventListener('touchstart', cancelFromUser, { passive:true });
-      scroller.addEventListener('pointerdown', cancelFromUser, { passive:true });
-
       const frame = now => {
-        if (token !== previewScrollToken) { finish(true); return; }
+        if (token !== previewScrollToken) { finish(); return; }
         const progress = Math.min(1, (now - started) / duration);
+        // Smooth ease-in/out, with a deliberate but not sluggish arrival.
         const eased = progress < .5
           ? 4 * progress * progress * progress
           : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         scroller.scrollTop = start + distance * eased;
-        if (progress < 1) frameId = requestAnimationFrame(frame);
+        if (progress < 1) requestAnimationFrame(frame);
         else {
           scroller.scrollTop = destination;
-          finish(false);
+          finish();
         }
       };
-      frameId = requestAnimationFrame(frame);
+      requestAnimationFrame(frame);
     });
   }
 
@@ -515,90 +483,59 @@
     })[scene] || null;
   }
 
-  function captureLayout(host, coordinateMode = 'viewport') {
+  function captureLayout(host) {
     if (!host) return new Map();
-    const scroller = findPreviewScroller(host);
-    const scrollTop = scroller?.scrollTop || 0;
-    const scrollLeft = scroller?.scrollLeft || 0;
-    return new Map([...host.children].map((element, index) => {
-      const rect = element.getBoundingClientRect();
-      const viewport = { left:rect.left, top:rect.top };
-      const content = { left:rect.left + scrollLeft, top:rect.top + scrollTop };
-      return [element.id || `__child_${index}`, {
-        // Adds use content coordinates because scrolling finishes before FLIP starts.
-        // Removes use viewport coordinates so browser scrollTop clamping is included
-        // and siblings keep their exact visual position at the start of the collapse.
-        rect:coordinateMode === 'content' ? content : viewport,
-        index
-      }];
-    }));
+    return new Map([...host.children].map((element, index) => [element.id || `__child_${index}`, {
+      rect: element.getBoundingClientRect(),
+      index
+    }]));
   }
 
-  function playAndRelease(element, keyframes, options, scroller = null) {
-    if (!element?.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve();
-    element.getAnimations?.().forEach(animation => animation.cancel());
-    const animation = element.animate(keyframes, { ...options, fill:'both' });
-    const cancelFromUser = () => animation.cancel();
-    if (scroller) {
-      // Manual movement always wins over a scripted layout transition.
-      scroller.addEventListener('wheel', cancelFromUser, {passive:true});
-      scroller.addEventListener('touchstart', cancelFromUser, {passive:true});
-      scroller.addEventListener('pointerdown', cancelFromUser, {passive:true});
-    }
-    return animation.finished.catch(() => {}).then(() => {
-      if (scroller) {
-        scroller.removeEventListener('wheel', cancelFromUser);
-        scroller.removeEventListener('touchstart', cancelFromUser);
-        scroller.removeEventListener('pointerdown', cancelFromUser);
-      }
-      // Release the WAAPI effect after its final frame so later FLIP passes start cleanly.
-      try { animation.cancel(); } catch (_) {}
-    });
-  }
-
-  function animateLayout(host, before, enteringId = '', coordinateMode = 'viewport') {
-    if (!host || !before) return Promise.resolve();
-    const jobs = [];
-    const enterDuration = 460;
-    const reflowDuration = 720;
+  function animateLayout(host, before, enteringId = '') {
+    if (!host || !before) return;
+    const isAI = host.id === 'aiPreviewContent';
+    const enterDuration = isAI ? 430 : 520;
+    const reflowDuration = 820;
 
     [...host.children].forEach((element, index) => {
       const key = element.id || `__child_${index}`;
       const previous = before.get(key);
       if (!previous) {
-        const isEmptyState = element.matches('.ai-empty-preview,.social-empty-preview,.visibility-empty-preview');
-        if (element.id === enteringId || (!enteringId && isEmptyState)) {
-          // Exact reverse of the removal: the element returns from the left while fading in.
-          jobs.push(playAndRelease(element, [
-            { opacity:0, transform:'translate3d(-48px,0,0)' },
-            { opacity:1, transform:'translate3d(0,0,0)' }
-          ], { duration:enterDuration, easing:'cubic-bezier(.2,.65,.6,1)' }, findPreviewScroller(host)));
+        if (element.id === enteringId && element.animate) {
+          element.getAnimations?.().forEach(animation => animation.cancel());
+          // Exact reverse of the removal motion: from left + transparent to its resting place.
+          element.animate([
+            { opacity: 0, transform: 'translate3d(-54px,0,0)' },
+            { opacity: 1, transform: 'translate3d(0,0,0)' }
+          ], { duration: enterDuration, easing: 'cubic-bezier(.4,0,.8,.35)', fill: 'both' });
         }
         return;
       }
 
       const current = element.getBoundingClientRect();
-      const scroller = findPreviewScroller(host);
-      const currentLeft = current.left + (coordinateMode === 'content' ? (scroller?.scrollLeft || 0) : 0);
-      const currentTop = current.top + (coordinateMode === 'content' ? (scroller?.scrollTop || 0) : 0);
-      const dx = previous.rect.left - currentLeft;
-      const dy = previous.rect.top - currentTop;
-      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
-        jobs.push(playAndRelease(element, [
-          { transform:`translate3d(${dx}px, ${dy}px, 0)` },
-          { transform:'translate3d(0,0,0)' }
-        ], { duration:reflowDuration, easing:'cubic-bezier(.4,0,.2,1)' }, scroller));
+      const dx = previous.rect.left - current.left;
+      const dy = previous.rect.top - current.top;
+      if ((Math.abs(dx) > 1 || Math.abs(dy) > 1) && element.animate) {
+        // Animate every element whose position changed, not only the nearest neighbour.
+        // No height/scale animation is applied to the container: the gap closes once, in flow.
+        element.getAnimations?.().forEach(animation => animation.cancel());
+        element.animate([
+          { transform: `translate3d(${dx}px, ${dy}px, 0)` },
+          { transform: 'translate3d(0, 0, 0)' }
+        ], { duration: reflowDuration, easing: 'cubic-bezier(.22,.72,.18,1)' });
       }
     });
-    return Promise.all(jobs);
   }
 
   async function animateRemoval(target) {
-    if (!target || !target.isConnected || !target.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    await playAndRelease(target, [
-      { opacity:1, transform:'translate3d(0,0,0)' },
-      { opacity:0, transform:'translate3d(-48px,0,0)' }
-    ], { duration:460, easing:'cubic-bezier(.4,0,.8,.35)' }, findPreviewScroller(target));
+    if (!target || !target.isConnected || !target.animate) return;
+    try {
+      target.getAnimations?.().forEach(animation => animation.cancel());
+      await target.animate([
+        { opacity: 1, transform: 'translate3d(0,0,0)' },
+        { opacity: 0, transform: 'translate3d(-54px,0,0)' }
+      ], { duration: 430, easing: 'cubic-bezier(.4,0,.8,.35)', fill: 'forwards' }).finished;
+    } catch (_) { /* A cancelled animation should not block the selection update. */ }
   }
 
   function findPreviewScroller(target) {
@@ -610,12 +547,12 @@
     return null;
   }
 
-  function scrollPreviewTo(targetId, expectedIntentVersion) {
-    if (!targetId || (expectedIntentVersion !== undefined && expectedIntentVersion !== previewUserIntentVersion)) return Promise.resolve();
+  function scrollPreviewTo(targetId) {
+    if (!targetId) return Promise.resolve();
     const token = ++previewScrollToken;
     return new Promise(resolve => {
       requestAnimationFrame(() => requestAnimationFrame(async () => {
-        if (token !== previewScrollToken || (expectedIntentVersion !== undefined && expectedIntentVersion !== previewUserIntentVersion)) { resolve(); return; }
+        if (token !== previewScrollToken) { resolve(); return; }
         const target = $(targetId);
         if (!target || !target.isConnected || !target.getClientRects().length) { resolve(); return; }
         // Scroll the preview's own viewport (website / phone / social / AI), never the options rail.
@@ -623,12 +560,14 @@
         if (!scroller) { resolve(); return; }
         const targetRect = target.getBoundingClientRect();
         const scrollerRect = scroller.getBoundingClientRect();
-        const topInset = Math.max(22, Math.min(54, scroller.clientHeight * .075));
+        const topInset = Math.max(22, Math.min(62, scroller.clientHeight * .09));
         const destination = scroller.scrollTop + targetRect.top - scrollerRect.top - topInset;
-        const boundedDestination = Math.max(0, Math.min(destination, scroller.scrollHeight - scroller.clientHeight));
-        const distance = Math.abs(boundedDestination - scroller.scrollTop);
-        const duration = Math.min(1120, Math.max(460, distance * .72));
-        await animatePreviewScroll(scroller, boundedDestination, duration, token);
+        await animatePreviewScroll(
+          scroller,
+          Math.max(0, Math.min(destination, scroller.scrollHeight - scroller.clientHeight)),
+          1550,
+          token
+        );
         resolve();
       }));
     });
@@ -694,93 +633,72 @@
     const rail = $('optionsRail');
     const section = document.querySelector(`[data-scene-section="${scene}"]`);
     if (!rail || !section) return;
-    railNavigationTarget = scene;
-    setScene(scene);
     const toolsHeight = rail.querySelector('.rail-tools')?.getBoundingClientRect().height || 0;
     const top = rail.scrollTop + section.getBoundingClientRect().top - rail.getBoundingClientRect().top - toolsHeight + 6;
     rail.scrollTo({top:Math.max(0, top), behavior:'smooth'});
   }
 
   const pendingChanges = new Set();
-  let previewChangeQueue = Promise.resolve();
 
   async function toggleFeature(id) {
     const item = byId(id);
     if (!item || item.mandatory || pendingChanges.has(id)) return;
     pendingChanges.add(id);
-    const intentVersion = previewUserIntentVersion;
-    const operation = previewChangeQueue.then(async () => {
+    try {
       setScene(item.scene);
-      await waitForSceneTransition(item.scene);
+      await nextPaint();
       const adding = !SELECTED.has(id);
       const host = previewHost(item.scene);
-
+      const before = captureLayout(host);
       if (!adding) {
         const target = $(item.target);
-        // First bring the block into view. Capture only after scrolling settles,
-        // and compare content coordinates so scroll clamping cannot fake movement.
-        if (target && target.isConnected) await scrollPreviewTo(item.target, intentVersion);
-        const before = captureLayout(host);
-        if (target && target.isConnected) await animateRemoval(target);
+        if (target && currentScene === item.scene) { await scrollPreviewTo(item.target); await animateRemoval(target); }
         SELECTED.delete(id);
         refresh();
         await nextPaint();
-        await animateLayout(host, before);
+        animateLayout(host, before);
         return;
       }
-
-      // Scroll to the new module before playing its entrance/reflow. Content-space
-      // measurements keep the FLIP deltas independent of the completed scroll.
-      const before = captureLayout(host, 'content');
       SELECTED.add(id);
       refresh();
       await nextPaint();
-      await scrollPreviewTo(item.target, intentVersion);
-      await animateLayout(host, before, item.target, 'content');
-    });
-    previewChangeQueue = operation.catch(() => {});
-    try { await operation; }
-    finally { pendingChanges.delete(id); }
+      animateLayout(host, before, item.target);
+      await scrollPreviewTo(item.target);
+    } finally {
+      pendingChanges.delete(id);
+    }
   }
 
   async function toggleSocial(id) {
-    const lockId = `social:${id}`;
-    if (pendingChanges.has(lockId)) return;
-    pendingChanges.add(lockId);
-    const intentVersion = previewUserIntentVersion;
-    const operation = previewChangeQueue.then(async () => {
+    if (pendingChanges.has(`social:${id}`)) return;
+    pendingChanges.add(`social:${id}`);
+    try {
       setScene('social');
-      await waitForSceneTransition('social');
+      await nextPaint();
       const adding = !SELECTED_SOCIAL.has(id);
       const host = previewHost('social');
       const targetId = `social-channel-${id}`;
-
+      const before = captureLayout(host);
       if (!adding) {
         const target = $(targetId);
-        if (target && target.isConnected) await scrollPreviewTo(targetId, intentVersion);
-        const before = captureLayout(host);
-        if (target && target.isConnected) await animateRemoval(target);
+        if (target && currentScene === 'social') { await scrollPreviewTo(targetId); await animateRemoval(target); }
         SELECTED_SOCIAL.delete(id);
         refresh();
         await nextPaint();
-        await animateLayout(host, before);
+        animateLayout(host, before);
         return;
       }
-
-      const before = captureLayout(host, 'content');
       SELECTED_SOCIAL.add(id);
       refresh();
       await nextPaint();
-      await scrollPreviewTo(targetId, intentVersion);
-      await animateLayout(host, before, targetId, 'content');
-    });
-    previewChangeQueue = operation.catch(() => {});
-    try { await operation; }
-    finally { pendingChanges.delete(lockId); }
+      animateLayout(host, before, targetId);
+      await scrollPreviewTo(targetId);
+    } finally {
+      pendingChanges.delete(`social:${id}`);
+    }
   }
 
   function applyRecommendedPreset() {
-    if (pendingChanges.size) return;
     SELECTED.clear();
     ['baseService','mobileOptimization','booking','employeeManagement','whatsapp','whatsappBot','chatbot','localSEO','instagramFeed'].forEach(id => SELECTED.add(id));
     SELECTED_SOCIAL.clear();
@@ -845,15 +763,11 @@
     const railRect = rail.getBoundingClientRect();
     const toolsHeight = document.querySelector('.rail-tools')?.getBoundingClientRect().height || 0;
     const activationLine = railRect.top + toolsHeight + 10;
-
-    // During a tab-triggered smooth scroll, do not flash through intermediate scenes.
-    // The target is finalized by the rail's scrollend handler.
-    if (railNavigationTarget) return;
-
     let active = sections[0];
     if (rail.scrollTop + rail.clientHeight >= rail.scrollHeight - 4) {
       active = sections[sections.length - 1];
     } else {
+      // Do not break early: sticky headers and layout changes can briefly alter rect order.
       for (const section of sections) {
         if (section.getBoundingClientRect().top <= activationLine) active = section;
       }
@@ -905,8 +819,8 @@
     }));
     $('startConfigurator').addEventListener('click', openConfigurator);
     document.querySelectorAll('[data-jump-scene]').forEach(button => button.addEventListener('click', () => {
-      // Open the requested preview immediately; the rail then scrolls without
-      // flashing through the intermediate categories it passes on the way.
+      // The live preview changes as the corresponding option section reaches the active line.
+      // This avoids briefly showing a different scene while the rail is still scrolling.
       alignRailToScene(button.dataset.jumpScene);
     }));
     $('recommendPreset').addEventListener('click', applyRecommendedPreset);
@@ -927,31 +841,13 @@
       }
     });
     window.addEventListener('resize', positionSiteFloatingActions, {passive:true});
-    const rail = $('optionsRail');
     $('optionsRail').addEventListener('scroll', () => {
       if (railFrame) return;
       railFrame = true;
       requestAnimationFrame(() => {activeRailScene();railFrame=false;});
     },{passive:true});
-    ['wheel','touchstart','pointerdown'].forEach(type => rail.addEventListener(type, () => { railNavigationTarget = null; }, {passive:true}));
-    // Remember direct user intent on each preview scroller so an automatic
-    // post-animation jump never overrides a manual scroll gesture.
-    [ $('siteViewport'), document.querySelector('.social-presentation'), document.querySelector('.ai-presentation'), document.querySelector('.visibility-presentation') ]
-      .filter(Boolean).forEach(scroller => ['wheel','touchstart','pointerdown'].forEach(type =>
-        scroller.addEventListener(type, () => { previewUserIntentVersion += 1; }, {passive:true})
-      ));
-    $('optionsRail').addEventListener('scrollend', () => {
-      if (railNavigationTarget) {
-        const destination = railNavigationTarget;
-        railNavigationTarget = null;
-        setScene(destination);
-      } else {
-        activeRailScene();
-      }
-    }, {passive:true});
-    rail.addEventListener('keydown', event => {
-      if (['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(event.key)) railNavigationTarget = null;
-    });
+    $('optionsRail').addEventListener('scrollend', activeRailScene, {passive:true});
+    const rail = $('optionsRail');
     const phoneScreen = $('phoneContent');
     const phoneTrack = $('phoneScrollbar');
     const phoneThumb = $('phoneScrollbarThumb');
