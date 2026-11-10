@@ -11,6 +11,184 @@
   const money = value => euro.format(Number(value || 0));
   const $ = id => document.getElementById(id);
 
+  function pexelsPhoto(id, alt, width = 900) {
+    return { src: `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${width}`, alt };
+  }
+
+  const TEAM_MEMBERS = [
+    { name: 'Sophie', src: 'img/team-sophie.jpg', alt: 'Porträt von Sophie aus dem Demo-Team' },
+    { name: 'Anna', src: 'img/team-anna.jpg', alt: 'Porträt von Anna aus dem Demo-Team' },
+    { name: 'Lukas', src: 'img/team-lukas.jpg', alt: 'Porträt von Lukas aus dem Demo-Team' }
+  ];
+
+  const STOCK_PHOTOS = {
+    hair: {
+      hero: pexelsPhoto(4783340, "Friseurin stylt das Haar einer Kundin", 1400),
+      services: [
+        pexelsPhoto(7755651, "Lockiges Haar wird in einem modernen Salon gestylt", 700),
+        pexelsPhoto(10318038, "Friseurin formt die Haare einer Kundin mit einem Lockenstab", 700),
+        pexelsPhoto(7389074, "Friseurin trägt Haarfarbe auf das Haar einer Kundin auf", 700)
+      ],
+      gallery: [
+        { ...pexelsPhoto(3065207, "Nahaufnahme einer eleganten blonden Lockenfrisur", 1200), label: "BLONDE LOCKEN" },
+        { ...pexelsPhoto(3065208, "Rückansicht einer eleganten, lockigen Frisur", 1200), label: "DEFINIERTE LOCKEN" },
+        { ...pexelsPhoto(3065096, "Elegante Hochsteckfrisur mit dekorativen Haarnadeln", 1200), label: "HOCHSTECKFRISUR" }
+      ],
+      social: [
+        pexelsPhoto(7755534, "Friseurin arbeitet am Haar einer Kundin", 900),
+        pexelsPhoto(8834028, "Friseurin berät eine Kundin im Salon", 900),
+        pexelsPhoto(4625625, "Barbier föhnt das Haar eines Kunden", 900),
+        pexelsPhoto(19664876, "Barbier schneidet die Haare eines Kunden", 900)
+      ],
+      blog: [
+        pexelsPhoto(13573920, "Haarpflegeprodukte auf einer Ablage", 900),
+        pexelsPhoto(20238659, "Haarfarbe wird im Salon aufgetragen", 900),
+        pexelsPhoto(9146943, "Innenraum eines Friseursalons", 900)
+      ],
+      shop: [
+        pexelsPhoto(16749131, "Shampoo- und Conditionerflaschen", 900),
+        pexelsPhoto(17576518, "Präsentation von Haarpflegeprodukten", 900),
+        pexelsPhoto(7428096, "Kosmetikprodukte und Haarspangen", 900)
+      ],
+      network: {
+        instagram: [
+          pexelsPhoto(8619014, "Kunde erhält einen Haarschnitt im Barbershop", 900),
+          pexelsPhoto(7697320, "Barbier arbeitet an einem Kunden", 900),
+          pexelsPhoto(4969835, "Moderner Friseursalon mit Spiegeln und Stühlen", 900),
+          pexelsPhoto(7750108, "Heller Saloninnenraum", 900)
+        ],
+        facebook: { cover: pexelsPhoto(7750115, "Innenansicht eines Friseursalons", 900), post: pexelsPhoto(15461411, "Friseurstuhl vor einem Spiegel", 900) },
+        tiktok: [
+          pexelsPhoto(13138585, "Barbier schneidet die Haare eines Kunden", 900),
+          pexelsPhoto(10317447, "Sitzbereich in einem Friseursalon", 900),
+          pexelsPhoto(7750125, "Gemütlicher Beauty-Salon", 900)
+        ],
+        linkedin: { cover: pexelsPhoto(7750098, "Modernes Saloninterieur", 900) }
+      }
+    },
+    nails: {
+      hero: pexelsPhoto(18112334, "Maniküre in einem Nagelstudio", 1400),
+      gallery: [
+        pexelsPhoto(6135681, "Nahaufnahme einer professionellen Maniküre", 900),
+        pexelsPhoto(13068380, "Manikürestationen in einem Beauty-Studio", 900),
+        pexelsPhoto(36328527, "Innenraum eines Nagelstudios", 900)
+      ],
+      social: [
+        pexelsPhoto(34930100, "Maniküre mit professionellen Nagelwerkzeugen", 900),
+        pexelsPhoto(34132695, "Professionelle Maniküre im Nagelstudio", 900),
+        pexelsPhoto(13424007, "Nageldesignerin feilt den Nagel einer Kundin", 900),
+        pexelsPhoto(34132696, "Nageldesignerin gestaltet Nail Art", 900)
+      ],
+      blog: [
+        pexelsPhoto(34930141, "Professionelle Nagelpflege im Beauty-Salon", 900),
+        pexelsPhoto(34930140, "Nageldesignerin führt eine Maniküre durch", 900),
+        pexelsPhoto(9718365, "Frau hält einen Nagellack", 900)
+      ],
+      shop: [
+        pexelsPhoto(29228983, "Bunte Nagellackflaschen im Regal", 900),
+        pexelsPhoto(15850947, "Auswahl an Nagellacken", 900),
+        pexelsPhoto(12206921, "Nagellackflasche und Pinsel in der Hand", 900)
+      ],
+      network: {
+        instagram: [
+          pexelsPhoto(29228975, "Bunte Nagellackflaschen in künstlerischer Anordnung", 900),
+          pexelsPhoto(29229003, "Nagellacke in verschiedenen Farben", 900),
+          pexelsPhoto(15850945, "Nagellackbehälter in einer Reihe", 900),
+          pexelsPhoto(15850981, "Nahaufnahme eines Nagellacks", 900)
+        ],
+        facebook: { cover: pexelsPhoto(29228985, "Bunte Nagellackflaschen auf einer Ablage", 900), post: pexelsPhoto(6446797, "Person hält eine Nagellackflasche", 900) },
+        tiktok: [
+          pexelsPhoto(37033372, "Kreatives Nail-Art-Design", 900),
+          pexelsPhoto(34930161, "Nageldesignerin trägt Nagellack auf", 900),
+          pexelsPhoto(3631691, "Nagellackflasche vor hellem Hintergrund", 900)
+        ],
+        linkedin: { cover: pexelsPhoto(15569180, "Kosmetikflaschen und Pflegeprodukte", 900) }
+      }
+    },
+    wellness: {
+      hero: pexelsPhoto(7233264, "Massagebehandlung in einem Wellnessstudio", 1400),
+      gallery: [
+        pexelsPhoto(31914690, "Professionelle Massagebehandlung im Spa", 900),
+        pexelsPhoto(5793681, "Massagetherapeut behandelt einen Kunden", 900),
+        pexelsPhoto(8312875, "Wellnessmassage in ruhiger Atmosphäre", 900)
+      ],
+      social: [
+        pexelsPhoto(9154455, "Gesichts- und Wellnesspflege", 900),
+        pexelsPhoto(33340473, "Entspannende Spa-Anwendung", 900),
+        pexelsPhoto(6560293, "Beauty- und Wellnessbehandlung", 900),
+        pexelsPhoto(9898735, "Pflegebehandlung im Studio", 900)
+      ],
+      blog: [
+        pexelsPhoto(6724529, "Massagebehandlung durch einen Therapeuten", 900),
+        pexelsPhoto(6724305, "Spa-Behandlung auf einer Massageliege", 900),
+        pexelsPhoto(19641820, "Person erhält eine Massage", 900)
+      ],
+      shop: [
+        pexelsPhoto(7795397, "Pflegeprodukte und Kosmetik", 900),
+        pexelsPhoto(19572632, "Hautpflegeprodukte in einer Komposition", 900),
+        pexelsPhoto(8054409, "Kosmetik und Wellnessprodukte", 900)
+      ],
+      network: {
+        instagram: [
+          pexelsPhoto(6707564, "Wellnessanwendung mit warmem Licht", 900),
+          pexelsPhoto(6707562, "Spa- und Massageatmosphäre", 900),
+          pexelsPhoto(6560283, "Beauty-Anwendung im Spa", 900),
+          pexelsPhoto(6628597, "Entspannende Behandlung im Wellnessbereich", 900)
+        ],
+        facebook: { cover: pexelsPhoto(6724357, "Wellnessbehandlung durch einen Therapeuten", 900), post: pexelsPhoto(17856240, "Pflege und Entspannung im Studio", 900) },
+        tiktok: [
+          pexelsPhoto(6815656, "Wellnessmassage in einem Behandlungsraum", 900),
+          pexelsPhoto(3865608, "Ruhige Spa-Atmosphäre", 900),
+          pexelsPhoto(3865679, "Entspannungsbereich im Spa", 900)
+        ],
+        linkedin: { cover: pexelsPhoto(19572635, "Professioneller Wellness- und Pflegebereich", 900) }
+      }
+    },
+    other: {
+      hero: pexelsPhoto(9301399, "Professionelle Arbeitssituation in einem modernen Büro", 1400),
+      gallery: [
+        pexelsPhoto(7438096, "Teamarbeit in einem modernen Büro", 900),
+        pexelsPhoto(8606292, "Zusammenarbeit im Unternehmen", 900),
+        pexelsPhoto(36123565, "Professioneller Arbeitsbereich", 900)
+      ],
+      social: [
+        pexelsPhoto(7433835, "Arbeitsplatz und Organisation im Büro", 900),
+        pexelsPhoto(5945809, "Teammitglieder bei der Zusammenarbeit", 900),
+        pexelsPhoto(8117473, "Professionelle Besprechung im Unternehmen", 900),
+        pexelsPhoto(7652046, "Arbeitsprozess in einem Team", 900)
+      ],
+      blog: [
+        pexelsPhoto(35242187, "Arbeitsplatz mit Laptop und Notizen", 900),
+        pexelsPhoto(19559795, "Organisation und Planung im Büro", 900),
+        pexelsPhoto(7652176, "Zusammenarbeit an einem Projekt", 900)
+      ],
+      shop: [
+        pexelsPhoto(38164328, "Produktpräsentation im Onlinehandel", 900),
+        pexelsPhoto(36781594, "Produkte für einen Webshop", 900),
+        pexelsPhoto(29238152, "Sortiment für den digitalen Produktverkauf", 900)
+      ],
+      network: {
+        instagram: [
+          pexelsPhoto(7495648, "Professioneller Arbeitsalltag im Unternehmen", 900),
+          pexelsPhoto(7495644, "Büroarbeit und Kommunikation", 900),
+          pexelsPhoto(7652049, "Arbeitsplatz im modernen Büro", 900),
+          pexelsPhoto(5862323, "Geschäftliche Zusammenarbeit", 900)
+        ],
+        facebook: { cover: pexelsPhoto(7651709, "Arbeitsumgebung eines kleinen Unternehmens", 900), post: pexelsPhoto(7710146, "Planung und Kundenservice im Büro", 900) },
+        tiktok: [
+          pexelsPhoto(7651814, "Teamarbeit im Büro", 900),
+          pexelsPhoto(5945343, "Teamfoto in einem Unternehmen", 900),
+          pexelsPhoto(7163395, "Besprechung eines Teams", 900)
+        ],
+        linkedin: { cover: pexelsPhoto(7640739, "Professionelle Zusammenarbeit im Büro", 900) }
+      }
+    }
+  };
+
+  function stockImage(photo, className = '') {
+    return `<img class="${className}" src="${escapeHTML(photo.src)}" alt="${escapeHTML(photo.alt)}" loading="lazy" decoding="async">`;
+  }
+
   const FEATURES = {
     website: [
       {id:'baseService',name:'Website, Hosting & Basis-Support',price:35,glyph:'',scene:'website',target:'siteTop',mandatory:true,detail:'Die feste Grundlage für Ihren digitalen Auftritt: Website-Bereitstellung, Hosting und technischer Basis-Support. Dieser Service gehört immer zur Konfiguration und kann nicht abgewählt werden. Die ersten zwei Monate sind kostenlos; danach beträgt der vorläufige Richtwert 35 € pro Monat.'},
@@ -21,7 +199,7 @@
       {id:'gallery',name:'Galerie & Portfolio',price:3,glyph:'▧',scene:'website',target:'module-gallery',detail:'Eine große, bildorientierte Galerie für Arbeiten, Referenzen oder Räume. Die Vorschau zeigt einen echten Bildbereich mit mehreren Formaten. Fotos und Nutzungsrechte werden vom Betrieb bereitgestellt bzw. vorab geklärt.'},
       {id:'instagramFeed',name:'Instagram-Integration',price:4,glyph:'◎',scene:'website',target:'module-instagram',detail:'Ausgewählte Instagram-Beiträge werden als eigener Bereich direkt in Ihre Website eingebunden. Die Vorschau zeigt ein Beitragsraster auf Ihrer Website. Dafür fallen 4 € pro Monat an. Einrichtung und Verknüpfung des Instagram-Profils sind davon getrennt und kosten einmalig 5 € pro ausgewähltem Profil. Keine laufende Social-Media-Betreuung.'},
       {id:'reviews',name:'Google-Bewertungen',price:3,glyph:'★',scene:'website',target:'module-reviews',detail:'Ein Bewertungsbereich mit ausgewählten Kundenstimmen und einer Verknüpfung zum Bewertungsprofil. Eine automatische Live-Synchronisierung hängt von einer verfügbaren Schnittstelle ab.'},
-      {id:'maps',name:'Karte & Öffnungszeiten',price:0,glyph:'⌖',scene:'website',target:'module-maps',detail:'Ein sichtbarer Standortbereich mit einer grafischen Karte, Adresse, Öffnungszeiten und einem Link zur Routenplanung. Eine externe Karten-Einbettung wird erst nach technischer und datenschutzrechtlicher Prüfung aktiviert.'},
+      {id:'maps',name:'Karte & Öffnungszeiten',price:0,glyph:'⌖',scene:'website',target:'module-maps',detail:'Ein interaktiver Kartenbereich auf Basis von OpenStreetMap mit Kartenverschiebung, Zoom und einem ungefähren Demo-Marker in Münster. Beim Laden wird eine Verbindung zu OpenStreetMap aufgebaut. Für eine produktive Kundenseite müssen Standortdaten, Datenschutzhinweise und die Einwilligungs-/Lade-Logik passend zum konkreten Einsatz geprüft werden.'},
       {id:'faq',name:'FAQ-Bereich',price:0,glyph:'＋',scene:'website',target:'module-faq',detail:'Ein aufklappbarer Fragenbereich. Besucher können Antworten direkt auf der Website öffnen, ohne erst anrufen zu müssen.'},
       {id:'blog',name:'Blog & Neuigkeiten',price:5,glyph:'▤',scene:'website',target:'module-blog',detail:'Ein redaktioneller Bereich für Neuigkeiten, Tipps und Beiträge. Die Vorschau zeigt einen echten Artikelaufbau mit Titel, Bild und Kurztext.'},
       {id:'shop',name:'Produktverkauf / Mini-Shop',price:25,glyph:'◇',scene:'website',target:'module-shop',detail:'Ein kleiner Produkt- oder Gutscheinbereich mit Produktkarten, Preisen und Bestellaufruf. Zahlungsanbieter, Transaktionsgebühren und rechtliche Shop-Pflichten werden separat geprüft.'},
@@ -59,6 +237,12 @@
   let websiteStatus = 'Keine Website';
   let currentInfoId = null;
   let currentScene = 'website';
+  let selectionMode = 'recommended';
+  // The user's own configuration is kept separately from the recommended preset.
+  // First entry into custom mode starts clean; later switches restore this snapshot.
+  const CUSTOM_SELECTED = new Set();
+  const CUSTOM_SELECTED_SOCIAL = new Set();
+  let customSelectionInitialized = false;
   let railFrame = false;
   let previewScrollToken = 0;
 
@@ -96,6 +280,15 @@
     mobileOptimization:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M10 18h4"/>',
     instagramFeed:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/>'
   };
+  const AI_ICON_PATHS = {
+    chatbot: '<path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-4 2v-5.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/>',
+    leadAssistant: '<rect x="5" y="3.5" width="14" height="18" rx="2"/><path d="M9 3.5v-1h6v1M8.5 9h7M8.5 13h7M8.5 17h4"/>',
+    emailAssistant: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6M15.5 17.5l2 2 4-4"/>',
+    crm: '<circle cx="9" cy="8" r="3.2"/><path d="M2.8 20v-1.2a5.2 5.2 0 0 1 5.2-5.2h2a5.2 5.2 0 0 1 4.1 2M16 8h5M18.5 5.5v5M15.5 18h6M18.5 15v6"/>',
+    voice: '<path d="M6.6 3.5a2 2 0 0 1 2-1.5h2a2 2 0 0 1 2 1.7l.6 3.1a2 2 0 0 1-.6 1.9l-1.4 1.2a15 15 0 0 0 6 6l1.2-1.4a2 2 0 0 1 1.9-.6l3.1.6a2 2 0 0 1 1.7 2v2a2 2 0 0 1-1.5 2C12.2 22.1 1.9 11.8 4.6 5z"/>',
+    automation: '<circle cx="5" cy="5" r="2.5"/><circle cx="19" cy="12" r="2.5"/><circle cx="5" cy="19" r="2.5"/><path d="M7.5 5H12a4 4 0 0 1 4 4v.5M16.5 14.5v.5a4 4 0 0 1-4 4H7.5"/>'
+  };
+
   const SOCIAL_BRANDS = {
     instagram: { width:448, height:512, path:"M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" },
     facebook: { width:320, height:512, path:"M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z" },
@@ -111,7 +304,18 @@
   }
 
   function featureIcon(item) {
+    // Use the official WhatsApp brand mark for both direct contact and the chatbot.
+    if (item.id === 'whatsapp' || item.id === 'whatsappBot') return socialBrandIcon('whatsapp', 'feature-whatsapp-icon');
     return `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">${FEATURE_ICON_PATHS[item.id] || '<circle cx="12" cy="12" r="8"/>'}</svg>`;
+  }
+
+  function aiServiceIcon(id) {
+    if (id === 'whatsappBot') {
+      const brand = SOCIAL_BRANDS.whatsapp;
+      return `<svg class="ai-brand-icon ai-brand-whatsapp" viewBox="0 0 ${brand.width} ${brand.height}" aria-hidden="true"><path d="${brand.path}" fill="currentColor"/></svg>`;
+    }
+    const path = AI_ICON_PATHS[id] || '<circle cx="12" cy="12" r="8"/>';
+    return `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
   }
 
   function renderFeatureRows() {
@@ -186,24 +390,25 @@
     const parts = [];
     const has = id => SELECTED.has(id);
     const theme = industryTheme();
+    const photos = STOCK_PHOTOS[theme.key] || STOCK_PHOTOS.hair;
     if (has('booking')) parts.push(`<section class="site-module module-booking" id="module-booking">${moduleHeading('ONLINE TERMIN','Ihren Termin auswählen','Wählen Sie Ihre gewünschte Leistung und einen passenden Zeitpunkt.')}
       <div class="booking-widget"><div class="booking-widget-head"><b>Was möchten Sie buchen?</b><small>01 / 03 · SERVICE</small></div><div class="booking-services">${theme.bookingPrices.map(label => `<span>${escapeHTML(label)}</span>`).join('')}</div><div class="booking-dates"><span>MO<br>09</span><span>DI<br>10</span><span>MI<br>11</span><span>DO<br>12</span><span>FR<br>13</span></div><div class="booking-times"><span>09:00</span><span>10:30</span><span>12:00</span><span>14:00</span></div></div></section>`);
-    if (has('employeeManagement')) parts.push(`<section class="site-module" id="module-team-management">${moduleHeading('UNSER TEAM','Die Menschen für Ihren Look')}
-      <div class="module-team-grid"><div class="module-team-person"><span class="module-team-avatar"></span><div><b>Anna Müller</b><small>Heute · 09:00–17:00</small></div></div><div class="module-team-person"><span class="module-team-avatar"></span><div><b>Lukas Schneider</b><small>Heute · 10:00–18:00</small></div></div><div class="module-team-person"><span class="module-team-avatar"></span><div><b>Sophie Weber</b><small>Heute · 09:00–16:00</small></div></div></div></section>`);
+    if (has('employeeManagement')) parts.push(`<section class="site-module" id="module-team-management">${moduleHeading('TEAM & PLANUNG','Die Menschen hinter Ihrem Look')}
+      <div class="module-team-grid">${TEAM_MEMBERS.map((member,i) => `<article class="module-team-person"><span class="module-team-avatar"><img class="avatar-${member.name.toLowerCase()}" src="${escapeHTML(member.src)}" alt="Porträt von ${escapeHTML(member.name)}" loading="lazy" decoding="async"></span><div class="module-team-copy"><b>${member.name}</b><small>${escapeHTML(theme.roles[i])}</small><span class="module-team-meta">Arbeitszeiten nach Vereinbarung</span></div></article>`).join('')}</div></section>`);
     if (has('gallery')) parts.push(`<section class="site-module" id="module-gallery">${moduleHeading('EINBLICKE',theme.galleryTitle,'Ein kleiner Einblick in unsere Arbeit und Atmosphäre.')}
-      <div class="module-gallery-grid"><i></i><i></i><i></i></div></section>`);
+      <div class="module-gallery-grid">${photos.gallery.map(photo => `<figure class="module-gallery-work">${stockImage(photo)}${photo.label ? `<figcaption>${escapeHTML(photo.label)}</figcaption>` : ''}</figure>`).join('')}</div></section>`);
     if (has('instagramFeed')) parts.push(`<section class="site-module" id="module-instagram">${moduleHeading('FOLLOW US','Einblicke auf Instagram','Ausgewählte Beiträge aus unserem Profil – direkt auf Ihrer Website.')}
-      <div class="module-instagram-grid"><i></i><i></i><i></i><i></i></div></section>`);
+      <div class="module-instagram-grid">${photos.social.map(photo => stockImage(photo)).join('')}</div></section>`);
     if (has('reviews')) parts.push(`<section class="site-module" id="module-reviews">${moduleHeading('KUNDENSTIMMEN','Das sagen unsere Kunden')}
       <div class="module-reviews-grid"><article class="review-card"><div class="review-stars">★★★★★</div><blockquote>„Ein wunderbares Studio. Ich habe mich vom ersten Moment an wohlgefühlt.“</blockquote><small>— Julia M. · Google-Bewertung</small></article><article class="review-card"><div class="review-stars">★★★★★</div><blockquote>„Tolle Beratung und ein Ergebnis, das einfach passt.“</blockquote><small>— Sarah K. · Google-Bewertung</small></article></div></section>`);
     if (has('maps')) parts.push(`<section class="site-module" id="module-maps">${moduleHeading('BESUCHEN SIE UNS','Wir freuen uns auf Sie.')}
-      <div class="module-map-layout"><div class="map-art"><span class="map-park"></span><span class="map-water"></span><span class="map-pin"></span></div><div class="map-info"><b>Mitten in Münster.</b><span>Beispielstraße 12 · 48143 Münster</span><span>Mo–Fr · 09:00–18:00</span><a href="#siteContact">Route planen ↗</a></div></div></section>`);
+      <div class="module-map-layout"><div class="map-frame"><iframe title="Interaktive OpenStreetMap-Karte – ungefährer Demo-Standort in Münster" src="https://www.openstreetmap.org/export/embed.html?bbox=7.615%2C51.957%2C7.638%2C51.968&amp;layer=mapnik&amp;marker=51.9625%2C7.6257" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div><div class="map-info"><b>Demo-Standort in Münster</b><span>Innenstadt · ungefähre Lage, keine Geschäftsadresse</span><span>Beispielzeiten: Mo–Fr · 09:00–18:00</span><a href="https://www.openstreetmap.org/?mlat=51.9625&amp;mlon=7.6257#map=17/51.9625/7.6257" target="_blank" rel="noopener noreferrer">Karte öffnen ↗</a></div></div></section>`);
     if (has('faq')) parts.push(`<section class="site-module" id="module-faq">${moduleHeading('GUT ZU WISSEN','Häufige Fragen')}
       <div class="module-faq-list"><details open><summary>Wie kann ich einen Termin buchen?</summary><p>Nutzen Sie unsere Online-Terminbuchung oder kontaktieren Sie uns direkt.</p></details><details><summary>Kann ich meinen Termin verschieben?</summary><p>Kontaktieren Sie uns rechtzeitig. Wir finden gemeinsam eine passende Lösung.</p></details><details><summary>Welche Zahlungsmöglichkeiten gibt es?</summary><p>Die verfügbaren Zahlungsarten erfahren Sie direkt bei Ihrem Besuch.</p></details></div></section>`);
     if (has('blog')) parts.push(`<section class="site-module" id="module-blog">${moduleHeading('NEUES AUS DEM STUDIO',theme.blogTitle)}
-      <div class="module-blog-grid"><article class="blog-card"><div class="blog-art"></div><b>Die richtige Pflege für Ihren Look</b><small>Tipps aus unserem Studio</small></article><article class="blog-card"><div class="blog-art"></div><b>Neue Saison, neuer Stil</b><small>Inspiration & Trends</small></article><article class="blog-card"><div class="blog-art"></div><b>Unser Studio im Portrait</b><small>Ein Blick hinter die Kulissen</small></article></div></section>`);
+      <div class="module-blog-grid"><article class="blog-card"><div class="blog-art">${stockImage(photos.blog[0])}</div><b>Die richtige Pflege für Ihren Look</b><small>Tipps aus unserem Studio</small></article><article class="blog-card"><div class="blog-art">${stockImage(photos.blog[1])}</div><b>Neue Saison, neuer Stil</b><small>Inspiration & Trends</small></article><article class="blog-card"><div class="blog-art">${stockImage(photos.blog[2])}</div><b>Unser Studio im Portrait</b><small>Ein Blick hinter die Kulissen</small></article></div></section>`);
     if (has('shop')) parts.push(`<section class="site-module" id="module-shop">${moduleHeading('SHOP',theme.shopTitle)}
-      <div class="module-shop-grid"><article class="shop-card"><div class="shop-art"></div><b>Care Shampoo</b><small>Sanfte Pflege</small><strong>24 €</strong></article><article class="shop-card"><div class="shop-art"></div><b>Silk Conditioner</b><small>Glanz & Geschmeidigkeit</small><strong>29 €</strong></article><article class="shop-card"><div class="shop-art"></div><b>Studio Gutschein</b><small>Das passende Geschenk</small><strong>ab 30 €</strong></article></div></section>`);
+      <div class="module-shop-grid"><article class="shop-card"><div class="shop-art">${stockImage(photos.shop[0])}</div><b>Care Shampoo</b><small>Sanfte Pflege</small><strong>24 €</strong></article><article class="shop-card"><div class="shop-art">${stockImage(photos.shop[1])}</div><b>Silk Conditioner</b><small>Glanz & Geschmeidigkeit</small><strong>29 €</strong></article><article class="shop-card"><div class="shop-art">${stockImage(photos.shop[2])}</div><b>Studio Gutschein</b><small>Das passende Geschenk</small><strong>ab 30 €</strong></article></div></section>`);
     if (has('newsletter')) parts.push(`<section class="site-module module-newsletter" id="module-newsletter"><div class="newsletter-copy"><span class="module-kicker">STUDIO LETTER</span><h3>Post aus dem Studio.</h3><p>Neuigkeiten, Inspiration und besondere Angebote.</p></div><form class="newsletter-form"><input type="email" placeholder="Ihre E-Mail-Adresse"><button type="button">Anmelden ↗</button></form></section>`);
     if (has('whatsapp')) parts.push(`<section class="site-module module-whatsapp" id="module-whatsapp">${moduleHeading('DIREKT ERREICHBAR','Schreiben Sie uns auf WhatsApp','Ein persönlicher Kontaktweg – ohne Warteformular.')}<a class="module-whatsapp-link" href="#siteContact"><span class="module-whatsapp-mark">${socialBrandIcon('whatsapp')}</span><span><b>WhatsApp-Nachricht senden</b><small>Wir freuen uns auf Ihre Nachricht.</small></span><i>↗</i></a></section>`);
     if (has('contactPlus')) parts.push(`<section class="site-module" id="module-contact">${moduleHeading('KONTAKT','Schreiben Sie uns')}
@@ -256,6 +461,19 @@
     if (demoSite) demoSite.className = `demo-site industry-${t.key || 'hair'}`;
     const phoneScreen = $('phoneScreen');
     if (phoneScreen) phoneScreen.className = `phone-screen industry-${t.key || 'hair'}`;
+    const photos = STOCK_PHOTOS[t.key] || STOCK_PHOTOS.hair;
+    const updatePhoto = (id, photo) => {
+      const image = $(id);
+      if (!image || !photo) return;
+      image.src = photo.src;
+      image.alt = photo.alt;
+    };
+    updatePhoto('heroStockPhoto', photos.hero);
+    updatePhoto('teamPhotoOne', TEAM_MEMBERS[0]);
+    updatePhoto('teamPhotoTwo', TEAM_MEMBERS[1]);
+    updatePhoto('teamPhotoThree', TEAM_MEMBERS[2]);
+    const phoneServiceImages = $('phoneMiniServiceImages');
+    if (phoneServiceImages) phoneServiceImages.innerHTML = (photos.services || photos.gallery).slice(0, 3).map(photo => stockImage(photo)).join('');
     setText('phoneServicesEyebrow',t.servicesEyebrow);
     setText('phoneAboutEyebrow',t.aboutEyebrow || 'ÜBER DAS STUDIO');
     setText('phoneAboutTitle',t.aboutTitle || 'Persönlich. Für Sie.');
@@ -321,28 +539,29 @@
   }
 
   function socialCard(item, handle) {
-    const title = escapeHTML(item.name);
     const theme = industryTheme();
+    const photos = STOCK_PHOTOS[theme.key] || STOCK_PHOTOS.hair;
+    const media = photos.network;
     if (item.id === 'instagram') return `<article class="network-card network-instagram" id="social-channel-instagram">
       <div class="network-card-top"><span class="network-mark">${socialBrandIcon('instagram')}</span><strong>INSTAGRAM</strong><span class="network-live">VERKNÜPFT</span></div>
       <div class="network-profile-row"><span class="network-avatar">${escapeHTML(handle.charAt(0).toUpperCase() || 'S')}</span><span><b>@${escapeHTML(handle)}</b><small>${escapeHTML(theme.tagline)} · Münster</small></span><button>Profil öffnen ↗</button></div>
       <div class="network-stats"><span><b>128</b> Beiträge</span><span><b>2,4 Tsd.</b> Follower</span><span><b>340</b> Gefolgt</span></div>
-      <div class="network-post-grid"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="network-post-grid">${media.instagram.map(photo => stockImage(photo)).join('')}</div>
     </article>`;
     if (item.id === 'facebook') return `<article class="network-card network-facebook" id="social-channel-facebook">
       <div class="network-card-top"><span class="network-mark">${socialBrandIcon('facebook')}</span><strong>FACEBOOK</strong><span class="network-live">VERKNÜPFT</span></div>
-      <div class="facebook-cover"></div><div class="network-profile-row"><span class="network-avatar">${escapeHTML(handle.charAt(0).toUpperCase() || 'S')}</span><span><b>${escapeHTML(handle)}</b><small>Unternehmen · ${escapeHTML(theme.tagline)}</small></span><button>Nachricht</button></div>
+      <div class="facebook-cover">${stockImage(media.facebook.cover)}</div><div class="network-profile-row"><span class="network-avatar">${escapeHTML(handle.charAt(0).toUpperCase() || 'S')}</span><span><b>${escapeHTML(handle)}</b><small>Unternehmen · ${escapeHTML(theme.tagline)}</small></span><button>Nachricht</button></div>
       <div class="facebook-tabs"><span>Beiträge</span><span>Info</span><span>Fotos</span><span>Bewertungen</span></div>
-      <div class="facebook-post"><b>${escapeHTML(handle)} · vor 2 Std.</b><p>Ein neuer Look beginnt mit einer guten Beratung. Wir freuen uns auf Ihren Besuch.</p><div class="facebook-post-art"></div><small>Gefällt mir　Kommentieren　Teilen</small></div>
+      <div class="facebook-post"><b>${escapeHTML(handle)} · vor 2 Std.</b><p>Ein neuer Einblick in unseren Arbeitsalltag. Wir freuen uns auf Ihren Besuch.</p><div class="facebook-post-art">${stockImage(media.facebook.post)}</div><small>Gefällt mir　Kommentieren　Teilen</small></div>
     </article>`;
     if (item.id === 'tiktok') return `<article class="network-card network-tiktok" id="social-channel-tiktok">
       <div class="network-card-top"><span class="network-mark">${socialBrandIcon('tiktok')}</span><strong>TIKTOK</strong><span class="network-live">VERKNÜPFT</span></div>
       <div class="tiktok-profile"><span class="network-avatar">${escapeHTML(handle.charAt(0).toUpperCase() || 'S')}</span><b>@${escapeHTML(handle)}</b><small>${escapeHTML(theme.tagline)} · Studio</small><div><span><b>24</b> Folge ich</span><span><b>8,6 Tsd.</b> Follower</span><span><b>52 Tsd.</b> Likes</span></div><button>Folgen</button></div>
-      <div class="tiktok-video-grid"><i><b>▶</b><small>Before / After</small></i><i><b>▶</b><small>Styling</small></i><i><b>▶</b><small>Studio Life</small></i></div>
+      <div class="tiktok-video-grid">${media.tiktok.map((photo,i) => `<i>${stockImage(photo)}<b>▶</b><small>${['Einblick','Arbeit','Studio'][i]}</small></i>`).join('')}</div>
     </article>`;
     return `<article class="network-card network-linkedin" id="social-channel-linkedin">
       <div class="network-card-top"><span class="network-mark">${socialBrandIcon('linkedin')}</span><strong>LINKEDIN</strong><span class="network-live">VERKNÜPFT</span></div>
-      <div class="linkedin-cover"></div><div class="linkedin-company"><span class="linkedin-logo">${escapeHTML(handle.charAt(0).toUpperCase() || 'S')}</span><b>${escapeHTML(handle)}</b><small>${escapeHTML(theme.tagline)} · Münster</small><p>Persönlicher Service, moderne Leistungen und ein starkes Team.</p><div><b>1.248</b> Follower　·　Unternehmen</div><button>Folgen</button></div>
+      <div class="linkedin-cover">${stockImage(media.linkedin.cover)}</div><div class="linkedin-company"><span class="linkedin-logo">${escapeHTML(handle.charAt(0).toUpperCase() || 'S')}</span><b>${escapeHTML(handle)}</b><small>${escapeHTML(theme.tagline)} · Münster</small><p>Persönlicher Service, moderne Leistungen und ein starkes Team.</p><div><b>1.248</b> Follower　·　Unternehmen</div><button>Folgen</button></div>
     </article>`;
   }
 
@@ -360,7 +579,7 @@
 
   function aiCard(item, content, channel) {
     return `<article class="ai-service-card ai-card-${item.id}" id="ai-preview-${item.id}">
-      <header class="ai-service-head"><span class="ai-service-icon">${item.glyph}</span><span><b>${escapeHTML(item.name)}</b><small>${channel}</small></span><i>AKTIV</i></header>
+      <header class="ai-service-head"><span class="ai-service-icon">${aiServiceIcon(item.id)}</span><span><b>${escapeHTML(item.name)}</b><small>${channel}</small></span><i>AKTIV</i></header>
       <div class="ai-service-body">${content}</div>
     </article>`;
   }
@@ -376,12 +595,12 @@
         case 'leadAssistant': return aiCard(item, `<div class="lead-flow"><div class="lead-progress"><i></i><i></i><i></i></div><b>Neue Kundenanfrage</b><small>Der Assistent sammelt die wichtigsten Angaben.</small><label>Gewünschte Leistung <strong>${primaryService}　⌄</strong></label><label>Wunschtermin <strong>Diese Woche　⌄</strong></label><label>Kontakt <strong>name@email.de</strong></label><div class="lead-summary"><span>✓</span><b>Anfrage strukturiert vorbereitet</b></div></div>`, 'ANFRAGEN-QUALIFIZIERUNG');
         case 'emailAssistant': return aiCard(item, `<div class="email-mock"><div class="email-toolbar"><span>Posteingang</span><b>Antwortentwurf</b><span>•••</span></div><div class="email-subject"><small>BETREFF</small><b>Ihre Terminanfrage</b></div><div class="email-text"><small>AN</small><b>kunde@example.de</b><p>Guten Tag, vielen Dank für Ihre Nachricht und Ihr Interesse an unserem Studio.</p><p>Gerne prüfen wir passende Termine und melden uns mit einer Auswahl zurück.</p></div><div class="email-ai-note">✳　Antwortentwurf vom KI-Assistenten</div><button class="email-action">Entwurf prüfen</button></div>`, 'E-MAIL-ENTWÜRFE');
         case 'crm': return aiCard(item, `<div class="crm-mock"><div class="crm-toolbar"><b>Kontakte</b><span>+ Neuer Kontakt</span></div><div class="crm-columns"><div><b>Neu <i>2</i></b><article><small>10:42</small><strong>Julia M.</strong><span>Online-Anfrage</span></article><article><small>09:18</small><strong>Sarah K.</strong><span>WhatsApp</span></article></div><div><b>In Bearbeitung <i>1</i></b><article><small>Gestern</small><strong>Laura B.</strong><span>Terminwunsch</span></article></div><div><b>Erledigt <i>1</i></b><article><small>Mo.</small><strong>Anna W.</strong><span>Rückmeldung</span></article></div></div></div>`, 'KUNDENÜBERSICHT');
-        case 'voice': return aiCard(item, `<div class="voice-mock"><div class="voice-status"><span class="voice-orb">☎</span><b>Anruf wird angenommen</b><small>KI-Telefonassistent · Demo</small></div><div class="voice-wave">${Array.from({length:34},(_,i)=>`<i style="--h:${12+(i*17%32)}px"></i>`).join('')}</div><div class="voice-transcript"><small>LIVE-TRANSKRIPT</small><p><b>Kunde:</b> Ich würde gern einen Termin für Freitag vereinbaren.</p><p><b>Assistent:</b> Gerne. Für welche Behandlung darf ich Sie vormerken?</p></div><div class="voice-call-meta"><span>00:42</span><span>● Verbindung aktiv</span></div></div>`, 'TELEFONIE');
-        case 'automation': return aiCard(item, `<div class="automation-flow"><div class="automation-node"><span>01</span><div><b>Kundenanfrage</b><small>Website / WhatsApp / E-Mail</small></div></div><div class="automation-arrow">↓</div><div class="automation-node automation-node-ai"><span>✳</span><div><b>KI verarbeitet</b><small>Erkennen · Sortieren · Vorbereiten</small></div></div><div class="automation-arrow">↓</div><div class="automation-node"><span>✓</span><div><b>Ihr Team</b><small>Fertige Aufgabe im Überblick</small></div></div></div>`, 'WORKFLOW');
+        case 'voice': return aiCard(item, `<div class="voice-mock"><div class="voice-status"><span class="voice-orb">${aiServiceIcon('voice')}</span><b>Anruf wird angenommen</b><small>KI-Telefonassistent · Demo</small></div><div class="voice-wave">${Array.from({length:34},(_,i)=>`<i style="--h:${12+(i*17%32)}px"></i>`).join('')}</div><div class="voice-transcript"><small>LIVE-TRANSKRIPT</small><p><b>Kunde:</b> Ich würde gern einen Termin für Freitag vereinbaren.</p><p><b>Assistent:</b> Gerne. Für welche Behandlung darf ich Sie vormerken?</p></div><div class="voice-call-meta"><span>00:42</span><span>● Verbindung aktiv</span></div></div>`, 'TELEFONIE');
+        case 'automation': return aiCard(item, `<div class="automation-flow"><div class="automation-node"><span>01</span><div><b>Kundenanfrage</b><small>Website / WhatsApp / E-Mail</small></div></div><div class="automation-arrow">↓</div><div class="automation-node automation-node-ai"><span>${aiServiceIcon('automation')}</span><div><b>KI verarbeitet</b><small>Erkennen · Sortieren · Vorbereiten</small></div></div><div class="automation-arrow">↓</div><div class="automation-node"><span>✓</span><div><b>Ihr Team</b><small>Fertige Aufgabe im Überblick</small></div></div></div>`, 'WORKFLOW');
         default: return '';
       }
     });
-    syncDirectChildren($('aiPreviewContent'), cards.length ? cards.join('') : `<div class="ai-empty-preview"><div class="ai-empty-orb">✳</div><h3>KI, die konkrete Aufgaben übernimmt.</h3><p>Wählen Sie einen KI-Baustein aus. Hier sehen Sie anschließend genau, wie er mit Ihren Kunden oder Ihrem Team arbeitet.</p><div class="ai-empty-flow"><span>Kundenanfrage</span><i>↓</i><span>KI-Assistent</span><i>↓</i><span>Ihr Team</span></div></div>`);
+    syncDirectChildren($('aiPreviewContent'), cards.length ? cards.join('') : `<div class="ai-empty-preview"><div class="ai-empty-orb">${aiServiceIcon('chatbot')}</div><h3>KI, die konkrete Aufgaben übernimmt.</h3><p>Wählen Sie einen KI-Baustein aus. Hier sehen Sie anschließend genau, wie er mit Ihren Kunden oder Ihrem Team arbeitet.</p><div class="ai-empty-flow"><span>Kundenanfrage</span><i>↓</i><span>KI-Assistent</span><i>↓</i><span>Ihr Team</span></div></div>`);
     $('aiActiveLabel').textContent = chosen.length ? `${chosen.length} KI-Baustein${chosen.length === 1 ? '' : 'e'} ausgewählt` : 'Noch keine KI-Funktion ausgewählt';
   }
 
@@ -483,10 +702,24 @@
     })[scene] || null;
   }
 
+  // Measure positions inside the preview host, not against the browser viewport.
+  // getBoundingClientRect() alone includes every ancestor's scroll offset. When a
+  // feature is removed, scrollPreviewTo() intentionally scrolls before the DOM
+  // update; viewport coordinates would then mistake that scroll distance for a
+  // layout change and make the remaining cards fly from/to the wrong positions.
+  function getHostRelativePosition(host, element, hostRect = host.getBoundingClientRect()) {
+    const rect = element.getBoundingClientRect();
+    return {
+      left: rect.left - hostRect.left,
+      top: rect.top - hostRect.top
+    };
+  }
+
   function captureLayout(host) {
     if (!host) return new Map();
+    const hostRect = host.getBoundingClientRect();
     return new Map([...host.children].map((element, index) => [element.id || `__child_${index}`, {
-      rect: element.getBoundingClientRect(),
+      position: getHostRelativePosition(host, element, hostRect),
       index
     }]));
   }
@@ -496,6 +729,7 @@
     const isAI = host.id === 'aiPreviewContent';
     const enterDuration = isAI ? 430 : 520;
     const reflowDuration = 820;
+    const hostRect = host.getBoundingClientRect();
 
     [...host.children].forEach((element, index) => {
       const key = element.id || `__child_${index}`;
@@ -512,11 +746,12 @@
         return;
       }
 
-      const current = element.getBoundingClientRect();
-      const dx = previous.rect.left - current.left;
-      const dy = previous.rect.top - current.top;
+      const current = getHostRelativePosition(host, element, hostRect);
+      const dx = previous.position.left - current.left;
+      const dy = previous.position.top - current.top;
       if ((Math.abs(dx) > 1 || Math.abs(dy) > 1) && element.animate) {
         // Animate every element whose position changed, not only the nearest neighbour.
+        // The delta is host-relative, so scrolling the preview never enters the FLIP offset.
         // No height/scale animation is applied to the container: the gap closes once, in flow.
         element.getAnimations?.().forEach(animation => animation.cancel());
         element.animate([
@@ -645,6 +880,10 @@
     if (!item || item.mandatory || pendingChanges.has(id)) return;
     pendingChanges.add(id);
     try {
+      // A direct edit in the recommended view becomes a custom configuration,
+      // but keeps every other recommended choice. Only the mode switch itself
+      // starts the first custom configuration from an empty optional set.
+      setCustomSelectionMode({ preserveCurrent: true });
       setScene(item.scene);
       await nextPaint();
       const adding = !SELECTED.has(id);
@@ -654,14 +893,19 @@
         const target = $(item.target);
         if (target && currentScene === item.scene) { await scrollPreviewTo(item.target); await animateRemoval(target); }
         SELECTED.delete(id);
+        saveCustomSelection();
         refresh();
-        await nextPaint();
+        // Start the FLIP inversions in the same JS task as the DOM update.
+        // Waiting for nextPaint() here would expose one frame with the collapsed
+        // layout before the siblings animate back to their previous positions.
         animateLayout(host, before);
         return;
       }
       SELECTED.add(id);
+      saveCustomSelection();
       refresh();
-      await nextPaint();
+      // Measure the final layout and apply the entrance/reflow animations before
+      // the browser paints the newly inserted module in its final position.
       animateLayout(host, before, item.target);
       await scrollPreviewTo(item.target);
     } finally {
@@ -673,6 +917,9 @@
     if (pendingChanges.has(`social:${id}`)) return;
     pendingChanges.add(`social:${id}`);
     try {
+      // Preserve the visible recommended profiles when the user edits one
+      // directly; the explicit mode button has separate first-entry behavior.
+      setCustomSelectionMode({ preserveCurrent: true });
       setScene('social');
       await nextPaint();
       const adding = !SELECTED_SOCIAL.has(id);
@@ -683,14 +930,16 @@
         const target = $(targetId);
         if (target && currentScene === 'social') { await scrollPreviewTo(targetId); await animateRemoval(target); }
         SELECTED_SOCIAL.delete(id);
+        saveCustomSelection();
         refresh();
-        await nextPaint();
+        // Keep the layout change and its FLIP inversion in the same frame.
         animateLayout(host, before);
         return;
       }
       SELECTED_SOCIAL.add(id);
+      saveCustomSelection();
       refresh();
-      await nextPaint();
+      // Do not let the new card flash at its destination before sliding in.
       animateLayout(host, before, targetId);
       await scrollPreviewTo(targetId);
     } finally {
@@ -698,42 +947,93 @@
     }
   }
 
-  function applyRecommendedPreset() {
+  function syncSelectionModeUI() {
+    const recommended = $('recommendedMode');
+    const custom = $('customMode');
+    if (!recommended || !custom) return;
+    const isRecommended = selectionMode === 'recommended';
+    recommended.classList.toggle('active', isRecommended);
+    custom.classList.toggle('active', !isRecommended);
+    recommended.setAttribute('aria-pressed', String(isRecommended));
+    custom.setAttribute('aria-pressed', String(!isRecommended));
+    $('selectionModeHint').textContent = isRecommended
+      ? 'Das empfohlene Paket ist vorausgewählt. Bei „Individuell“ starten Sie ohne optionale Zusatzfunktionen; Pflichtbestandteile bleiben aktiv.'
+      : 'Wählen Sie Ihre Zusatzfunktionen selbst. Diese Auswahl bleibt beim Wechsel zu „Empfohlen“ gespeichert.';
+  }
+
+  function saveCustomSelection() {
+    CUSTOM_SELECTED.clear();
+    SELECTED.forEach(id => {
+      const item = byId(id);
+      if (item && !item.mandatory) CUSTOM_SELECTED.add(id);
+    });
+    CUSTOM_SELECTED_SOCIAL.clear();
+    SELECTED_SOCIAL.forEach(id => CUSTOM_SELECTED_SOCIAL.add(id));
+  }
+
+  function restoreMandatoryFeatures() {
+    allFeatures.filter(item => item.mandatory).forEach(item => SELECTED.add(item.id));
+  }
+
+  function setCustomSelectionMode({ preserveCurrent = false } = {}) {
+    let firstEntry = false;
+    if (selectionMode !== 'custom') {
+      if (preserveCurrent) {
+        // A user edited an item while viewing the recommended preset. Treat
+        // that visible preset as the starting point of their custom variant.
+        customSelectionInitialized = true;
+        saveCustomSelection();
+      } else {
+        SELECTED.clear();
+        restoreMandatoryFeatures();
+        SELECTED_SOCIAL.clear();
+
+        if (customSelectionInitialized) {
+          CUSTOM_SELECTED.forEach(id => SELECTED.add(id));
+          CUSTOM_SELECTED_SOCIAL.forEach(id => SELECTED_SOCIAL.add(id));
+        } else {
+          // The first explicit switch to custom starts without optional items.
+          firstEntry = true;
+          customSelectionInitialized = true;
+          saveCustomSelection();
+        }
+      }
+      selectionMode = 'custom';
+      refresh();
+    }
+    syncSelectionModeUI();
+    return { firstEntry };
+  }
+
+  function applyRecommendedPreset({ focus = true } = {}) {
+    if (selectionMode === 'custom') {
+      saveCustomSelection();
+      customSelectionInitialized = true;
+    }
+    selectionMode = 'recommended';
     SELECTED.clear();
     ['baseService','mobileOptimization','booking','employeeManagement','whatsapp','whatsappBot','chatbot','localSEO','instagramFeed'].forEach(id => SELECTED.add(id));
     SELECTED_SOCIAL.clear();
     SELECTED_SOCIAL.add('instagram');
+    syncSelectionModeUI();
     refresh();
-    setScene('website');
-    alignRailToScene('website');
-    scrollPreviewTo('module-booking');
+    if (focus) {
+      setScene('website');
+      alignRailToScene('website');
+      scrollPreviewTo('module-booking');
+    }
   }
 
   function openInfo(id) {
     const item = byId(id);
     if (!item) return;
     currentInfoId = id;
-    $('infoArt').innerHTML = illustration(item);
     $('infoTitle').textContent = item.name;
     $('infoDescription').textContent = item.detail;
     $('infoPrice').textContent = item.id === 'mobileOptimization' ? 'Immer enthalten · keine Zusatzkosten' : item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · 2 Monate kostenlos testen` : item.price ? `${money(item.price)} pro Monat · 2 Monate kostenlos testen` : '0 € · keine laufenden Zusatzkosten';
     $('infoToggle').textContent = item.mandatory ? 'Immer enthalten' : SELECTED.has(id) ? 'Aus Auswahl entfernen' : 'Hinzufügen';
     $('infoToggle').disabled = !!item.mandatory;
     $('infoDialog').showModal();
-  }
-
-  function illustration(item) {
-    const ink = '#282828', muted = '#bbb5aa', paper = '#fff', gold = '#b49e7a';
-    const icon = {
-      booking:`<rect x="24" y="22" width="152" height="142" rx="8" fill="${paper}" stroke="${muted}"/><path d="M24 52h152" stroke="${muted}" stroke-width="2"/><path d="M60 14v22M140 14v22" stroke="${ink}" stroke-width="5" stroke-linecap="round"/><g fill="#eeeae3"><rect x="42" y="72" width="28" height="21" rx="3"/><rect x="86" y="72" width="28" height="21" rx="3"/><rect x="130" y="72" width="28" height="21" rx="3"/></g><rect x="86" y="112" width="28" height="21" rx="3" fill="${ink}"/><path d="M42 145h116" stroke="${muted}" stroke-width="4"/>`,
-      maps:`<path d="m22 43 52-20 54 20 50-20v120l-50 20-54-20-52 20Z" fill="${paper}" stroke="${muted}" stroke-width="3"/><path d="M74 23v120M128 43v120" stroke="${muted}" stroke-width="3"/><path d="M105 52c-19 0-30 13-30 30 0 23 30 54 30 54s30-31 30-54c0-17-11-30-30-30Z" fill="${ink}"/><circle cx="105" cy="82" r="9" fill="${paper}"/>`,
-      reviews:`<path d="m100 20 24 48 53 8-39 38 9 54-47-25-47 25 9-54-39-38 53-8Z" fill="${gold}"/><path d="M38 184h124" stroke="${muted}" stroke-width="7" stroke-linecap="round"/>`,
-      seo:`<rect x="20" y="40" width="160" height="110" rx="9" fill="${paper}" stroke="${muted}"/><circle cx="50" cy="74" r="13" fill="none" stroke="${ink}" stroke-width="4"/><path d="m60 84 10 10" stroke="${ink}" stroke-width="4"/><path d="M87 67h70M87 86h54M38 119h118" stroke="${muted}" stroke-width="6" stroke-linecap="round"/>`,
-      instagramFeed:`<rect x="30" y="22" width="140" height="160" rx="15" fill="${paper}" stroke="${muted}" stroke-width="3"/><circle cx="55" cy="47" r="11" fill="${gold}"/><path d="M80 43h65M80 54h40" stroke="${muted}" stroke-width="4" stroke-linecap="round"/><g><rect x="42" y="73" width="50" height="47" fill="#d1c5b5"/><rect x="101" y="73" width="50" height="47" fill="#9f9183"/><rect x="42" y="128" width="50" height="40" fill="#928579"/><rect x="101" y="128" width="50" height="40" fill="#d7cbbb"/></g>`,
-      chatbot:`<rect x="25" y="30" width="150" height="142" rx="12" fill="${paper}" stroke="${muted}"/><path d="M25 64h150" stroke="${muted}"/><circle cx="48" cy="47" r="9" fill="${ink}"/><path d="M69 45h73" stroke="${muted}" stroke-width="5" stroke-linecap="round"/><rect x="39" y="82" width="94" height="24" rx="8" fill="#eeeae3"/><rect x="79" y="118" width="75" height="24" rx="8" fill="${ink}"/><path d="M41 155h112" stroke="${muted}" stroke-width="4" stroke-linecap="round"/>`
-    };
-    const body = icon[item.id] || `<rect x="25" y="25" width="150" height="150" rx="12" fill="${paper}" stroke="${muted}"/><path d="M55 80h90M55 105h65M55 130h78" stroke="${muted}" stroke-width="6" stroke-linecap="round"/><circle cx="100" cy="52" r="13" fill="${gold}"/>`;
-    return `<svg viewBox="0 0 200 200" role="img" aria-label="Schematische Darstellung von ${escapeHTML(item.name)}" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
   }
 
   function openIntro() {
@@ -752,7 +1052,8 @@
     $('priceBar').hidden = false;
     $('optionsRail').scrollTop = 0;
     setScene('website');
-    refresh();
+    if (selectionMode === 'recommended') applyRecommendedPreset({ focus: false });
+    else { syncSelectionModeUI(); refresh(); }
     requestAnimationFrame(() => $('optionsRail').dispatchEvent(new Event('scroll')));
   }
 
@@ -823,7 +1124,8 @@
       // This avoids briefly showing a different scene while the rail is still scrolling.
       alignRailToScene(button.dataset.jumpScene);
     }));
-    $('recommendPreset').addEventListener('click', applyRecommendedPreset);
+    $('recommendedMode').addEventListener('click', () => applyRecommendedPreset());
+    $('customMode').addEventListener('click', setCustomSelectionMode);
 
     $('optionsRail').addEventListener('click', event => {
       const info = event.target.closest('[data-info]');
@@ -925,6 +1227,7 @@
   }
 
   renderFeatureRows();
+  syncSelectionModeUI();
   refresh();
   wireEvents();
 })();

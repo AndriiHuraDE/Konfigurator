@@ -20,19 +20,21 @@
         <h1 id="introTitle">Welchen Betrieb führen Sie?</h1>
         <div class="choice-grid industry-choices" role="group" aria-label="Branche">
           <button type="button" class="choice-card selected" data-industry="Friseursalon / Barbershop">
-            <span class="choice-illustration salon-illustration" aria-hidden="true"><i></i><b></b><em></em></span>
+            <span class="choice-illustration salon-illustration choice-hair-closeup"><img src="https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=700" alt="Nahaufnahme einer Friseurin, die lange Locken mit einem Lockenstab stylt" loading="eager" fetchpriority="high" decoding="async"></span>
             <span>Friseursalon</span>
+            <small>Frisuren &amp; Styling</small>
           </button>
           <button type="button" class="choice-card" data-industry="Nagelstudio">
-            <span class="choice-illustration nails-illustration" aria-hidden="true"><i></i><b></b><em></em></span>
+            <span class="choice-illustration nails-illustration choice-nails-closeup"><img src="https://images.pexels.com/photos/6135675/pexels-photo-6135675.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=700" alt="Nahaufnahme einer professionellen Maniküre mit Nagelfeile" loading="eager" decoding="async"></span>
             <span>Nagelstudio</span>
+            <small>Maniküre &amp; Nail Art</small>
           </button>
           <button type="button" class="choice-card" data-industry="Massage / Wellness">
-            <span class="choice-illustration wellness-illustration" aria-hidden="true"><i></i><b></b><em></em></span>
+            <span class="choice-illustration wellness-illustration"><img src="https://images.pexels.com/photos/31234759/pexels-photo-31234759.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=500" alt="Massagebehandlung in einem Wellnessstudio" loading="lazy" decoding="async"></span>
             <span>Massage & Wellness</span>
           </button>
           <button type="button" class="choice-card" data-industry="Sonstiges">
-            <span class="choice-illustration other-illustration" aria-hidden="true"><i></i><b></b><em></em></span>
+            <span class="choice-illustration other-illustration"><img src="https://images.pexels.com/photos/7792829/pexels-photo-7792829.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=500" alt="Arbeitssituation in einem modernen Unternehmen" loading="lazy" decoding="async"></span>
             <span>Anderer Betrieb</span>
           </button>
         </div>
@@ -75,8 +77,8 @@
                   <div class="hero-actions"><a class="hero-primary" href="#module-booking">Termin entdecken <span>↗</span></a><a class="hero-secondary" href="#siteServices">Leistungen ansehen</a></div>
                   <div class="hero-proof"><span>✦ Persönliche Beratung</span><span>✦ Zeit für Ihren Look</span></div>
                 </div>
-                <div class="hero-art" aria-label="Abstrakte Salon-Bildkomposition">
-                  <div class="hero-art-photo"><div class="portrait-halo"></div><div class="portrait-head"></div><div class="portrait-body"></div><span class="portrait-caption">YOUR BEAUTY<br>YOUR STYLE</span></div>
+                <div class="hero-art" aria-label="Beispielfotografie aus einem professionellen Studio">
+                  <div class="hero-art-photo"><img id="heroStockPhoto" src="https://images.pexels.com/photos/4783340/pexels-photo-4783340.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400" alt="Friseurin stylt das Haar einer Kundin" decoding="async"><span class="portrait-caption">BEISPIELBILD · STOCKFOTO</span></div>
                   <div class="hero-art-note"><i></i><span>EST. WITH<br>CARE & DETAIL</span></div>
                 </div>
               </section>
@@ -93,9 +95,9 @@
               <section class="site-team" id="siteTeam">
                 <div class="site-section-heading compact"><span id="teamEyebrow">MIT LIEBE ZUM DETAIL</span><h3 id="teamTitle">Menschen hinter<br><em>dem Handwerk.</em></h3></div>
                 <div class="team-preview-grid">
-                  <article class="team-preview"><div class="team-person person-one"><i></i></div><b>Anna</b><small id="teamRoleOne">Creative Director</small></article>
-                  <article class="team-preview"><div class="team-person person-two"><i></i></div><b>Lukas</b><small id="teamRoleTwo">Master Stylist</small></article>
-                  <article class="team-preview"><div class="team-person person-three"><i></i></div><b>Sophie</b><small id="teamRoleThree">Color Expert</small></article>
+                  <article class="team-preview"><div class="team-person person-one"><img id="teamPhotoOne" class="team-photo-sophie" src="img/team-sophie.jpg" alt="Porträt von Sophie" loading="lazy" decoding="async"></div><b>Sophie</b><small id="teamRoleOne">Creative Director</small></article>
+                  <article class="team-preview"><div class="team-person person-two"><img id="teamPhotoTwo" class="team-photo-anna" src="img/team-anna.jpg" alt="Porträt von Anna" loading="lazy" decoding="async"></div><b>Anna</b><small id="teamRoleTwo">Master Stylist</small></article>
+                  <article class="team-preview"><div class="team-person person-three"><img id="teamPhotoThree" class="team-photo-lukas" src="img/team-lukas.jpg" alt="Porträt von Lukas" loading="lazy" decoding="async"></div><b>Lukas</b><small id="teamRoleThree">Color Expert</small></article>
                 </div>
               </section>
 
@@ -121,7 +123,7 @@
                   <div class="phone-status"><span>9:41</span><span>●●● ▰</span></div>
                   <div class="phone-site-head" id="phoneSiteTop"><b id="phoneBrand">DEMO</b><span>☰</span></div>
                   <div class="phone-hero"><small id="phoneTagline">HAIR & BEAUTY</small><b id="phoneHeroTitle">Ihr Stil.<br><em>Ihr Moment.</em></b><span id="phoneHeroText">Persönlich. Modern. Für Sie.</span><i>Termin entdecken ↗</i></div>
-                  <div class="phone-mini-services"><span id="phoneServicesEyebrow">UNSERE LEISTUNGEN</span><div><i></i><i></i><i></i></div></div>
+                  <div class="phone-mini-services"><span id="phoneServicesEyebrow">UNSERE LEISTUNGEN</span><div id="phoneMiniServiceImages"><img src="https://images.pexels.com/photos/7755651/pexels-photo-7755651.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Lockiges Haar wird im Salon gestylt" loading="lazy"><img src="https://images.pexels.com/photos/10318038/pexels-photo-10318038.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Haare werden mit einem Lockenstab geformt" loading="lazy"><img src="https://images.pexels.com/photos/7389074/pexels-photo-7389074.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Haarcoloration im Friseursalon" loading="lazy"></div></div>
                   <div class="phone-about"><small id="phoneAboutEyebrow">ÜBER DAS STUDIO</small><b id="phoneAboutTitle">Persönlich. Für Sie.</b><span id="phoneAboutText">Leistungen, Menschen und ein guter erster Eindruck.</span></div>
                   <div class="phone-live-module" id="phoneLiveModule"><span class="phone-module-empty">Ihre Website-Funktionen erscheinen hier.</span></div>
                   <div class="phone-social-links" id="phoneSocialLinks" hidden aria-label="Social-Media-Profile"></div>
@@ -179,7 +181,13 @@
             <button type="button" data-jump-scene="ai">KI</button>
             <button type="button" data-jump-scene="visibility">SEO & Sprachen</button>
           </nav>
-          <button type="button" class="recommend-preset" id="recommendPreset">✦ Empfohlene Auswahl</button>
+          <div class="selection-mode-wrap">
+            <div class="selection-mode" role="group" aria-label="Auswahlmodus">
+              <button type="button" class="selection-mode-btn active" id="recommendedMode" aria-pressed="true"><span class="selection-mode-icon" aria-hidden="true">✦</span> Empfohlen</button>
+              <button type="button" class="selection-mode-btn" id="customMode" aria-pressed="false">Individuell</button>
+            </div>
+            <p class="selection-mode-hint" id="selectionModeHint">Eine sinnvolle Grundausstattung ist bereits ausgewählt. Sie können alles anpassen.</p>
+          </div>
         </div>
         <section class="option-section" data-scene-section="website" id="optionsWebsite">
           <h2>Website</h2>
@@ -214,17 +222,15 @@
         <span class="price-divider"></span>
         <div class="price-item trial-price"><small>Ihre Testphase</small><b>2 Monate kostenlos</b></div>
         <span class="price-divider"></span>
-        <div class="price-item profile-setup-price"><small>Einrichtung einmalig</small><b id="oneTimeTotal">0 €</b></div>
+        <div class="price-item profile-setup-price"><small>Einmalige Einrichtung</small><b id="oneTimeTotal">0 €</b></div>
         <span class="price-divider"></span>
-        <button type="button" class="price-details-button" id="priceDetailsButton">Auswahl & Preise <span>↗</span></button>
       </div>
-      <div class="price-bar-right"><div class="monthly-total"><small>Danach pro Monat</small><b id="monthlyTotal">35 €</b></div><button type="button" class="price-cta" id="requestButton">Konfiguration anfragen <span>→</span></button></div>
+      <div class="price-bar-right"><div class="monthly-total"><small>Danach pro Monat</small><b id="monthlyTotal">35 €</b></div><button type="button" class="price-details-button" id="priceDetailsButton">Auswahl & Preise <span>↗</span></button><button type="button" class="price-cta" id="requestButton">Konfiguration anfragen <span>→</span></button></div>
     </section>
 
     <!-- Information modal: long copy lives here, not in the options list -->
     <dialog class="info-dialog" id="infoDialog">
       <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
-      <div class="info-art" id="infoArt"></div>
       <div class="info-copy"><span class="info-kicker">FUNKTIONSDETAILS</span><h2 id="infoTitle"></h2><p id="infoDescription"></p><div class="info-price" id="infoPrice"></div><button type="button" class="dialog-add" id="infoToggle">Hinzufügen</button></div>
     </dialog>
 
@@ -250,11 +256,16 @@
           <label class="contact-field"><span>Telefon</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+49 …"></label>
           <label class="contact-field"><span>Nachricht</span><textarea name="message" rows="3" maxlength="1500" placeholder="Was sollten wir noch wissen?"></textarea></label>
           <label class="contact-consent"><input type="checkbox" name="contactConsent" required><span>Ich bin mit der Kontaktaufnahme zu meiner Anfrage einverstanden. *</span></label>
+          <div class="captcha-placeholder" role="note" aria-label="Platzhalter für die spätere Ich-bin-kein-Roboter-Prüfung">
+            <span class="captcha-placeholder-box" aria-hidden="true"></span>
+            <span class="captcha-placeholder-text">Ich bin kein Roboter<small>Wird später eingebunden · derzeit nicht aktiv</small></span>
+            <span class="captcha-placeholder-brand" aria-hidden="true">reCAPTCHA</span>
+          </div>
           <input name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="contact-error" id="contactError" role="alert" aria-live="polite"></div>
           <button class="contact-submit" id="contactSubmit" type="submit">Anfrage senden <span>↗</span></button>
         </form>
-        <aside class="contact-summary"><small>IHRE AUSWAHL</small><b id="contactMonthly">35 € / Monat</b><span>nach 2 Freimonaten</span><div class="contact-once"><small>Einmalig</small><b id="contactOnce">0 €</b></div><div id="contactSelected"></div><strong>Erstellung & Testphase: 0 €</strong></aside>
+        <aside class="contact-summary"><small>IHRE AUSWAHL</small><b id="contactMonthly">35 € / Monat</b><span>nach 2 Freimonaten</span><div class="contact-once"><small>Einmalig</small><b id="contactOnce">0 €</b></div><div id="contactSelected"></div><strong>Erstellung & Testphase: 0 €</strong><p class="contact-payment-note"><span aria-hidden="true">ⓘ</span> Noch keine Zahlung: Sie erhalten zunächst ein unverbindliches Angebot. Erst nach Ihrer Zustimmung wird ein Vertrag geschlossen.</p></aside>
       </div>
     </dialog>
 
