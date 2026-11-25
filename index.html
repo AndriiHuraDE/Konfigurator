@@ -8,16 +8,69 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Website-Konfigurator | pimentaGROUP</title>
   <link rel="stylesheet" href="css/styles.css">
-  <script src="js/configurator.js" defer></script>
+  <script src="js/backend-config.js" defer></script>
+  <script src="js/configurator.js?v=36" defer></script>
 </head>
 <body>
   <main class="app" id="app">
-    <!-- Minimal onboarding: exactly the two initial questions -->
+    <!-- Step 2: choose who controls website structure and visual design. -->
+    <section class="mode-screen" id="modeScreen" hidden aria-labelledby="modeTitle">
+      <div class="mode-card-shell">
+        <button type="button" class="mode-back" id="modeBackToFunctions">← Zurück zur Funktionsauswahl</button>
+        <div class="mode-heading">
+          <span class="mode-kicker">SCHRITT 2 VON 3 · WEBSITE-ERSTELLUNG & DESIGN</span>
+          <h1 id="modeTitle">Wer übernimmt Gestaltung und Umsetzung?</h1>
+          <p>Ihre Funktionsauswahl ist bereits abgeschlossen. Hier entscheiden Sie nur, wie das Design und der Seitenaufbau entstehen. Alle ausgewählten Funktionen, Leistungen und Preise bleiben erhalten – Sie müssen nichts erneut konfigurieren.</p>
+        </div>
+        <div class="mode-options" role="group" aria-label="Art der Website-Erstellung">
+          <button type="button" class="mode-option selected" data-builder-mode="simple" aria-pressed="true">
+            <span class="mode-option-visual mode-visual-simple" aria-hidden="true">
+              <span class="mini-browser"><i></i><i></i><i></i><b></b><em></em><small></small><strong></strong></span>
+            </span>
+            <span class="mode-option-copy"><span class="mode-option-label">01 · UMSETZUNG DURCH UNSER TEAM</span><strong>Unser Team gestaltet Ihre Website</strong><small>Wir erstellen Seitenstruktur, Design und Texte auf Basis Ihrer Auswahl. Sie erhalten einen Entwurf zur Prüfung und können anschließend Änderungen wünschen.</small><span class="mode-status available">Jetzt verfügbar</span></span>
+          </button>
+          <button type="button" class="mode-option unavailable" data-builder-mode="visual" disabled aria-disabled="true">
+            <span class="mode-option-visual mode-visual-visual" aria-hidden="true">
+              <span class="mini-editor"><i></i><b></b><b></b><em></em><small></small></span>
+            </span>
+            <span class="mode-option-copy"><span class="mode-option-label">02 · GEMEINSAM GESTALTEN</span><strong>Gemeinsam mit uns gestalten</strong><small>Sie bestimmen Seitenaufbau und Erscheinungsbild mit unserem visuellen Editor. Ihre ausgewählten Funktionen werden übernommen.</small><span class="mode-status upcoming">In Entwicklung</span></span>
+          </button>
+          <button type="button" class="mode-option unavailable" data-builder-mode="free" disabled aria-disabled="true">
+            <span class="mode-option-visual mode-visual-free" aria-hidden="true">
+              <span class="mini-canvas"><i></i><b></b><em></em><small></small><strong></strong></span>
+            </span>
+            <span class="mode-option-copy"><span class="mode-option-label">03 · SELBST GESTALTEN</span><strong>Selbst gestalten mit Bausteinen</strong><small>Sie setzen Seiten und Bereiche eigenständig zusammen. Die zuvor ausgewählten Funktionen stehen Ihnen im Editor zur Verfügung.</small><span class="mode-status upcoming">In Entwicklung</span></span>
+          </button>
+        </div>
+        <div class="mode-summary" aria-live="polite">
+          <div><small>IHRE ZUSATZFUNKTIONEN</small><b id="modeFeatureCount">0 ausgewählt</b></div>
+          <div><small>MONATLICHER RICHTWERT</small><b id="modeMonthlyTotal">35 € / Monat</b></div>
+          <div><small>EINMALIGE EINRICHTUNG</small><b id="modeOneTimeTotal">0 €</b></div>
+        </div>
+        <div class="mode-footer">
+          <p>Im nächsten Schritt ergänzen Sie Ihre Kontaktdaten und können erste Fotos oder Ihr Logo hochladen. Weitere Inhalte stimmen wir anschließend gemeinsam ab. Das Absenden ist zunächst eine unverbindliche Anfrage – noch keine Bestellung und keine Zahlung.</p>
+          <button type="button" class="intro-continue" id="modeContinue">Weiter zu Kontakt & Materialien <span>→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 1: business information and current website situation. -->
     <section class="intro-screen" id="introScreen" aria-labelledby="introTitle">
       <div class="intro-card">
+        <div class="intro-step-meta"><span class="intro-step-kicker">SCHRITT 1 VON 3 · BETRIEBSANGABEN</span><button type="button" class="intro-back" id="backToConfigurator" hidden>← Zurück zur Funktionsauswahl</button></div>
         <div class="intro-progress"><span class="progress-active"></span><span></span></div>
         <div class="intro-number">01 / 02</div>
         <h1 id="introTitle">Welchen Betrieb führen Sie?</h1>
+        <div class="intro-explainer" role="note">
+          <span class="intro-explainer-mark" aria-hidden="true">i</span>
+          <div><strong>Jetzt geht es um Funktionen – nicht um das endgültige Design.</strong><p>Wählen Sie, was Ihre Website können soll. Farben und Seitenaufbau gestalten Sie später mit uns oder selbst. Die Vorschau ist beispielhaft; Ihre Auswahl bleibt erhalten.</p></div>
+        </div>
+        <div class="project-load-actions">
+          <div class="project-load-copy"><b>Bereits eine Konfiguration gespeichert?</b><small>Laden Sie Ihre JSON-Datei und bearbeiten Sie das Projekt weiter.</small></div>
+          <button type="button" id="loadProjectButton"><span class="project-load-icon" aria-hidden="true">↑</span> Konfiguration laden</button>
+          <input type="file" id="projectFileInput" accept="application/json,.json" hidden>
+          <small id="projectFileStatus" class="project-file-status" role="status" aria-live="polite">Sie können eine zuvor gespeicherte Konfiguration jederzeit laden.</small>
+        </div>
         <div class="choice-grid industry-choices" role="group" aria-label="Branche">
           <button type="button" class="choice-card selected" data-industry="Friseursalon / Barbershop">
             <span class="choice-illustration salon-illustration choice-hair-closeup"><img src="https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=700" alt="Nahaufnahme einer Friseurin, die lange Locken mit einem Lockenstab stylt" loading="eager" fetchpriority="high" decoding="async"></span>
@@ -46,11 +99,11 @@
           <button type="button" class="website-choice" data-website="Veraltet / nicht mobiloptimiert"><span class="radio-mark"></span><span>Ja, aber sie ist veraltet</span></button>
           <button type="button" class="website-choice" data-website="Vorhanden und aktuell"><span class="radio-mark"></span><span>Ja, sie ist aktuell</span></button>
         </div>
-        <button type="button" class="intro-continue" id="startConfigurator">Konfigurator öffnen <span>→</span></button>
+        <button type="button" class="intro-continue" id="startConfigurator">Weiter: Funktionen auswählen <span>→</span></button>
       </div>
     </section>
 
-    <!-- Main configurator: large live website / one independently scrolling options rail -->
+    <!-- Step 1 continues: functions and services, with a live effect preview. -->
     <section class="configurator-screen" id="configuratorScreen" hidden aria-label="Website-Konfigurator">
       <section class="preview-stage" id="previewStage" aria-label="Live-Vorschau">
         <!-- WEBSITE SCENE -->
@@ -174,6 +227,7 @@
       <!-- Only this pane scrolls on desktop -->
       <aside class="options-rail" id="optionsRail" aria-label="Funktionen auswählen">
         <div class="rail-tools">
+          <div class="rail-purpose-note"><small class="rail-step-kicker">SCHRITT 1 VON 3 · FUNKTIONEN</small><b>Was soll Ihre Website können?</b><span>Hier wählen Sie Funktionen, Integrationen und Leistungen – noch nicht das endgültige Design. Die Vorschau zeigt beispielhaft sichtbare Bereiche; Seitenaufbau und Gestaltung legen Sie im nächsten Schritt fest.</span></div>
           <nav class="section-nav" aria-label="Konfigurator-Bereiche">
             <button type="button" data-jump-scene="website" class="active">Website</button>
             <button type="button" data-jump-scene="phone">Mobil</button>
@@ -220,18 +274,19 @@
       <div class="price-bar-left">
         <div class="price-item"><small>Erstellung</small><b>0 €</b></div>
         <span class="price-divider"></span>
-        <div class="price-item trial-price"><small>Ihre Testphase</small><b>2 Monate kostenlos</b></div>
+        <div class="price-item trial-price"><small id="priceBarBillingLabel">Testphase (optional)</small><b id="priceBarBillingValue">2 Monate kostenlos</b></div>
         <span class="price-divider"></span>
         <div class="price-item profile-setup-price"><small>Einmalige Einrichtung</small><b id="oneTimeTotal">0 €</b></div>
         <span class="price-divider"></span>
       </div>
-      <div class="price-bar-right"><div class="monthly-total"><small>Danach pro Monat</small><b id="monthlyTotal">35 €</b></div><button type="button" class="price-details-button" id="priceDetailsButton">Auswahl & Preise <span>↗</span></button><button type="button" class="price-cta" id="requestButton">Konfiguration anfragen <span>→</span></button></div>
+      <div class="price-bar-right"><div class="monthly-total"><small id="monthlyTotalLabel">Danach pro Monat</small><b id="monthlyTotal">35 €</b></div><button type="button" class="price-save-button" id="saveProjectButton" aria-label="Konfiguration als Datei speichern" title="Konfiguration speichern"><span class="price-save-icon" aria-hidden="true">↓</span><span class="price-save-label">Speichern</span></button><button type="button" class="price-details-button" id="priceDetailsButton">Auswahl & Preise <span>↗</span></button><button type="button" class="price-cta" id="requestButton" aria-label="Zur Gestaltung">Zur Gestaltung <span>→</span></button></div>
+      <span id="priceSaveStatus" class="visually-hidden" role="status" aria-live="polite"></span>
     </section>
 
     <!-- Information modal: long copy lives here, not in the options list -->
     <dialog class="info-dialog" id="infoDialog">
       <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
-      <div class="info-copy"><span class="info-kicker">FUNKTIONSDETAILS</span><h2 id="infoTitle"></h2><p id="infoDescription"></p><div class="info-price" id="infoPrice"></div><button type="button" class="dialog-add" id="infoToggle">Hinzufügen</button></div>
+      <div class="info-copy"><span class="info-kicker">FUNKTIONSDETAILS</span><h2 id="infoTitle"></h2><p id="infoDescription"></p><div class="info-effect"><small>WIRKUNG AUF IHRE WEBSITE</small><span id="infoEffectText"></span></div><div class="info-price" id="infoPrice"></div><button type="button" class="dialog-add" id="infoToggle">Hinzufügen</button></div>
     </dialog>
 
     <!-- Price details modal -->
@@ -239,23 +294,44 @@
       <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
       <span class="info-kicker">IHRE AUSWAHL</span><h2>Preisübersicht</h2>
       <div id="priceBreakdown" class="price-breakdown"></div>
-      <div class="price-dialog-total"><span>Monatlich nach 2 Freimonaten</span><b id="priceDialogTotal">35 €</b></div>
+      <div class="price-dialog-total"><span id="priceDialogTiming">Monatlich ab dem 3. Monat</span><b id="priceDialogTotal">35 €</b></div>
       <div class="price-dialog-total one-time-total"><span>Einmalige Profileinrichtung</span><b id="priceDialogOnce">0 €</b></div>
       <p>Die Preisangaben sind vorläufige Richtwerte. Ein kostenpflichtiger Vertrag entsteht ausschließlich nach einem individuellen Angebot und Ihrer ausdrücklichen Zustimmung.</p>
     </dialog>
 
-    <!-- Contact form appears from the fixed bottom bar; no separate third configurator page -->
+    <!-- Step 3: contact details and optional first materials -->
     <dialog class="contact-dialog" id="contactDialog">
       <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
-      <div class="contact-dialog-head"><span class="info-kicker">FAST GESCHAFFT</span><h2>Ihre Konfiguration.</h2><p>Hinterlassen Sie Ihre Kontaktdaten. Wir melden uns persönlich.</p></div>
+      <div class="contact-dialog-head"><span class="info-kicker">SCHRITT 3 VON 3 · ANGABEN & MATERIALIEN</span><h2>Ihre unverbindliche Projektanfrage.</h2><p>Ergänzen Sie Ihre Kontaktdaten und laden Sie bei Bedarf erste Fotos oder Ihr Logo hoch. Weitere Texte und Inhalte können wir anschließend gemeinsam abstimmen.</p></div>
       <div class="contact-layout">
         <form id="contactForm" novalidate>
+          <fieldset class="billing-start-fieldset">
+            <legend>Welche Startoption sollen wir in Ihrem Angebot berücksichtigen?</legend>
+            <div class="billing-start-options">
+              <label class="billing-start-option selected">
+                <input type="radio" name="billingStart" value="trial" checked>
+                <span><b>2 Monate kostenlos testen</b><small>Die monatliche Zahlung beginnt erst ab dem 3. Monat.</small></span>
+              </label>
+              <label class="billing-start-option">
+                <input type="radio" name="billingStart" value="immediate">
+                <span><b>Ohne Testphase starten</b><small>Die monatliche Zahlung beginnt ab dem individuell vereinbarten Starttermin.</small></span>
+              </label>
+            </div>
+            <p class="billing-start-note">Diese Auswahl ist nur eine Präferenz für Ihr späteres Angebot. Sie löst keine Zahlung aus und begründet keinen Vertrag.</p>
+          </fieldset>
           <label class="contact-field"><span>Name *</span><input name="contactName" autocomplete="name" required maxlength="120" placeholder="Vor- und Nachname"></label>
-          <label class="contact-field"><span>Unternehmen</span><input name="contactCompany" autocomplete="organization" maxlength="120" placeholder="Name Ihres Betriebs"></label>
+          <label class="contact-field"><span>Unternehmen / Salon</span><input name="contactCompany" autocomplete="organization" maxlength="120" placeholder="Name Ihres Betriebs"></label>
           <label class="contact-field"><span>E-Mail *</span><input name="email" type="email" autocomplete="email" required maxlength="160" placeholder="name@unternehmen.de"></label>
           <label class="contact-field"><span>Telefon</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+49 …"></label>
-          <label class="contact-field"><span>Nachricht</span><textarea name="message" rows="3" maxlength="1500" placeholder="Was sollten wir noch wissen?"></textarea></label>
-          <label class="contact-consent"><input type="checkbox" name="contactConsent" required><span>Ich bin mit der Kontaktaufnahme zu meiner Anfrage einverstanden. *</span></label>
+          <label class="contact-field contact-message-field"><span>Aktuelle Website (optional)</span><input name="currentWebsite" type="url" autocomplete="url" maxlength="300" placeholder="https://www.ihre-website.de"></label>
+          <label class="contact-field contact-message-field"><span>Nachricht / Wünsche</span><textarea name="message" rows="2" maxlength="1500" placeholder="Was sollten wir noch wissen?"></textarea></label>
+          <label class="contact-upload contact-message-field" for="contactAssets">
+            <span class="contact-upload-title">Fotos und Logo hinzufügen <small>Optional · Weitere Materialien können Sie später bereitstellen</small></span>
+            <span class="contact-upload-action">Dateien auswählen</span>
+            <input type="file" id="contactAssets" name="assets" accept="image/jpeg,image/png,image/webp" multiple>
+            <span id="contactFileList" class="contact-file-list" aria-live="polite">Noch keine Dateien ausgewählt · maximal 8 Bilder, je 5 MB</span>
+          </label>
+          <label class="contact-consent"><input type="checkbox" name="contactConsent" required><span>Ich bin mit der Kontaktaufnahme zur Bearbeitung meiner Anfrage einverstanden. *</span></label>
           <div class="captcha-placeholder" role="note" aria-label="Platzhalter für die spätere Ich-bin-kein-Roboter-Prüfung">
             <span class="captcha-placeholder-box" aria-hidden="true"></span>
             <span class="captcha-placeholder-text">Ich bin kein Roboter<small>Wird später eingebunden · derzeit nicht aktiv</small></span>
@@ -263,15 +339,16 @@
           </div>
           <input name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="contact-error" id="contactError" role="alert" aria-live="polite"></div>
-          <button class="contact-submit" id="contactSubmit" type="submit">Anfrage senden <span>↗</span></button>
+          <p class="contact-submit-note">Mit dem Absenden bitten Sie uns um ein unverbindliches Angebot. Es wird keine Zahlung ausgelöst und kein Vertrag abgeschlossen.</p>
+          <button class="contact-submit" id="contactSubmit" type="submit">Unverbindliche Anfrage senden <span>↗</span></button>
         </form>
-        <aside class="contact-summary"><small>IHRE AUSWAHL</small><b id="contactMonthly">35 € / Monat</b><span>nach 2 Freimonaten</span><div class="contact-once"><small>Einmalig</small><b id="contactOnce">0 €</b></div><div id="contactSelected"></div><strong>Erstellung & Testphase: 0 €</strong><p class="contact-payment-note"><span aria-hidden="true">ⓘ</span> Noch keine Zahlung: Sie erhalten zunächst ein unverbindliches Angebot. Erst nach Ihrer Zustimmung wird ein Vertrag geschlossen.</p></aside>
+        <aside class="contact-summary"><small>IHRE AUSWAHL</small><b id="contactMonthly">35 € / Monat</b><span id="contactBillingTiming">Start nach 2 Freimonaten</span><div class="contact-once"><small>Einmalig</small><b id="contactOnce">0 €</b></div><div id="contactSelected"></div><strong id="contactStartNote">Erstellung & Testphase: 0 €</strong><p class="contact-payment-note"><span aria-hidden="true">ⓘ</span> Keine Zahlung und kein Vertrag durch diese Anfrage. Wir prüfen Ihre Angaben und melden uns mit einem individuellen Angebot.</p></aside>
       </div>
     </dialog>
 
     <dialog class="success-dialog" id="successDialog">
       <button type="button" class="dialog-close" data-close-dialog aria-label="Schließen">×</button>
-      <div class="success-symbol">✓</div><span class="info-kicker">VIELEN DANK</span><h2>Ihre Konfiguration ist bereit.</h2><p id="successMessage"></p><button type="button" class="dialog-add" data-close-dialog>Schließen</button>
+      <div class="success-symbol">✓</div><span class="info-kicker">VIELEN DANK</span><h2>Ihre Anfrage wurde übermittelt.</h2><p id="successMessage"></p><button type="button" class="dialog-add" data-close-dialog>Schließen</button>
     </dialog>
   </main>
 </body>

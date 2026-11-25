@@ -40,7 +40,7 @@ function doPost(e) {
       'Social-Profile', 'Social-Profil-Einrichtung einmalig EUR', 'Social-Funktionen', 'KI-Funktionen', 'Sichtbarkeit & Sprachen',
       'Erstellung einmalig EUR', 'Basis monatlich EUR', 'Zusatzmodule monatlich EUR',
       'Monatlich nach Test EUR', 'Kostenlose Testmonate', 'Preisstatus', 'Nachricht',
-      'Vollständige Anfrage (JSON)'
+      'Vollständige Anfrage (JSON)', 'Gewünschter Zahlungsbeginn'
     ];
 
     if (sheet.getLastRow() === 0) {
@@ -70,7 +70,7 @@ function doPost(e) {
       safeCell(formatList(project.aiFeatures)), safeCell(formatList(project.visibilityFeatures)),
       Number(pricing.setupPrice || 0), Number(pricing.baseMonthly || 0),
       Number(pricing.addonsMonthly || 0), Number(pricing.monthlyAfterTrial || 0),
-      Number(pricing.freeTrialMonths || 0), safeCell(pricing.status), safeCell(contact.message), JSON.stringify(data)
+      Number(pricing.freeTrialMonths || 0), safeCell(pricing.status), safeCell(contact.message), JSON.stringify(data), safeCell(pricing.billingStartLabel || pricing.billingStart || 'Nicht angegeben')
     ];
     sheet.appendRow(row);
 
@@ -122,7 +122,9 @@ function sendNotification(data) {
     `Social-Profil-Einrichtung einmalig: ${formatEuro(price.profileSetupOnce || 0)}`, 
     `Basis pro Monat: ${formatEuro(price.baseMonthly || 0)}`,
     `Zusatzmodule pro Monat: ${formatEuro(price.addonsMonthly || 0)}`,
-    `Monatlich nach ${price.freeTrialMonths || 0} kostenlosen Monaten: ${formatEuro(price.monthlyAfterTrial || 0)}`,
+    `Gewünschter Zahlungsbeginn: ${price.billingStartLabel || 'Nicht angegeben'}`,
+    `Kostenlose Testmonate: ${Number(price.freeTrialMonths || 0)}`,
+    `Monatlich: ${formatEuro(price.monthlyAfterTrial || 0)}`,
     `Status: ${price.status || 'Unverbindlich'}`,
     '', 'NACHRICHT', contact.message || '-',
     '', 'Hinweis: Dies ist eine unverbindliche Anfrage. Die kostenpflichtige Nutzung beginnt nur nach ausdrücklicher Vereinbarung.'

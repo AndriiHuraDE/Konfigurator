@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  // Erst nach Bereitstellung der Google-Apps-Script-Web-App ausfüllen.
-  const CONFIG = { FORM_ENDPOINT: '' };
+  // Public project values only. Never place a Supabase secret/service-role key here.
+  const CONFIG = window.PIMENTA_CONFIG || { SUPABASE_URL: '', SUPABASE_PUBLISHABLE_KEY: '', SUBMIT_FUNCTION: 'submit-website-request' };
   const BASE_MONTHLY = 35;
   const FREE_TRIAL_MONTHS = 2;
   const PROFILE_SETUP_ONCE = 5;
@@ -238,6 +238,8 @@
   let currentInfoId = null;
   let currentScene = 'website';
   let selectionMode = 'recommended';
+  let creationMode = 'simple';
+  let preserveLoadedProjectOnOpen = false;
   // The user's own configuration is kept separately from the recommended preset.
   // First entry into custom mode starts clean; later switches restore this snapshot.
   const CUSTOM_SELECTED = new Set();
@@ -252,9 +254,37 @@
   const selectedItems = () => allFeatures.filter(item => SELECTED.has(item.id));
   const monthlyTotal = () => selectedItems().reduce((sum, item) => sum + item.price, 0);
   const profileSetupTotal = () => SELECTED_SOCIAL.size * PROFILE_SETUP_ONCE;
+  const billingStart = () => $('contactForm')?.elements.billingStart?.value === 'immediate' ? 'immediate' : 'trial';
+  const usesFreeTrial = () => billingStart() === 'trial';
   const addonsTotal = () => selectedItems().filter(item => !item.mandatory).reduce((sum, item) => sum + item.price, 0);
   const projectType = () => websiteStatus === 'Keine Website' ? 'Neue Website' : websiteStatus.startsWith('Veraltet') ? 'Website erneuern' : 'Website erweitern';
   const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+  const FEATURE_IMPACTS = {
+    baseService: 'Technische Grundlage: Website-Bereitstellung, Hosting und Basis-Support.',
+    mobileOptimization: 'Wirkt auf die Darstellung aller Seiten auf Smartphones und Tablets.',
+    booking: 'Sichtbarer Buchungsbereich auf Ihrer Website; die Terminlogik läuft über die angebundene Buchungslösung.',
+    employeeManagement: 'Interne Verwaltung von Mitarbeitenden, Arbeitszeiten und Terminen – kein eigener sichtbarer Website-Block.',
+    whatsapp: 'Sichtbarer Kontaktweg: Besucher können direkt eine WhatsApp-Nachricht öffnen.',
+    contactPlus: 'Sichtbares Anfrageformular auf Ihrer Website.',
+    gallery: 'Sichtbarer Galerie- und Portfolio-Bereich auf Ihrer Website.',
+    instagramFeed: 'Sichtbarer Instagram-Bereich und Verknüpfung mit Ihrem Profil.',
+    reviews: 'Sichtbarer Bewertungsbereich und Verknüpfung mit Ihrem Bewertungsprofil.',
+    maps: 'Sichtbarer Standort- und Öffnungszeitenbereich.',
+    faq: 'Sichtbarer Fragen- und Antwortenbereich.',
+    blog: 'Sichtbarer Bereich für Neuigkeiten und Artikel.',
+    shop: 'Sichtbarer Produkt- und Gutscheinbereich; Zahlungsabwicklung wird separat eingerichtet.',
+    newsletter: 'Sichtbares Anmeldeformular; Versand und Double-Opt-in laufen über einen Newsletter-Dienst.',
+    whatsappBot: 'Arbeitet über WhatsApp. Es ist kein zusätzlicher Website-Block, sondern ein automatisierter Gesprächskanal.',
+    chatbot: 'Sichtbares Chat-Widget auf Ihrer Website; die Antworten werden im Hintergrund durch KI verarbeitet.',
+    leadAssistant: 'Unterstützt die strukturierte Erfassung und Vorbereitung von Kundenanfragen.',
+    emailAssistant: 'Interne Unterstützung beim Sortieren und Vorbereiten von E-Mail-Antworten.',
+    crm: 'Verknüpft Kundendaten und Anfragen mit einem externen CRM-System.',
+    voice: 'Arbeitet über Telefonanrufe und ist nicht Teil des Website-Layouts.',
+    automation: 'Verbindet ausgewählte Abläufe und Dienste im Hintergrund.',
+    localSEO: 'Wirkt im Hintergrund auf die technische und lokale Auffindbarkeit in Suchmaschinen – ohne eigenen sichtbaren Seitenblock.',
+    multilingual: 'Ergänzt sichtbare Sprachumschaltung und Inhalte in zusätzlichen Sprachen.'
+  };
 
   const FEATURE_ICON_PATHS = {
     gallery:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
@@ -828,12 +858,20 @@
   function updatePrices() {
     const total = monthlyTotal();
     const oneTime = profileSetupTotal();
+    const trialSelected = usesFreeTrial();
     $('monthlyTotal').textContent = money(total);
     $('oneTimeTotal').textContent = money(oneTime);
     $('priceDialogTotal').textContent = `${money(total)} / Monat`;
     $('priceDialogOnce').textContent = money(oneTime);
     $('contactMonthly').textContent = `${money(total)} / Monat`;
     $('contactOnce').textContent = money(oneTime);
+    $('priceDialogTiming').textContent = trialSelected ? 'Monatlich ab dem 3. Monat' : 'Monatlich ab sofort';
+    $('priceBarBillingLabel').textContent = trialSelected ? 'Testphase (optional)' : 'Zahlungsbeginn';
+    $('priceBarBillingValue').textContent = trialSelected ? '2 Monate kostenlos' : 'Ab sofort';
+    $('monthlyTotalLabel').textContent = trialSelected ? 'Danach pro Monat' : 'Ab sofort pro Monat';
+    $('contactBillingTiming').textContent = trialSelected ? 'Start nach 2 Freimonaten' : 'Start ab sofort';
+    $('contactStartNote').textContent = trialSelected ? 'Erstellung & Testphase: 0 €' : 'Erstellung: 0 € · Zahlung ab sofort';
+    document.querySelectorAll('[name="billingStart"]').forEach(input => input.closest('.billing-start-option')?.classList.toggle('selected', input.checked));
     const addonsList = selectedItems().filter(item => !item.mandatory);
     const selectedProfiles = SOCIAL.filter(item => SELECTED_SOCIAL.has(item.id));
     $('contactSelected').innerHTML = [
@@ -841,15 +879,26 @@
       ...addonsList.map(item => `<span>${escapeHTML(item.name)} · ${item.price ? `${money(item.price)} / Monat` : '0 €'}</span>`),
       ...selectedProfiles.map(item => `<span>${escapeHTML(item.name)}-Profil einrichten · ${money(PROFILE_SETUP_ONCE)} einmalig</span>`)
     ].join('');
+    const timingNote = trialSelected ? 'nach 2 Freimonaten' : 'ab sofort';
     const rows = [
-      `<div class="price-breakdown-row"><span>Website, Hosting & Basis-Support<small>Fester Basis-Service · nach 2 Freimonaten</small></span><b>${money(BASE_MONTHLY)} / Mon.</b></div>`,
+      `<div class="price-breakdown-row"><span>Website, Hosting & Basis-Support<small>Fester Basis-Service · ${timingNote}</small></span><b>${money(BASE_MONTHLY)} / Mon.</b></div>`,
       ...addonsList.map(item => `<div class="price-breakdown-row"><span>${escapeHTML(item.name)}</span><b>${item.price ? `${money(item.price)} / Mon.` : '0 €'}</b></div>`),
       ...(selectedProfiles.length ? [`<div class="price-breakdown-caption">Einmalige Einrichtung der Social-Media-Profile</div>`, ...selectedProfiles.map(item => `<div class="price-breakdown-row"><span>${escapeHTML(item.name)}-Profil einrichten</span><b>${money(PROFILE_SETUP_ONCE)} einmalig</b></div>`)] : [])
     ];
     $('priceBreakdown').innerHTML = rows.join('');
+    persistLocalDraft();
   }
 
   function refresh() {
+    if (typeof activeSubmissionId !== 'undefined') activeSubmissionId = '';
+    const saveButton = $('saveProjectButton');
+    if (saveButton?.classList.contains('is-saved')) {
+      saveButton.classList.remove('is-saved');
+      saveButton.setAttribute('aria-label', 'Konfiguration als Datei speichern');
+      saveButton.title = 'Konfiguration speichern';
+      saveButton.querySelector('.price-save-icon').textContent = '↓';
+      saveButton.querySelector('.price-save-label').textContent = 'Speichern';
+    }
     document.querySelectorAll('[data-feature]').forEach(row => {
       const active = SELECTED.has(row.dataset.feature);
       row.classList.toggle('selected', active);
@@ -1030,16 +1079,43 @@
     currentInfoId = id;
     $('infoTitle').textContent = item.name;
     $('infoDescription').textContent = item.detail;
-    $('infoPrice').textContent = item.id === 'mobileOptimization' ? 'Immer enthalten · keine Zusatzkosten' : item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · 2 Monate kostenlos testen` : item.price ? `${money(item.price)} pro Monat · 2 Monate kostenlos testen` : '0 € · keine laufenden Zusatzkosten';
+    $('infoEffectText').textContent = FEATURE_IMPACTS[id] || 'Die genaue Wirkung wird im individuellen Projektumfang festgelegt.';
+    $('infoPrice').textContent = item.id === 'mobileOptimization' ? 'Immer enthalten · keine Zusatzkosten' : item.mandatory ? `${money(item.price)} pro Monat · fester Basis-Service · Testphase optional` : item.price ? `${money(item.price)} pro Monat · 2 Monate Testphase optional` : '0 € · keine laufenden Zusatzkosten';
     $('infoToggle').textContent = item.mandatory ? 'Immer enthalten' : SELECTED.has(id) ? 'Aus Auswahl entfernen' : 'Hinzufügen';
     $('infoToggle').disabled = !!item.mandatory;
     $('infoDialog').showModal();
   }
 
+  function updateModeSummary() {
+    const extraCount = selectedItems().filter(item => !item.mandatory).length + SELECTED_SOCIAL.size;
+    $('modeFeatureCount').textContent = `${extraCount} ${extraCount === 1 ? 'Zusatzfunktion' : 'Zusatzfunktionen'} ausgewählt`;
+    $('modeMonthlyTotal').textContent = `${money(monthlyTotal())} / Monat`;
+    $('modeOneTimeTotal').textContent = money(profileSetupTotal());
+  }
+
+  function openModeScreen() {
+    $('configuratorScreen').hidden = true;
+    $('priceBar').hidden = true;
+    $('introScreen').hidden = true;
+    $('modeScreen').hidden = false;
+    updateModeSummary();
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  function returnToConfigurator() {
+    $('modeScreen').hidden = true;
+    $('introScreen').hidden = true;
+    $('configuratorScreen').hidden = false;
+    $('priceBar').hidden = false;
+    refresh();
+  }
+
   function openIntro() {
+    $('modeScreen').hidden = true;
     $('configuratorScreen').hidden = true;
     $('priceBar').hidden = true;
     $('introScreen').hidden = false;
+    $('backToConfigurator').hidden = false;
   }
 
   function openConfigurator() {
@@ -1047,13 +1123,15 @@
     const selectedWebsite = document.querySelector('[data-website].selected');
     industry = selectedIndustry?.dataset.industry || industry;
     websiteStatus = selectedWebsite?.dataset.website || websiteStatus;
+    $('modeScreen').hidden = true;
     $('introScreen').hidden = true;
     $('configuratorScreen').hidden = false;
     $('priceBar').hidden = false;
     $('optionsRail').scrollTop = 0;
     setScene('website');
-    if (selectionMode === 'recommended') applyRecommendedPreset({ focus: false });
+    if (selectionMode === 'recommended' && !preserveLoadedProjectOnOpen) applyRecommendedPreset({ focus: false });
     else { syncSelectionModeUI(); refresh(); }
+    preserveLoadedProjectOnOpen = false;
     requestAnimationFrame(() => $('optionsRail').dispatchEvent(new Event('scroll')));
   }
 
@@ -1084,34 +1162,231 @@
     const selected = selectedItems();
     const group = key => FEATURES[key].filter(item => SELECTED.has(item.id)).map(item => ({id:item.id,name:item.name,monthlyPrice:item.price}));
     const businessName = getFormValue('contactCompany');
+    const freeTrialMonths = usesFreeTrial() ? FREE_TRIAL_MONTHS : 0;
     return {
-      source:'pimentaGROUP Website-Konfigurator',
-      submittedAt:new Date().toISOString(),
-      project:{
-        type:projectType(),projectKey:websiteStatus === 'Keine Website' ? 'new' : websiteStatus.startsWith('Veraltet') ? 'refresh' : 'extend',
-        industry,businessName,websiteStatus,
-        features:group('website'),visibilityFeatures:group('visibility'),
-        mobileFeatures:group('phone'),contactFeatures:group('website').filter(item => ['whatsapp','contactPlus'].includes(item.id)),
-        aiFeatures:group('ai'),socialProfiles:SOCIAL.filter(item=>SELECTED_SOCIAL.has(item.id)).map(item=>({id:item.id,name:item.name,setupPrice:PROFILE_SETUP_ONCE})),
-        socialFeatures:[],
-        pricing:{setupPrice:0,profileSetupOnce:profileSetupTotal(),oneTimeTotal:profileSetupTotal(),baseMonthly:BASE_MONTHLY,addonsMonthly:addonsTotal(),monthlyAfterTrial:monthlyTotal(),freeTrialMonths:FREE_TRIAL_MONTHS,trialTotal:0,currency:'EUR',status:PRICE_STATUS,note:'Unverbindliche monatliche Richtwerte. Die Profileinrichtung wird einmalig mit 5 € je ausgewähltem Profil berechnet. Ein kostenpflichtiger Vertrag entsteht nur nach individuellem Angebot und ausdrücklicher Zustimmung.'},
-        selectedFeatures:selected.map(item=>({id:item.id,name:item.name,category:categoryOf(item.id),monthlyPrice:item.price})),
-        socialProfileSetup:{profiles:SOCIAL.filter(item=>SELECTED_SOCIAL.has(item.id)).map(item=>item.name),pricePerProfile:PROFILE_SETUP_ONCE,totalOnce:profileSetupTotal()}
+      schemaVersion: 1,
+      source: 'pimentaGROUP Website-Konfigurator',
+      submissionId: getSubmissionId(),
+      submittedAt: new Date().toISOString(),
+      creationMode,
+      project: {
+        creationMode,
+        type: projectType(),
+        projectKey: websiteStatus === 'Keine Website' ? 'new' : websiteStatus.startsWith('Veraltet') ? 'refresh' : 'extend',
+        industry,
+        businessName,
+        websiteStatus,
+        features: group('website'),
+        visibilityFeatures: group('visibility'),
+        mobileFeatures: group('phone'),
+        contactFeatures: group('website').filter(item => ['whatsapp','contactPlus'].includes(item.id)),
+        aiFeatures: group('ai'),
+        socialProfiles: SOCIAL.filter(item => SELECTED_SOCIAL.has(item.id)).map(item => ({id:item.id,name:item.name,setupPrice:PROFILE_SETUP_ONCE})),
+        socialFeatures: [],
+        pricing: {
+          setupPrice: 0,
+          profileSetupOnce: profileSetupTotal(),
+          oneTimeTotal: profileSetupTotal(),
+          baseMonthly: BASE_MONTHLY,
+          addonsMonthly: addonsTotal(),
+          monthlyAfterTrial: monthlyTotal(),
+          freeTrialMonths,
+          billingStart: billingStart(),
+          billingStartLabel: usesFreeTrial() ? 'Nach 2 kostenlosen Monaten' : 'Ab sofort',
+          trialTotal: 0,
+          currency: 'EUR',
+          status: PRICE_STATUS,
+          note: usesFreeTrial()
+            ? 'Unverbindliche monatliche Richtwerte. Die zweimonatige Testphase ist optional. Ein kostenpflichtiger Vertrag entsteht nur nach individuellem Angebot und ausdrücklicher Zustimmung.'
+            : 'Unverbindliche monatliche Richtwerte. Die monatliche Zahlung soll auf Wunsch ab sofort beginnen; eine Zahlung oder ein Vertrag entsteht nur nach individuellem Angebot und ausdrücklicher Zustimmung.'
+        },
+        selectedFeatures: selected.map(item => ({id:item.id,name:item.name,category:categoryOf(item.id),monthlyPrice:item.price})),
+        socialProfileSetup: {profiles:SOCIAL.filter(item=>SELECTED_SOCIAL.has(item.id)).map(item=>item.name),pricePerProfile:PROFILE_SETUP_ONCE,totalOnce:profileSetupTotal()},
+        editorMode: 'simple'
       },
-      contact:{name:getFormValue('contactName'),company:businessName,email:getFormValue('email'),phone:getFormValue('phone'),currentWebsite:'',message:getFormValue('message')},
-      website:getFormValue('website')
+      contact: {
+        name: getFormValue('contactName'),
+        company: businessName,
+        email: getFormValue('email'),
+        phone: getFormValue('phone'),
+        currentWebsite: getFormValue('currentWebsite'),
+        message: getFormValue('message'),
+        consent: true,
+        consentAt: new Date().toISOString()
+      },
+      website: getFormValue('website')
     };
+  }
+
+  function makeUuid() {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
+      const random = Math.random() * 16 | 0;
+      return (char === 'x' ? random : (random & 3 | 8)).toString(16);
+    });
+  }
+
+  let activeSubmissionId = '';
+  function getSubmissionId() {
+    if (!activeSubmissionId) activeSubmissionId = makeUuid();
+    return activeSubmissionId;
+  }
+
+  function createProjectFile() {
+    return {
+      format: 'pimentaGROUP.website-config',
+      schemaVersion: 1,
+      savedAt: new Date().toISOString(),
+      creationMode,
+      industry,
+      websiteStatus,
+      selectionMode,
+      customSelectionInitialized,
+      selectedFeatureIds: [...SELECTED],
+      selectedSocialIds: [...SELECTED_SOCIAL],
+      billingStart: billingStart()
+    };
+  }
+
+  function persistLocalDraft() {
+    try { localStorage.setItem('pimentaGROUP.simple-config.v1', JSON.stringify(createProjectFile())); }
+    catch (error) { /* Browser storage may be disabled; manual export remains available. */ }
+  }
+
+  function applyProjectFile(data) {
+    if (!data || data.format !== 'pimentaGROUP.website-config' || data.schemaVersion !== 1) {
+      throw new Error('Diese Datei ist keine unterstützte pimentaGROUP-Konfiguration.');
+    }
+    const allowedIndustries = ['Friseursalon / Barbershop','Nagelstudio','Massage / Wellness','Sonstiges'];
+    const allowedWebsiteStates = ['Keine Website','Veraltet / nicht mobiloptimiert','Vorhanden und aktuell'];
+    if (!allowedIndustries.includes(data.industry) || !allowedWebsiteStates.includes(data.websiteStatus)) {
+      throw new Error('Die Betriebsangaben in der Datei sind ungültig.');
+    }
+    industry = data.industry;
+    websiteStatus = data.websiteStatus;
+    creationMode = 'simple';
+    preserveLoadedProjectOnOpen = true;
+    selectionMode = data.selectionMode === 'custom' ? 'custom' : 'recommended';
+    customSelectionInitialized = Boolean(data.customSelectionInitialized || selectionMode === 'custom');
+    SELECTED.clear();
+    const selectedIds = Array.isArray(data.selectedFeatureIds) ? data.selectedFeatureIds : [];
+    selectedIds.forEach(id => { if (byId(id)) SELECTED.add(id); });
+    restoreMandatoryFeatures();
+    SELECTED_SOCIAL.clear();
+    const socialIds = Array.isArray(data.selectedSocialIds) ? data.selectedSocialIds : [];
+    socialIds.forEach(id => { if (SOCIAL.some(item => item.id === id)) SELECTED_SOCIAL.add(id); });
+    CUSTOM_SELECTED.clear();
+    SELECTED.forEach(id => { const item = byId(id); if (item && !item.mandatory) CUSTOM_SELECTED.add(id); });
+    CUSTOM_SELECTED_SOCIAL.clear();
+    SELECTED_SOCIAL.forEach(id => CUSTOM_SELECTED_SOCIAL.add(id));
+    const billing = data.billingStart === 'immediate' ? 'immediate' : 'trial';
+    const billingRadio = $('contactForm').querySelector(`[name="billingStart"][value="${billing}"]`);
+    if (billingRadio) billingRadio.checked = true;
+    document.querySelectorAll('[data-industry]').forEach(button => button.classList.toggle('selected', button.dataset.industry === industry));
+    document.querySelectorAll('[data-website]').forEach(button => button.classList.toggle('selected', button.dataset.website === websiteStatus));
+    syncSelectionModeUI();
+    refresh();
+    persistLocalDraft();
+  }
+
+  function restoreLocalDraft() {
+    try {
+      const saved = localStorage.getItem('pimentaGROUP.simple-config.v1');
+      if (saved) applyProjectFile(JSON.parse(saved));
+    } catch (error) {
+      try { localStorage.removeItem('pimentaGROUP.simple-config.v1'); } catch (ignored) {}
+    }
+  }
+
+  function saveProjectFile() {
+    downloadJSON(createProjectFile());
+    const message = 'Ihre Konfiguration wurde als JSON-Datei gespeichert.';
+    $('priceSaveStatus').textContent = message;
+    $('projectFileStatus').textContent = message;
+    const button = $('saveProjectButton');
+    button.classList.add('is-saved');
+    button.setAttribute('aria-label', message);
+    button.title = message;
+    button.querySelector('.price-save-icon').textContent = '✓';
+    button.querySelector('.price-save-label').textContent = 'Gespeichert';
+  }
+
+  async function loadProjectFile(file) {
+    if (!file) return;
+    if (file.size > 1024 * 1024) throw new Error('Die Konfigurationsdatei ist größer als 1 MB.');
+    const data = JSON.parse(await file.text());
+    applyProjectFile(data);
+    $('projectFileStatus').textContent = 'Die Konfiguration wurde geladen. Prüfen Sie die Angaben und fahren Sie anschließend fort.';
+  }
+
+  function validateSelectedFiles(files) {
+    const allowedTypes = new Set(['image/jpeg','image/png','image/webp']);
+    if (files.length > 8) throw new Error('Bitte wählen Sie höchstens 8 Bilder aus.');
+    let total = 0;
+    for (const file of files) {
+      if (!allowedTypes.has(file.type)) throw new Error('Bitte verwenden Sie nur JPG-, PNG- oder WebP-Bilder.');
+      if (file.size > 5 * 1024 * 1024) throw new Error(`„${file.name}“ ist größer als 5 MB.`);
+      total += file.size;
+    }
+    if (total > 20 * 1024 * 1024) throw new Error('Die ausgewählten Bilder dürfen zusammen höchstens 20 MB groß sein.');
+  }
+
+  function updateContactFileList() {
+    const files = [...($('contactAssets')?.files || [])];
+    $('contactFileList').textContent = files.length
+      ? files.map(file => `${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`).join(' · ')
+      : 'Noch keine Dateien ausgewählt · maximal 8 Bilder, je 5 MB';
+  }
+
+  async function submitRequest(data, files) {
+    if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_PUBLISHABLE_KEY) {
+      throw new Error('Der sichere Anfrage-Empfang ist noch nicht aktiviert. Ihre Anfrage wurde nicht übermittelt. Bitte speichern Sie Ihre Konfiguration als JSON-Datei und senden Sie sie später erneut, sobald der Empfang aktiviert ist.');
+    }
+    const formData = new FormData();
+    formData.append('payload', JSON.stringify(data));
+    files.forEach(file => formData.append('assets', file, file.name));
+    const endpoint = `${CONFIG.SUPABASE_URL.replace(/\/+$/, '')}/functions/v1/${CONFIG.SUBMIT_FUNCTION}`;
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { apikey: CONFIG.SUPABASE_PUBLISHABLE_KEY },
+      body: formData
+    });
+    let result;
+    try { result = await response.json(); }
+    catch (error) { throw new Error('Der Server hat keine lesbare Antwort zurückgegeben. Bitte versuchen Sie es erneut.'); }
+    if (!response.ok || !result?.ok) {
+      throw new Error(result?.error || `Die Anfrage konnte nicht gespeichert werden (HTTP ${response.status}).`);
+    }
+    return result;
   }
 
   function downloadJSON(data) {
     const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = url; link.download = `pimenta-konfiguration-${new Date().toISOString().slice(0,10)}.json`;
+    link.href = url; link.download = `pimentaGROUP-konfiguration-${new Date().toISOString().slice(0,10)}.json`;
     document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
   }
 
   function wireEvents() {
+    document.querySelectorAll('[data-builder-mode]').forEach(button => button.addEventListener('click', () => {
+      if (button.disabled || button.dataset.builderMode !== 'simple') return;
+      document.querySelectorAll('[data-builder-mode]').forEach(item => {
+        item.classList.toggle('selected', item === button);
+        item.setAttribute('aria-pressed', String(item === button));
+      });
+      creationMode = 'simple';
+    }));
+    $('modeContinue').addEventListener('click', () => {
+      creationMode = 'simple';
+      $('contactError').textContent = '';
+      $('contactDialog').showModal();
+    });
+    $('modeBackToFunctions').addEventListener('click', returnToConfigurator);
+    $('backToConfigurator').addEventListener('click', () => {
+      preserveLoadedProjectOnOpen = true;
+      openConfigurator();
+    });
     document.querySelectorAll('[data-industry]').forEach(button => button.addEventListener('click', () => {
       document.querySelectorAll('[data-industry]').forEach(item => item.classList.toggle('selected', item === button));
     }));
@@ -1189,8 +1464,34 @@
       toggleFeature(id);
     });
     document.querySelectorAll('[data-close-dialog]').forEach(button => button.addEventListener('click', () => button.closest('dialog')?.close()));
+    document.querySelectorAll('dialog').forEach(dialog => {
+      dialog.addEventListener('click', event => {
+        if (event.target !== dialog) return;
+        const bounds = dialog.getBoundingClientRect();
+        const clickedOutside = event.clientX < bounds.left || event.clientX > bounds.right ||
+          event.clientY < bounds.top || event.clientY > bounds.bottom;
+        if (clickedOutside) dialog.close();
+      });
+    });
+    $('contactForm').querySelectorAll('[name="billingStart"]').forEach(input => input.addEventListener('change', () => { activeSubmissionId = ''; updatePrices(); }));
+    $('contactForm').addEventListener('input', event => {
+      if (event.target && event.target.name !== 'website') activeSubmissionId = '';
+    });
+    $('contactAssets').addEventListener('change', () => {
+      activeSubmissionId = '';
+      try { validateSelectedFiles([...$('contactAssets').files]); updateContactFileList(); }
+      catch (error) { $('contactError').textContent = error.message; $('contactAssets').value = ''; updateContactFileList(); }
+    });
+    $('saveProjectButton').addEventListener('click', saveProjectFile);
+    $('loadProjectButton').addEventListener('click', () => $('projectFileInput').click());
+    $('projectFileInput').addEventListener('change', async () => {
+      try { await loadProjectFile($('projectFileInput').files[0]); }
+      catch (error) { $('projectFileStatus').textContent = error.message; }
+      finally { $('projectFileInput').value = ''; }
+    });
     $('priceDetailsButton').addEventListener('click', () => $('priceDialog').showModal());
-    $('requestButton').addEventListener('click', () => $('contactDialog').showModal());
+    // The price-bar action advances to the design approach; it does not submit or charge.
+    $('requestButton').addEventListener('click', openModeScreen);
     $('changeBasics').addEventListener('click', openIntro);
     $('contactForm').elements.contactCompany.addEventListener('input', () => {
       refresh();
@@ -1205,27 +1506,45 @@
         return;
       }
       if (getFormValue('website')) return;
+      const currentWebsite = getFormValue('currentWebsite');
+      if (currentWebsite) {
+        try { const url = new URL(currentWebsite); if (!['http:','https:'].includes(url.protocol)) throw new Error(); }
+        catch (ignored) { error.textContent = 'Bitte geben Sie eine gültige Website-Adresse mit https:// oder http:// ein.'; return; }
+      }
+      const files = [...$('contactAssets').files];
+      try { validateSelectedFiles(files); }
+      catch (fileError) { error.textContent = fileError.message; return; }
       const data = buildPayload();
       const button = $('contactSubmit');
-      button.disabled = true;button.textContent = 'Wird vorbereitet …';
+      button.disabled = true;
+      button.textContent = 'Wird sicher übermittelt …';
       try {
-        if (CONFIG.FORM_ENDPOINT) {
-          await fetch(CONFIG.FORM_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
-          $('successMessage').textContent = 'Die Anfrage wurde vom Browser an den eingerichteten Empfang übermittelt. Bitte prüfen Sie die tatsächliche Speicherung im Google-Tabellenblatt.';
-        } else {
-          downloadJSON(data);
-          $('successMessage').textContent = 'Ihre Konfiguration wurde als JSON-Datei exportiert. Der automatische Empfang bei pimentaGROUP ist noch nicht aktiviert.';
+        const result = await submitRequest(data, files);
+        const ref = result.referenceCode ? `Referenz: ${result.referenceCode}. ` : '';
+        const customerMailStatus = result.notifications?.customer || 'not_configured';
+        let message = `Ihre Anfrage wurde sicher gespeichert. ${ref}Wir melden uns persönlich bei Ihnen.`;
+        if (customerMailStatus === 'not_configured') {
+          message += ' Eine automatische Bestätigungs-E-Mail ist derzeit noch nicht eingerichtet. Bitte notieren Sie Ihre Referenznummer.';
+        } else if (customerMailStatus === 'failed') {
+          message += ' Ihre Anfrage ist gespeichert, aber die Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte notieren Sie Ihre Referenznummer.';
         }
+        if (Number(result.assetsFailed || 0) > 0) message += ` ${result.assetsFailed} Datei(en) konnten nicht hochgeladen werden. Sie können diese später per E-Mail nachreichen.`;
+        $('successMessage').textContent = message;
         $('contactDialog').close();
         $('successDialog').showModal();
-      } catch (err) {
-        error.textContent = 'Die Anfrage konnte nicht vorbereitet werden. Bitte versuchen Sie es erneut.';
+        activeSubmissionId = '';
+        $('contactAssets').value = '';
+        updateContactFileList();
+      } catch (submitError) {
+        error.textContent = submitError.message || 'Die Anfrage konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.';
       } finally {
-        button.disabled = false;button.innerHTML = 'Anfrage senden <span>↗</span>';
+        button.disabled = false;
+        button.innerHTML = 'Unverbindliche Anfrage senden <span>↗</span>';
       }
     });
   }
 
+  restoreLocalDraft();
   renderFeatureRows();
   syncSelectionModeUI();
   refresh();

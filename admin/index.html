@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#f6f5f2">
+  <title>Web Concierge · Admin | pimentaGROUP</title>
+  <link rel="stylesheet" href="./admin.css">
+  <script src="../js/backend-config.js"></script>
+  <script type="module" src="./admin.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <main id="loginView" class="login-shell">
+    <section class="login-card">
+      <a class="brand" href="../" aria-label="pimentaGROUP Startseite"><span class="brand-mark">p.</span><span>pimentaGROUP</span></a>
+      <div class="eyebrow">WEB CONCIERGE · INTERN</div>
+      <h1>Anmelden</h1>
+      <p class="muted">Melden Sie sich mit Ihrem freigeschalteten Mitarbeiterkonto an.</p>
+      <form id="loginForm" class="login-form">
+        <label for="loginEmail">E-Mail-Adresse</label>
+        <input id="loginEmail" name="email" type="email" autocomplete="username" required placeholder="name@pimenta.group">
+        <label for="loginPassword">Passwort</label>
+        <input id="loginPassword" name="password" type="password" autocomplete="current-password" required placeholder="Passwort">
+        <button id="loginButton" class="button button-primary" type="submit">Anmelden <span aria-hidden="true">→</span></button>
+      </form>
+      <p id="loginError" class="form-message" role="alert" hidden></p>
+      <p class="login-footnote">Der Zugang wird ausschließlich durch einen Administrator freigeschaltet. Eine öffentliche Registrierung ist nicht möglich.</p>
+    </section>
+  </main>
+
+  <div id="appView" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand brand-sidebar" href="../"><span class="brand-mark">p.</span><span>pimentaGROUP</span></a>
+      <div class="sidebar-label">WEB CONCIERGE</div>
+      <a class="nav-item active" href="#requests"><span class="nav-icon">▦</span> Anfragen</a>
+      <div class="nav-item disabled" aria-disabled="true"><span class="nav-icon">◫</span> Websites <small>Bald</small></div>
+      <div class="nav-item disabled" aria-disabled="true"><span class="nav-icon">◷</span> Aufgaben <small>Bald</small></div>
+      <div class="sidebar-bottom">
+        <div class="secure-label"><span class="secure-dot"></span> Sicher verbunden</div>
+        <div id="sidebarUser" class="sidebar-user"></div>
+        <button id="logoutButton" class="button button-quiet button-full" type="button">Abmelden</button>
+      </div>
+    </aside>
+
+    <section class="main-area" id="requests">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">PIMENTAGROUP / INTERN</div>
+          <h1>Anfragen</h1>
+          <p class="muted">Kundenanfragen, Materialien und Bearbeitungsstatus verwalten.</p>
+        </div>
+        <div class="topbar-actions">
+          <span id="lastUpdated" class="last-updated"></span>
+          <button id="refreshButton" class="button button-secondary" type="button"><span aria-hidden="true">↻</span> Aktualisieren</button>
+        </div>
+      </header>
+
+      <div id="appMessage" class="app-message" role="status" hidden></div>
+
+      <section class="stats-grid" aria-label="Übersicht">
+        <article class="stat-card"><span>Alle Anfragen</span><strong id="statTotal">—</strong><small>Gesamt</small></article>
+        <article class="stat-card"><span>Neu</span><strong id="statNew">—</strong><small>Unbearbeitet</small></article>
+        <article class="stat-card"><span>In Bearbeitung</span><strong id="statActive">—</strong><small>Prüfung und Umsetzung</small></article>
+        <article class="stat-card"><span>Warten auf Kunde</span><strong id="statWaiting">—</strong><small>Fehlende Angaben oder Feedback</small></article>
+      </section>
+
+      <section class="workspace">
+        <div class="request-panel panel">
+          <div class="panel-heading">
+            <div><h2>Alle Anfragen</h2><p class="muted" id="listCount">Lade Anfragen …</p></div>
+            <button id="exportButton" class="button button-quiet button-small" type="button">CSV exportieren</button>
+          </div>
+          <div class="filters">
+            <label class="search-wrap"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Name, Salon oder Referenz suchen …" aria-label="Anfragen suchen"></label>
+            <select id="statusFilter" aria-label="Nach Status filtern">
+              <option value="all">Alle Status</option>
+              <option value="new">Neu</option>
+              <option value="in_review">In Prüfung</option>
+              <option value="waiting_for_materials">Warten auf Unterlagen</option>
+              <option value="in_production">In Umsetzung</option>
+              <option value="internal_review">Interne Prüfung</option>
+              <option value="customer_review">Kundenprüfung</option>
+              <option value="changes_requested">Änderungen gewünscht</option>
+              <option value="approved">Freigegeben</option>
+              <option value="published">Veröffentlicht</option>
+              <option value="closed">Geschlossen</option>
+            </select>
+          </div>
+          <div id="requestList" class="request-list" aria-live="polite">
+            <div class="loading-state">Anfragen werden geladen …</div>
+          </div>
+        </div>
+
+        <aside id="detailPanel" class="detail-panel panel">
+          <div class="empty-detail"><div class="empty-icon">↖</div><h2>Anfrage auswählen</h2><p class="muted">Wählen Sie links eine Anfrage aus, um Kontaktdaten, Funktionsauswahl und Materialien zu sehen.</p></div>
+        </aside>
+      </section>
+      <footer class="app-footer">pimentaGROUP Web Concierge <span>·</span> Interne Verwaltung</footer>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#f6f5f2">
+  <title>Ihre Salon-Informationen · pimentaGROUP</title>
+  <link rel="stylesheet" href="./onboarding.css">
+  <script src="../js/backend-config.js"></script>
+  <script type="module" src="./onboarding.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <main class="page-shell">
+    <header class="brand-header"><a class="brand" href="../"><span class="brand-mark">p.</span><span>pimentaGROUP</span></a><span class="header-note">WEB CONCIERGE · KUNDENBEREICH</span></header>
+
+    <section id="loadingView" class="state-card"><div class="loader"></div><h1>Ihr Projekt wird geladen …</h1><p>Wir stellen Ihre persönliche Materialseite bereit.</p></section>
+    <section id="invalidView" class="state-card" hidden><div class="state-icon">!</div><h1>Link nicht verfügbar</h1><p id="invalidMessage">Dieser Link ist ungültig oder abgelaufen. Bitte kontaktieren Sie pimentaGROUP.</p><a class="button button-secondary" href="mailto:webconcierge@pimenta.group">pimentaGROUP kontaktieren</a></section>
+
+    <section id="formView" hidden>
+      <div class="intro-card">
+        <div class="eyebrow">IHR PROJEKT · <span id="referenceCode">—</span></div>
+        <h1>Erzählen Sie uns mehr über Ihren Salon.</h1>
+        <p>Mit diesen Informationen können wir Ihre Website passend zu Ihrem Unternehmen vorbereiten. Sie können zwischendurch speichern und später über denselben Link weitermachen.</p>
+        <div class="progress-line"><span id="progressBar"></span></div>
+        <div class="progress-copy"><span id="progressLabel">Noch nicht eingereicht</span><span id="expiryLabel"></span></div>
+      </div>
+
+      <form id="onboardingForm" novalidate>
+        <section class="form-card">
+          <div class="section-heading"><span class="step">01</span><div><h2>Unternehmen & Kontakt</h2><p>Wie sollen Besucher Ihren Salon erreichen?</p></div></div>
+          <div class="form-grid">
+            <label class="field full"><span>Salon- / Unternehmensname <b>*</b></span><input name="businessName" id="businessName" maxlength="160" required placeholder="z. B. Salon Müller"></label>
+            <label class="field full"><span>Straße und Hausnummer</span><input name="street" id="street" maxlength="160" placeholder="Musterstraße 12"></label>
+            <label class="field"><span>Postleitzahl</span><input name="postalCode" id="postalCode" maxlength="24" placeholder="48143"></label>
+            <label class="field"><span>Stadt <b>*</b></span><input name="city" id="city" maxlength="100" required placeholder="Münster"></label>
+            <label class="field"><span>Land</span><input name="country" id="country" maxlength="80" value="Deutschland"></label>
+            <label class="field"><span>Öffentliche E-Mail-Adresse <b>*</b></span><input name="publicEmail" id="publicEmail" type="email" maxlength="160" required placeholder="info@salon.de"></label>
+            <label class="field"><span>Telefon</span><input name="publicPhone" id="publicPhone" type="tel" maxlength="50" placeholder="+49 …"></label>
+            <label class="field"><span>Website (falls vorhanden)</span><input name="publicWebsite" id="publicWebsite" type="url" maxlength="300" placeholder="https://www…"></label>
+            <label class="field full"><span>Öffnungszeiten</span><textarea name="openingHours" id="openingHours" rows="3" maxlength="3000" placeholder="Mo–Fr: 09:00–18:00&#10;Sa: 09:00–14:00&#10;So: geschlossen"></textarea></label>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading"><span class="step">02</span><div><h2>Über Ihren Salon</h2><p>Diese Angaben helfen uns, authentische und passende Texte zu schreiben.</p></div></div>
+          <div class="form-grid">
+            <label class="field full"><span>Beschreiben Sie Ihren Salon</span><textarea name="aboutBusiness" id="aboutBusiness" rows="4" maxlength="5000" placeholder="Was zeichnet Ihren Salon aus? Wie lange gibt es ihn? Welche Atmosphäre erwartet Ihre Kunden?"></textarea><small>Sie können Stichpunkte schreiben. Wir formulieren daraus einen passenden Website-Text.</small></label>
+            <label class="field full"><span>Ihre besonderen Leistungen / Spezialisierungen</span><textarea name="specialties" id="specialties" rows="3" maxlength="2500" placeholder="z. B. moderne Haarschnitte, Balayage, Bartpflege, Nageldesign …"></textarea></label>
+            <label class="field full"><span>Wen möchten Sie hauptsächlich erreichen?</span><textarea name="targetAudience" id="targetAudience" rows="2" maxlength="1500" placeholder="z. B. Berufstätige, Familien, Kunden mit lockigem Haar …"></textarea></label>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading"><span class="step">03</span><div><h2>Leistungen & Team</h2><p>Fügen Sie Ihre wichtigsten Angebote und Mitarbeitenden hinzu. Unvollständige Angaben können später ergänzt werden.</p></div></div>
+          <label class="field full"><span>Ihre Leistungen und Preise</span><textarea name="services" id="services" rows="6" maxlength="7000" placeholder="Bitte möglichst eine Leistung pro Zeile:&#10;Damenhaarschnitt | ab 45 € | 45 Min.&#10;Herrenhaarschnitt | 32 € | 30 Min.&#10;Balayage | ab 120 € | 180 Min."></textarea><small>Preise und Dauer können Sie als Richtwerte angeben. Wir stimmen Details vor der Veröffentlichung mit Ihnen ab.</small></label>
+          <label class="field full gap-top"><span>Ihr Team</span><textarea name="team" id="team" rows="5" maxlength="7000" placeholder="Eine Person pro Zeile:&#10;Anna | Friseurmeisterin | Farbe und Balayage&#10;Lukas | Barber | Herrenhaarschnitte und Bartpflege"></textarea><small>Wenn Sie möchten, können Sie anschließend für jede Person ein Foto hochladen.</small></label>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading"><span class="step">04</span><div><h2>Stil & Gestaltung</h2><p>Welche Richtung passt zu Ihrer Marke? Das endgültige Design stimmen wir später anhand des Website-Entwurfs ab.</p></div></div>
+          <div class="form-grid">
+            <label class="field"><span>Gewünschter Stil</span><select name="brandStyle" id="brandStyle"><option value="">Noch offen</option><option value="Elegant & luxuriös">Elegant & luxuriös</option><option value="Modern & minimalistisch">Modern & minimalistisch</option><option value="Natürlich & warm">Natürlich & warm</option><option value="Klassisch & zeitlos">Klassisch & zeitlos</option><option value="Kreativ & auffällig">Kreativ & auffällig</option></select></label>
+            <label class="field"><span>Website-Sprachen</span><input name="languages" id="languages" maxlength="120" placeholder="Deutsch, Englisch"></label>
+            <label class="field"><span>Bevorzugte Hauptfarbe</span><div class="color-field"><input name="primaryColor" id="primaryColor" type="color" value="#2f8a69"><input class="color-text" id="primaryColorText" type="text" value="#2f8a69" maxlength="20" aria-label="Hauptfarbe als Hexwert"></div></label>
+            <label class="field"><span>Weitere Farbe (optional)</span><div class="color-field"><input name="secondaryColor" id="secondaryColor" type="color" value="#f6f5f2"><input class="color-text" id="secondaryColorText" type="text" value="#f6f5f2" maxlength="20" aria-label="Weitere Farbe als Hexwert"></div></label>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading"><span class="step">05</span><div><h2>Fotos & Dateien</h2><p>Laden Sie vorhandene Materialien hoch. Gute Originalfotos helfen uns, Ihre Website persönlicher zu gestalten.</p></div></div>
+          <div class="upload-grid">
+            <label class="upload-box"><span class="upload-icon">▧</span><strong>Logo & Marke</strong><small>Logo, Farbvorlagen, Schriftbeispiele</small><input type="file" data-category="logo" accept="image/jpeg,image/png,image/webp,application/pdf" multiple></label>
+            <label class="upload-box"><span class="upload-icon">♙</span><strong>Teamfotos</strong><small>Fotos von Ihnen und Ihren Mitarbeitenden</small><input type="file" data-category="team" accept="image/jpeg,image/png,image/webp,application/pdf" multiple></label>
+            <label class="upload-box"><span class="upload-icon">▣</span><strong>Arbeiten & Galerie</strong><small>Ergebnisse, Salon, Einrichtung und Atmosphäre</small><input type="file" data-category="gallery" accept="image/jpeg,image/png,image/webp,application/pdf" multiple></label>
+            <label class="upload-box"><span class="upload-icon">▤</span><strong>Weitere Dokumente</strong><small>Preisliste oder Informations-PDF</small><input type="file" data-category="documents" accept="image/jpeg,image/png,image/webp,application/pdf" multiple></label>
+          </div>
+          <div id="uploadRules" class="upload-rules">Upload-Limits werden geladen …</div>
+          <div id="uploadUsage" class="upload-usage" aria-live="polite"></div>
+          <label class="rights-check"><input type="checkbox" id="assetRightsConfirmed"><span>Ich bestätige, dass ich die erforderlichen Nutzungsrechte für die hochgeladenen Bilder und Dokumente habe und die abgebildeten Personen mit der Verwendung auf unserer Website einverstanden sind.</span></label>
+          <div id="selectedFiles" class="selected-files" hidden></div>
+          <div id="existingAssets" class="existing-assets" hidden></div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading"><span class="step">06</span><div><h2>Weitere Wünsche</h2><p>Gibt es etwas, das wir bei der Erstellung berücksichtigen sollen?</p></div></div>
+          <label class="field full"><span>Zusätzliche Hinweise</span><textarea name="notes" id="notes" rows="4" maxlength="3000" placeholder="Besondere Wünsche, Beispiele anderer Websites, Dinge, die Ihnen wichtig sind …"></textarea></label>
+        </section>
+
+        <div class="form-actions">
+          <div class="action-note"><strong>Sie können jederzeit zwischenspeichern.</strong><span>Ihre Angaben werden sicher gespeichert. Sie können denselben Link erneut öffnen, um weiterzuarbeiten.</span></div>
+          <div class="action-buttons"><button id="saveDraftButton" class="button button-secondary" type="button">Zwischenspeichern</button><button id="submitButton" class="button button-primary" type="submit">Angaben vollständig einreichen <span aria-hidden="true">→</span></button></div>
+        </div>
+        <p id="formMessage" class="form-message" role="status" hidden></p>
+        <p class="privacy-note">Bitte laden Sie nur Bilder und Dokumente hoch, für deren Nutzung Sie die erforderlichen Rechte besitzen. Ihre Angaben werden ausschließlich zur Vorbereitung und Umsetzung Ihres Website-Projekts verwendet.</p>
+      </form>
+    </section>
+    <footer class="page-footer">pimentaGROUP Web Concierge <span>·</span> Sichere Projektübergabe</footer>
+  </main>
+</body>
+</html>

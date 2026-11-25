@@ -1,0 +1,11 @@
+# Replace with the actual Supabase project ref after creating the project.
+project_id = "otfxqesrvpmabxwsblqb"
+
+[functions.submit-website-request]
+# The function validates the public publishable key itself and applies its own
+# origin, payload, file and rate-limit checks. No user session is required here.
+verify_jwt = false
+
+[functions.client-onboarding]
+# Public bearer-link portal; the function validates the one-time/expiring token itself.
+verify_jwt = false
