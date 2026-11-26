@@ -1,45 +1,63 @@
-# Supabase project connection
+# Supabase project — pimentaGROUP Web Concierge
 
-- Project name: `pimenta-webconcierge-dev`
+## Project
+
 - Project reference: `otfxqesrvpmabxwsblqb`
-- Project URL: `https://otfxqesrvpmabxwsblqb.supabase.co`
-- Frontend publishable key: configured in `js/backend-config.js`
+- Edge Function `verify_jwt`: `false` for `submit-website-request` and `client-onboarding`; each function performs its own origin, publishable-key and request/invitation-token checks.
+- Public browser code must use only the Supabase publishable key. Never expose `SUPABASE_SECRET_KEYS`, `SUPABASE_SERVICE_ROLE_KEY`, database passwords, Brevo credentials or n8n webhook secrets.
 
-## Deployed / verified before v35
+## Edge Functions
 
-- `20261119000100_website_requests.sql` — deployed and tested with real request submissions and initial image uploads.
-- `submit-website-request` — deployed and tested with real submissions and private Storage uploads.
-- `20261124000100_webconcierge_admin.sql` — applied; admin login, request list/detail, statuses, notes and initial assets were verified in the dashboard by the project owner.
+### `submit-website-request`
 
-## Added in v34 — already activated
+- Accepts public `POST` multipart form data and validates the request, allowed feature IDs, server-side pricing and initial assets.
+- Stores the original request plus normalized `configuration.websiteGenerationRequest` (contract `1.0.0`) in `public.website_requests.configuration`.
+- Sets the integer request `schema_version` to `2` for new configurator submissions.
+- Keeps the existing `configuration.project.features` array, including price data required by the admin and onboarding upload-policy logic. The AI-specific `websiteGenerationRequest.selectedFeatures` omits pimentaGROUP subscription/setup prices.
 
-- `20261124000200_client_onboarding.sql` — adds hashed expiring customer invites, onboarding profile/assets tables, private Storage bucket and access policies.
-- `client-onboarding` Edge Function — validates the invite token, saves drafts/submissions, enforces project-wide file quotas and issues signed upload URLs.
+### `client-onboarding`
 
-The database migration and Edge Function were deployed and verified by the project owner from the v34 project root:
+- Accepts token-authorized onboarding actions (`load`, `save`, `prepare_uploads`, `register_uploads`).
+- Normalizes the extended JSONB onboarding data: products, FAQs, social links, booking/shop/newsletter provider preferences and legal details.
+- Checks the v2 rights confirmation against both `public.website_request_assets` and `public.website_onboarding_assets` before final submission.
+- Accepts the new `products` asset category for shop product photos.
+
+## Relevant storage and tables
+
+- `public.website_requests` — requests and JSONB configuration.
+- `public.website_request_assets` — files supplied with the original request.
+- `public.website_onboarding_profiles` — customer business/onboarding data in JSONB.
+- `public.website_onboarding_assets` — customer logo/team/gallery/product images and documents.
+- Private Storage buckets: `website-request-assets`, `website-onboarding-assets`.
+
+The admin AI job exporter downloads assets through the authenticated administrator's Supabase session and the existing RLS Storage read policies. It does not export signed URLs, service-role credentials or invitation tokens.
+
+## Migration
+
+Apply `supabase/migrations/20261126000100_website_generation_handoff.sql` before deploying the updated onboarding function. It:
+
+1. Extends the `website_onboarding_assets.category` check constraint with `products`.
+2. Replaces `public.save_client_onboarding_by_hash(text, jsonb, boolean)` with the same security-definer behaviour but a 120 KB JSON payload limit (previously 60 KB).
+3. Preserves the function's restricted execution grant: only `service_role` may execute it.
+
+Preview and apply migrations from the repository root:
+
+```powershell
+npx.cmd supabase db push --dry-run --remote=otfxqesrvpmabxwsblqb
+```
 
 ```powershell
 npx.cmd supabase db push --remote=otfxqesrvpmabxwsblqb
-npx.cmd supabase functions deploy client-onboarding --use-api --remote=otfxqesrvpmabxwsblqb
 ```
 
-The existing request submission function and browser publishable key are unchanged. No service-role key, database password, Brevo API key or n8n secret is stored in this repository.
-
-## Added in v35 — upload limits
-
-- No shop feature: up to 50 photos, 15 PDFs, 10 MB per file, 200 MB combined per onboarding project.
-- Shop feature selected: up to 500 photos, 15 PDFs, 10 MB per file, 750 MB combined per onboarding project.
-- The `client-onboarding` Edge Function derives the shop entitlement from `website_requests.configuration` and enforces limits server-side. Files are uploaded in batches of 20, with up to four browser transfers in parallel.
-- No database migration is needed for v35. Deploy the updated Edge Function from the v35 project root:
+## Deploy Edge Functions
 
 ```powershell
-npx.cmd supabase functions deploy client-onboarding --use-api --remote=otfxqesrvpmabxwsblqb
+npx.cmd supabase functions deploy submit-website-request --remote=otfxqesrvpmabxwsblqb --use-api
 ```
 
-## Origin configuration
+```powershell
+npx.cmd supabase functions deploy client-onboarding --remote=otfxqesrvpmabxwsblqb --use-api
+```
 
-The onboarding function allows local origins `http://localhost:8000` and `http://127.0.0.1:8000` by default. Set the `ALLOWED_ORIGINS` Edge Function secret to the exact production origin(s) before hosting publicly. Do not add wildcard origins.
-
-## Email and automation
-
-Brevo sender-domain verification and API secrets are still pending; onboarding invites must be copied from the admin panel and shared manually for now. n8n is not connected; existing request-created events remain pending in `website_automation_outbox` until a workflow is connected.
+Check the deployment target and confirm only after reviewing the displayed project reference. Configure the server-only environment keys listed in `supabase/functions/.env.example` in Supabase Function Secrets. Do not put actual values in this repository.

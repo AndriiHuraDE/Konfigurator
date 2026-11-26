@@ -1164,7 +1164,7 @@
     const businessName = getFormValue('contactCompany');
     const freeTrialMonths = usesFreeTrial() ? FREE_TRIAL_MONTHS : 0;
     return {
-      schemaVersion: 1,
+      schemaVersion: 2,
       source: 'pimentaGROUP Website-Konfigurator',
       submissionId: getSubmissionId(),
       submittedAt: new Date().toISOString(),

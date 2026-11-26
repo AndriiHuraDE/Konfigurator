@@ -88,6 +88,21 @@ function readFormData() {
     languages: $('languages').value.trim(),
     services: $('services').value.trim(),
     team: $('team').value.trim(),
+    products: $('products').value.trim(),
+    faqs: $('faqs').value.trim(),
+    socialLinks: $('socialLinks').value.trim(),
+    bookingProvider: $('bookingProvider').value.trim(),
+    bookingUrl: $('bookingUrl').value.trim(),
+    reviewProfileUrl: $('reviewProfileUrl').value.trim(),
+    shopPaymentProvider: $('shopPaymentProvider').value.trim(),
+    newsletterProvider: $('newsletterProvider').value.trim(),
+    legalName: $('legalName').value.trim(),
+    legalForm: $('legalForm').value.trim(),
+    legalRepresentative: $('legalRepresentative').value.trim(),
+    registerCourt: $('registerCourt').value.trim(),
+    registerNumber: $('registerNumber').value.trim(),
+    vatId: $('vatId').value.trim(),
+    responsiblePerson: $('responsiblePerson').value.trim(),
     notes: $('notes').value.trim(),
     assetRightsConfirmed: $('assetRightsConfirmed').checked ? 'true' : 'false',
     assetRightsConfirmedAt: $('assetRightsConfirmed').checked ? new Date().toISOString() : '',
@@ -97,10 +112,12 @@ function readFormData() {
 function fillForm(data = {}) {
   const fields = [
     'businessName','street','postalCode','city','country','publicEmail','publicPhone','publicWebsite','openingHours',
-    'aboutBusiness','specialties','targetAudience','brandStyle','primaryColor','secondaryColor','languages','services','team','notes',
+    'aboutBusiness','specialties','targetAudience','brandStyle','primaryColor','secondaryColor','languages','services','team','products','faqs','socialLinks',
+    'bookingProvider','bookingUrl','reviewProfileUrl','shopPaymentProvider','newsletterProvider','legalName','legalForm','legalRepresentative','registerCourt','registerNumber','vatId','responsiblePerson','notes',
   ];
   fields.forEach(key => { if (typeof data[key] === 'string' && $(key)) $(key).value = data[key]; });
-  if (data.assetRightsConfirmed === 'true') $('assetRightsConfirmed').checked = true;
+  // A pre-v37 consent covered onboarding uploads only. Require an explicit re-confirmation for the v2 scope, which also covers initial request uploads.
+  if (data.assetRightsConfirmed === 'true' && data.assetRightsConfirmationVersion === 'v2') $('assetRightsConfirmed').checked = true;
   if (data.primaryColor && /^#[0-9a-f]{6}$/i.test(data.primaryColor)) $('primaryColor').value = data.primaryColor;
   if (data.secondaryColor && /^#[0-9a-f]{6}$/i.test(data.secondaryColor)) $('secondaryColor').value = data.secondaryColor;
   $('primaryColorText').value = $('primaryColor').value;
@@ -154,7 +171,7 @@ function renderExistingAssets(assets = []) {
     updateUploadGuidance();
     return;
   }
-  const labels = { logo: 'Logo & Marke', team: 'Teamfotos', gallery: 'Arbeiten & Galerie', documents: 'Dokumente', other: 'Weitere Dateien' };
+  const labels = { logo: 'Logo & Marke', team: 'Teamfotos', gallery: 'Arbeiten & Galerie', products: 'Shop-Produkte', documents: 'Dokumente', other: 'Weitere Dateien' };
   const visibleAssets = assets.slice(0, 30);
   container.hidden = false;
   container.innerHTML = `<strong style="font-size:11px">Bereits hochgeladen (${usage.photos} Fotos, ${usage.documents} PDFs)</strong>` + visibleAssets.map(asset =>

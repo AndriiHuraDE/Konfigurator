@@ -39,6 +39,31 @@ const SOCIAL_CATALOG: Record<string, string> = {
   linkedin: 'LinkedIn',
 };
 
+const FEATURE_GROUPS: Record<string, 'website' | 'phone' | 'ai' | 'visibility'> = {
+  baseService: 'website', booking: 'website', employeeManagement: 'website', whatsapp: 'website',
+  contactPlus: 'website', gallery: 'website', instagramFeed: 'website', reviews: 'website', maps: 'website',
+  faq: 'website', blog: 'website', shop: 'website', newsletter: 'website', mobileOptimization: 'phone',
+  whatsappBot: 'ai', chatbot: 'ai', leadAssistant: 'ai', emailAssistant: 'ai', crm: 'ai', voice: 'ai',
+  automation: 'ai', localSEO: 'visibility', multilingual: 'visibility',
+};
+
+const GENERATION_FEATURE_KEYS: Record<string, string> = {
+  baseService: 'baseWebsite', mobileOptimization: 'responsiveDesign', booking: 'booking',
+  employeeManagement: 'employeeManagement', whatsapp: 'whatsappContact', contactPlus: 'contactForm',
+  gallery: 'gallery', instagramFeed: 'instagramFeed', reviews: 'reviews', maps: 'mapAndOpeningHours',
+  faq: 'faq', blog: 'blog', shop: 'shop', newsletter: 'newsletter', whatsappBot: 'whatsappBot',
+  chatbot: 'websiteChatbot', leadAssistant: 'leadAssistant', emailAssistant: 'emailAssistant',
+  crm: 'crmIntegration', voice: 'voiceAssistant', automation: 'workflowAutomation',
+  localSEO: 'localSEO', multilingual: 'multilingual',
+};
+
+function industryKey(value: string): string {
+  if (value === 'Friseursalon / Barbershop') return 'hair_salon_barbershop';
+  if (value === 'Nagelstudio') return 'nail_studio';
+  if (value === 'Massage / Wellness') return 'massage_wellness';
+  return 'other';
+}
+
 const INDUSTRIES = new Set([
   'Friseursalon / Barbershop',
   'Nagelstudio',
@@ -293,30 +318,95 @@ Deno.serve(async (request: Request) => {
     const normalizedFeatures = featureIds.map(id => ({
       id,
       name: FEATURE_CATALOG[id].name,
+      category: FEATURE_GROUPS[id],
       monthlyPrice: FEATURE_CATALOG[id].monthly,
     }));
     const normalizedSocial = socialIds.map(id => ({ id, name: SOCIAL_CATALOG[id], setupPrice: 5 }));
+    const generationFeatures = normalizedFeatures.map(({ id, name, category }) => ({ id, name, category }));
+    const generationSocialProfiles = normalizedSocial.map(({ id, name }) => ({ id, name }));
+    const featureGroups = {
+      website: normalizedFeatures.filter(feature => feature.category === 'website'),
+      phone: normalizedFeatures.filter(feature => feature.category === 'phone'),
+      ai: normalizedFeatures.filter(feature => feature.category === 'ai'),
+      visibility: normalizedFeatures.filter(feature => feature.category === 'visibility'),
+    };
+    const generationFeatureFlags = Object.fromEntries(
+      Object.entries(GENERATION_FEATURE_KEYS).map(([id, key]) => [key, featureIds.includes(id)])
+    );
+    const hasFeature = (id: string) => featureIds.includes(id);
+    const requestedSections = [
+      'hero', 'intro',
+      ...(hasFeature('booking') ? ['booking'] : []),
+      ...(hasFeature('gallery') ? ['gallery'] : []),
+      ...(hasFeature('instagramFeed') || socialIds.length ? ['social_links'] : []),
+      ...(hasFeature('reviews') ? ['reviews'] : []),
+      ...(hasFeature('maps') ? ['location_opening_hours'] : []),
+      ...(hasFeature('faq') ? ['faq'] : []),
+      ...(hasFeature('blog') ? ['blog'] : []),
+      ...(hasFeature('contactPlus') || hasFeature('whatsapp') ? ['contact'] : []),
+    ];
+    const requestedPages = [
+      { id: 'home', required: true },
+      ...(hasFeature('shop') ? [{ id: 'shop', required: true }] : []),
+      { id: 'impressum', required: true, legalReviewRequired: true },
+      { id: 'datenschutz', required: true, legalReviewRequired: true },
+    ];
     const monthlyTotal = normalizedFeatures.reduce((sum, feature) => sum + feature.monthlyPrice, 0);
     const oneTimeTotal = normalizedSocial.length * 5;
     const freeTrialMonths = billingStart === 'trial' ? 2 : 0;
     const submittedAt = cleanText(payload.submittedAt, 60);
 
+    const normalizedSubmittedAt = submittedAt && !Number.isNaN(Date.parse(submittedAt))
+      ? new Date(submittedAt).toISOString() : null;
     const normalizedConfiguration = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       source: 'pimentaGROUP Website-Konfigurator',
       creationMode: 'simple',
       project: {
         type: cleanText(project.type, 80),
         projectKey: cleanText(project.projectKey, 40),
         industry,
+        industryKey: industryKey(industry),
         businessName,
         websiteStatus,
         features: normalizedFeatures,
+        selectedFeatureIds: featureIds,
+        featureGroups,
         socialProfiles: normalizedSocial,
+        selectedSocialProfileIds: socialIds,
         editorMode: 'simple',
       },
+      websiteGenerationRequest: {
+        contract: 'pimentaGROUP.website-generation-request',
+        schemaVersion: '1.0.0',
+        referenceKit: { id: 'pimentaGROUP-ai-reference-kit', version: '2.0.0' },
+        targetMarket: 'DE',
+        project: {
+          type: cleanText(project.type, 80),
+          projectKey: cleanText(project.projectKey, 40),
+          industry: { id: industryKey(industry), label: industry },
+          websiteStatus,
+          existingWebsite: currentWebsite || null,
+        },
+        features: generationFeatureFlags,
+        selectedFeatureIds: featureIds,
+        selectedFeatures: generationFeatures,
+        selectedSocialProfiles: generationSocialProfiles,
+        requestedPages,
+        requestedSections,
+        design: { direction: 'to_be_set_from_client_onboarding', useReferenceKit: true },
+        rules: {
+          createIndividualDesign: true,
+          adaptReferencePatternsRatherThanCopyTheDemo: true,
+          copyReferenceBusinessContent: false,
+          inventMissingBusinessFacts: false,
+          enableOnlySelectedFeatures: true,
+          doNotPretendDemoIntegrationsAreProduction: true,
+          requireHumanApprovalBeforePublication: true,
+        },
+      },
       billingPreference: { start: billingStart, freeTrialMonths },
-      submittedAt: submittedAt && !Number.isNaN(Date.parse(submittedAt)) ? new Date(submittedAt).toISOString() : null,
+      submittedAt: normalizedSubmittedAt,
     };
     const pricingSnapshot = {
       currency: 'EUR',
@@ -396,7 +486,7 @@ Deno.serve(async (request: Request) => {
       submission_id: submissionId,
       reference_code: referenceCode,
       source: 'pimentaGROUP Website-Konfigurator',
-      schema_version: 1,
+      schema_version: Number(payload.schemaVersion) >= 2 ? 2 : 1,
       creation_mode: 'simple',
       status: 'new',
       industry,

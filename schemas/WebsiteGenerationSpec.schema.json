@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pimenta.group/schemas/WebsiteGenerationSpec-1.0.0.schema.json",
+  "title": "pimentaGROUP WebsiteGenerationSpec",
+  "description": "Canonical, versioned handoff from Web Concierge to the website-generation workflow. Contains only business/public content, selected functionality, legal information supplied for review, and approved asset references.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract", "schemaVersion", "job", "project", "business", "brand", "pages", "sections",
+    "features", "selectedFeatureIds", "selectedFeatures", "selectedSocialProfiles", "content", "assets", "assetsExcluded",
+    "reference", "generationRules", "productionRequirements", "readiness", "sourceSnapshots"
+  ],
+  "properties": {
+    "contract": { "const": "pimentaGROUP.WebsiteGenerationSpec" },
+    "schemaVersion": { "const": "1.0.0" },
+    "job": {
+      "type": "object",
+      "required": ["requestId", "referenceCode", "packageCreatedAt", "requestStatus", "packageParts", "assetCount", "assetBytes", "totalAssetCount", "totalAssetBytes"],
+      "properties": {
+        "requestId": { "type": "string", "format": "uuid" },
+        "referenceCode": { "type": "string" },
+        "requestCreatedAt": { "type": ["string", "null"], "format": "date-time" },
+        "packageCreatedAt": { "type": "string", "format": "date-time" },
+        "requestStatus": { "type": "string" },
+        "packageParts": { "type": "integer", "minimum": 1, "maximum": 2 },
+        "assetCount": { "type": "integer", "minimum": 0 },
+        "assetBytes": { "type": "integer", "minimum": 0 },
+        "totalAssetCount": { "type": "integer", "minimum": 0 },
+        "totalAssetBytes": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "project": {
+      "type": "object",
+      "required": ["type", "projectKey", "industry", "websiteStatus", "targetMarket"],
+      "properties": {
+        "type": { "type": "string" },
+        "projectKey": { "type": "string" },
+        "industry": {
+          "type": "object",
+          "required": ["id", "label"],
+          "properties": { "id": { "type": "string" }, "label": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "websiteStatus": { "type": "string" },
+        "existingWebsite": { "type": ["string", "null"], "format": "uri" },
+        "targetMarket": { "type": "string", "default": "DE" }
+      },
+      "additionalProperties": false
+    },
+    "business": {
+      "type": "object",
+      "required": ["name", "legal", "address", "publicContact", "openingHours"],
+      "properties": {
+        "name": { "type": "string" },
+        "legal": {
+          "type": "object",
+          "required": ["legalName", "legalForm", "legalRepresentative", "registerCourt", "registerNumber", "vatId", "responsiblePerson", "reviewStatus"],
+          "properties": {
+            "legalName": { "type": "string" },
+            "legalForm": { "type": "string" },
+            "legalRepresentative": { "type": "string" },
+            "registerCourt": { "type": "string" },
+            "registerNumber": { "type": "string" },
+            "vatId": { "type": "string" },
+            "responsiblePerson": { "type": "string" },
+            "reviewStatus": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "address": {
+          "type": "object",
+          "required": ["street", "postalCode", "city", "country"],
+          "properties": {
+            "street": { "type": "string" },
+            "postalCode": { "type": "string" },
+            "city": { "type": "string" },
+            "country": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "publicContact": {
+          "type": "object",
+          "required": ["email", "phone", "website"],
+          "properties": {
+            "email": { "type": "string" },
+            "phone": { "type": "string" },
+            "website": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "openingHours": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "brand": {
+      "type": "object",
+      "required": ["requestedStyle", "colors", "languages", "socialLinks"],
+      "properties": {
+        "requestedStyle": { "type": "string" },
+        "colors": {
+          "type": "object",
+          "required": ["primary", "secondary"],
+          "properties": { "primary": { "type": "string" }, "secondary": { "type": "string" } },
+          "additionalProperties": false
+        },
+        "languages": {
+          "type": "object",
+          "required": ["primary", "additional", "labels", "defaultedFromTargetMarket"],
+          "properties": {
+            "primary": { "type": "string" },
+            "additional": { "type": "array", "items": { "type": "string" } },
+            "labels": { "type": "array", "items": { "type": "string" } },
+            "unknownLabels": { "type": "array", "items": { "type": "string" } },
+            "defaultedFromTargetMarket": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "socialLinks": { "type": "array", "items": { "$ref": "#/$defs/socialLink" } }
+      },
+      "additionalProperties": false
+    },
+    "pages": { "type": "array", "items": { "$ref": "#/$defs/page" } },
+    "sections": { "type": "array", "items": { "type": "string" } },
+    "features": { "type": "object", "additionalProperties": { "type": "boolean" } },
+    "selectedFeatureIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "selectedFeatures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "category"],
+        "properties": { "id": { "type": "string" }, "name": { "type": "string" }, "category": { "type": "string" } },
+        "additionalProperties": false
+      }
+    },
+    "selectedSocialProfiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": { "id": { "type": "string" }, "name": { "type": "string" } },
+        "additionalProperties": false
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": [
+        "aboutBusiness", "specialties", "targetAudience", "services", "servicesRaw", "team", "teamRaw",
+        "products", "productsRaw", "faqs", "faqsRaw", "reviewProfileUrl", "notes", "integrationPreferences"
+      ],
+      "properties": {
+        "aboutBusiness": { "type": "string" },
+        "specialties": { "type": "string" },
+        "targetAudience": { "type": "string" },
+        "services": { "type": "array", "items": { "$ref": "#/$defs/service" } },
+        "servicesRaw": { "type": "string" },
+        "team": { "type": "array", "items": { "$ref": "#/$defs/teamMember" } },
+        "teamRaw": { "type": "string" },
+        "products": { "type": "array", "items": { "$ref": "#/$defs/product" } },
+        "productsRaw": { "type": "string" },
+        "faqs": { "type": "array", "items": { "$ref": "#/$defs/faq" } },
+        "faqsRaw": { "type": "string" },
+        "reviewProfileUrl": { "type": "string" },
+        "notes": { "type": "string" },
+        "integrationPreferences": {
+          "type": "object",
+          "required": ["bookingProvider", "bookingUrl", "shopPaymentProvider", "newsletterProvider"],
+          "properties": {
+            "bookingProvider": { "type": "string" },
+            "bookingUrl": { "type": "string" },
+            "shopPaymentProvider": { "type": "string" },
+            "newsletterProvider": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "assets": { "type": "array", "items": { "$ref": "#/$defs/asset" } },
+    "assetsExcluded": { "type": "array", "items": { "$ref": "#/$defs/excludedAsset" } },
+    "reference": {
+      "type": "object",
+      "required": ["kitId", "kitVersion", "usage"],
+      "properties": {
+        "kitId": { "type": "string" },
+        "kitVersion": { "type": "string" },
+        "usage": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "generationRules": { "type": "object", "additionalProperties": { "type": "boolean" } },
+    "productionRequirements": { "type": "array", "items": { "type": "object" } },
+    "readiness": {
+      "type": "object",
+      "required": ["status", "missingInformation", "canGenerateDraft", "canPublish", "humanApprovalRequired"],
+      "properties": {
+        "status": { "type": "string", "enum": ["ready_for_draft", "needs_input_or_review"] },
+        "missingInformation": { "type": "array", "items": { "type": "object", "required": ["field", "reason"], "properties": { "field": { "type": "string" }, "reason": { "type": "string" } }, "additionalProperties": false } },
+        "canGenerateDraft": { "type": "boolean" },
+        "canPublish": { "type": "boolean" },
+        "humanApprovalRequired": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "sourceSnapshots": {
+      "type": "object",
+      "required": ["configurator", "onboarding"],
+      "properties": {
+        "configurator": { "type": "object" },
+        "onboarding": { "type": "object" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "page": {
+      "type": "object",
+      "required": ["id", "required"],
+      "properties": {
+        "id": { "type": "string" },
+        "required": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "legalReviewRequired": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "socialLink": {
+      "type": "object",
+      "required": ["platform", "url", "sourceLine", "parseStatus"],
+      "properties": {
+        "platform": { "type": "string" },
+        "url": { "type": "string" },
+        "sourceLine": { "type": "string" },
+        "parseStatus": { "type": "string", "enum": ["structured", "needs_review"] }
+      },
+      "additionalProperties": false
+    },
+    "service": {
+      "type": "object",
+      "required": ["sourceLine", "parseStatus", "name", "priceText", "durationText", "description"],
+      "properties": {
+        "sourceLine": { "type": "string" },
+        "parseStatus": { "type": "string", "enum": ["structured", "needs_review"] },
+        "name": { "type": "string" },
+        "priceText": { "type": "string" },
+        "durationText": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "teamMember": {
+      "type": "object",
+      "required": ["sourceLine", "parseStatus", "name", "role", "specialties", "photoFilename"],
+      "properties": {
+        "sourceLine": { "type": "string" },
+        "parseStatus": { "type": "string", "enum": ["structured", "needs_review"] },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "specialties": { "type": "string" },
+        "photoFilename": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "product": {
+      "type": "object",
+      "required": ["sourceLine", "parseStatus", "name", "priceText", "description", "skuOrVariant", "imageFilename"],
+      "properties": {
+        "sourceLine": { "type": "string" },
+        "parseStatus": { "type": "string", "enum": ["structured", "needs_review"] },
+        "name": { "type": "string" },
+        "priceText": { "type": "string" },
+        "description": { "type": "string" },
+        "skuOrVariant": { "type": "string" },
+        "imageFilename": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "faq": {
+      "type": "object",
+      "required": ["sourceLine", "parseStatus", "question", "answer"],
+      "properties": {
+        "sourceLine": { "type": "string" },
+        "parseStatus": { "type": "string", "enum": ["structured", "needs_review"] },
+        "question": { "type": "string" },
+        "answer": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "asset": {
+      "type": "object",
+      "required": ["id", "category", "source", "originalFilename", "mimeType", "sizeBytes", "archivePath", "rightsConfirmed"],
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string" },
+        "source": { "type": "string" },
+        "originalFilename": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "sizeBytes": { "type": "integer", "minimum": 1 },
+        "archivePath": { "type": "string" },
+        "rightsConfirmed": { "type": "boolean" },
+        "rightsConfirmedAt": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "excludedAsset": {
+      "type": "object",
+      "required": ["id", "category", "source", "originalFilename", "mimeType", "sizeBytes", "reason"],
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string" },
+        "source": { "type": "string" },
+        "originalFilename": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "sizeBytes": { "type": "integer", "minimum": 0 },
+        "reason": { "type": "string", "const": "chatgpt_free_package_size_cap" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

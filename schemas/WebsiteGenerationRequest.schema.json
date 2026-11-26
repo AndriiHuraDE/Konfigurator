@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pimenta.group/schemas/WebsiteGenerationRequest-1.0.0.schema.json",
+  "title": "pimentaGROUP WebsiteGenerationRequest",
+  "description": "Server-normalized generation intent stored with the original website request before client onboarding is complete.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "schemaVersion", "referenceKit", "targetMarket", "project", "features", "selectedFeatureIds", "selectedFeatures", "selectedSocialProfiles", "requestedPages", "requestedSections", "design", "rules"],
+  "properties": {
+    "contract": { "const": "pimentaGROUP.website-generation-request" },
+    "schemaVersion": { "const": "1.0.0" },
+    "referenceKit": {
+      "type": "object",
+      "required": ["id", "version"],
+      "properties": { "id": { "const": "pimentaGROUP-ai-reference-kit" }, "version": { "const": "2.0.0" } },
+      "additionalProperties": false
+    },
+    "targetMarket": { "const": "DE" },
+    "project": {
+      "type": "object",
+      "required": ["type", "projectKey", "industry", "websiteStatus", "existingWebsite"],
+      "properties": {
+        "type": { "type": "string" },
+        "projectKey": { "type": "string", "enum": ["new", "refresh", "extend"] },
+        "industry": {
+          "type": "object",
+          "required": ["id", "label"],
+          "properties": {
+            "id": { "type": "string", "enum": ["hair_salon_barbershop", "nail_studio", "massage_wellness", "other"] },
+            "label": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "websiteStatus": { "type": "string" },
+        "existingWebsite": { "type": ["string", "null"], "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "features": { "type": "object", "additionalProperties": { "type": "boolean" } },
+    "selectedFeatureIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "selectedFeatures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "category"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "category": { "type": "string", "enum": ["website", "phone", "ai", "visibility"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "selectedSocialProfiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "enum": ["instagram", "facebook", "tiktok", "linkedin"] },
+          "name": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requestedPages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "required"],
+        "properties": {
+          "id": { "type": "string", "enum": ["home", "shop", "impressum", "datenschutz"] },
+          "required": { "type": "boolean" },
+          "legalReviewRequired": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requestedSections": { "type": "array", "items": { "type": "string" } },
+    "design": {
+      "type": "object",
+      "required": ["direction", "useReferenceKit"],
+      "properties": {
+        "direction": { "const": "to_be_set_from_client_onboarding" },
+        "useReferenceKit": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "rules": {
+      "type": "object",
+      "required": ["createIndividualDesign", "adaptReferencePatternsRatherThanCopyTheDemo", "copyReferenceBusinessContent", "inventMissingBusinessFacts", "enableOnlySelectedFeatures", "doNotPretendDemoIntegrationsAreProduction", "requireHumanApprovalBeforePublication"],
+      "properties": {
+        "createIndividualDesign": { "const": true },
+        "adaptReferencePatternsRatherThanCopyTheDemo": { "const": true },
+        "copyReferenceBusinessContent": { "const": false },
+        "inventMissingBusinessFacts": { "const": false },
+        "enableOnlySelectedFeatures": { "const": true },
+        "doNotPretendDemoIntegrationsAreProduction": { "const": true },
+        "requireHumanApprovalBeforePublication": { "const": true }
+      },
+      "additionalProperties": false
+    }
+  }
+}

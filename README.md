@@ -1,127 +1,114 @@
-# pimentaGROUP Web Concierge — v36
+# pimentaGROUP Web Concierge — v37
 
-Version 36 refreshes the configurator JavaScript asset URL to prevent browsers from reusing a stale cached script. The package is based on the clean v35 project and preserves its onboarding upload limits, request, onboarding and admin workflows.
+## Purpose
 
-## Customer journey
+This repository contains the pimentaGROUP Web Concierge configurator, the internal request admin panel, the customer onboarding portal and the Supabase Edge Functions behind them. It is the intake and customer-data side of the future AI website-generation workflow. The public salon Demo Website is a separate project and is not part of this repository.
 
-1. A prospect chooses salon type and website functions in the simple configurator.
-2. The prospect selects the done-for-you design route and sends a non-binding enquiry.
-3. The enquiry and initial images are saved in Supabase.
-4. A pimentaGROUP administrator opens the request in `/admin/` and creates a personal onboarding link.
-5. The customer opens `/onboarding/#token=...` and provides business details, opening hours, service/price information, team details, brand preferences and additional notes.
-6. The customer can save a draft and continue later using the same link, or submit the material package.
-7. Additional customer files are uploaded directly to a private Storage bucket using short-lived signed upload tokens. The service validates the uploaded file type/signature before registering metadata.
-8. The administrator sees the submitted onboarding profile and additional files inside the request detail view.
+## Customer workflow
 
-## Security design
+1. A customer selects the website options in the configurator and submits a request.
+2. The request is validated server-side. The server recalculates the pimentaGROUP feature prices and stores the selected feature groups plus a normalized `websiteGenerationRequest` in `website_requests.configuration`.
+3. An administrator opens the request in `/admin/` and creates an onboarding invitation.
+4. The customer completes business details, brand preferences, services, team, products, FAQs, social profile URLs, integration preferences and legal information. The customer can upload a logo, team photos, gallery images, product photos and documents.
+5. Before customer assets can be exported for AI use, the customer must explicitly confirm the updated v2 usage-rights statement. This statement covers both files attached to the original request and later onboarding uploads.
+6. The administrator downloads the AI job ZIP package from the request details.
+7. For the current manual ChatGPT Free workflow, the administrator attaches the AI Reference Kit v2 ZIP and the client job ZIP (or both client-job parts) to a separate ChatGPT conversation for that customer. ChatGPT creates a draft; pimentaGROUP reviews it before publication.
 
-- The onboarding link contains a 256-bit random bearer token in the URL fragment (after `#`), so the browser does not send it in the initial HTTP request or normal referrer header. The database stores only its SHA-256 hash.
-- The link expires after 30 days by default. The onboarding page also sends a `no-referrer` policy and removes the token fragment from the address bar after opening. Creating a new link revokes earlier active links for that request.
-- The raw token is shown once to the administrator. Copy it and send it to the customer through a suitable channel. The raw token is not stored in the database.
-- The customer portal has no general public database access. It calls the `client-onboarding` Edge Function, which validates the token server-side.
-- Customer uploads use server-created signed Storage upload tokens and go into the private `website-onboarding-assets` bucket.
-- Public/anonymous users cannot read onboarding tables or bucket files. Only approved pimentaGROUP administrators can read them through RLS.
-- No Supabase secret/service-role key is in browser code.
-- The portal can save drafts and resubmit changes until the invite expires or is revoked.
+## AI data contracts
 
-## Apply the database migration
+- Configurator request payload: `schemaVersion: 2`.
+- Stored request configuration: `configuration.schemaVersion: 2`.
+- Request-stage contract: `configuration.websiteGenerationRequest`, validated by `schemas/WebsiteGenerationRequest.schema.json`, version `1.0.0`.
+- Complete post-onboarding handoff: `schemas/WebsiteGenerationSpec.schema.json`, version `1.0.0`.
+- Reference kit identifier/version: `pimentaGROUP-ai-reference-kit`, version `2.0.0`.
 
-Open PowerShell in the project root (the folder containing `index.html` and `supabase/`) and run:
+The final `WebsiteGenerationSpec` combines the server-normalized feature selection with onboarding business data and customer assets. It excludes the requester's private contact email/phone, internal admin notes, billing details, Supabase secrets, invitation tokens and temporary signed URLs. pimentaGROUP subscription/setup prices are stripped from the AI-facing feature list so the model does not confuse them with the customer's service/product prices.
+
+## Onboarding information
+
+The onboarding form accepts:
+
+- Business name, address, public email/phone/website and opening hours.
+- Business description, specialties and target audience.
+- Services: one per line, `Name | price | duration | optional description`.
+- Team: one per line, `Name | role | specialities | optional photo filename`.
+- Products: one per line, `Name | price | description | optional SKU/variant | optional image filename`.
+- FAQs: one per line, `Question | answer`.
+- Website languages, requested visual style and optional primary/secondary colors.
+- Social profile URLs: one per line, `Platform | public URL`.
+- Booking provider/URL, review profile URL, shop payment provider and newsletter service.
+- Legal company name, legal form, representative, register details, VAT ID and responsible person.
+- Additional notes.
+
+Structured lines are parsed into fields while the original source lines are retained for review. Lines that cannot be parsed reliably are marked `needs_review` in the AI spec; the model must not guess missing values.
+
+## Asset upload and export limits
+
+- Without the `shop` feature: up to 50 image files.
+- With the `shop` feature: up to 500 image files.
+- PDF documents: up to 15 per project.
+- Maximum individual onboarding file size: 10 MB.
+- Aggregate onboarding material budget: 200 MB without shop or 750 MB with shop.
+- Upload batches: up to 20 files.
+- Accepted formats: JPEG, PNG, WebP and PDF. The separate product-image category accepts images only.
+
+The new migration `supabase/migrations/20261126000100_website_generation_handoff.sql` adds the `products` asset category and raises the onboarding JSON payload limit from 60 KB to 120 KB. Apply the migration before using the expanded form and product-image category.
+
+For ChatGPT Free, the admin exporter targets a combined job-asset budget of 470 MiB and at most two ZIP parts, each below 400 MiB. If the customer uploaded more than the manual package budget, the exporter prioritizes logo, documents, team photos, original-request files and product images before gallery/other images. Omitted files are listed in `assetsExcluded`; the AI must not pretend those files are available. This is a manual pilot limit, not a limit on the long-term generator design.
+
+## AI package export
+
+Open a request in `/admin/` and choose **AI-Website-Paket herunterladen (ZIP)**. The browser downloads the private assets using the authenticated administrator session and builds the package locally. The package includes:
+
+- `WebsiteGenerationSpec.json`;
+- `ASSET_MANIFEST.json` and `CHATGPT_TASK.txt`;
+- approved customer files under `assets/`;
+- an explicit `assetsExcluded` list when some assets are omitted due to the Free-plan package budget.
+
+For two-part packages, part 01 contains the spec and the first assets; part 02 contains the remaining included assets and its manifest. The customer must have confirmed asset rights version `v2`. Existing confirmations saved under the earlier wording are intentionally not reused: the customer must actively confirm again.
+
+The exporter uses JSZip 3.10.1 from a pinned CDN URL. It does not send customer data to ChatGPT or any OpenAI API. The administrator must upload the Reference Kit and job ZIP(s) manually in a separate ChatGPT conversation. ChatGPT Free limits and ZIP/Data Analysis availability can change; check the current ChatGPT UI/help limits.
+
+## Supabase deployment
+
+The request/onboarding data extensions use the existing JSONB columns; the only schema change is the migration described above. From the project root, preview and then apply pending migrations:
+
+```powershell
+npx.cmd supabase db push --dry-run --remote=otfxqesrvpmabxwsblqb
+```
 
 ```powershell
 npx.cmd supabase db push --remote=otfxqesrvpmabxwsblqb
 ```
 
-This applies `supabase/migrations/20261124000200_client_onboarding.sql`. It adds:
-
-- Private hashed onboarding invites.
-- `public.website_onboarding_profiles`.
-- `public.website_onboarding_assets`.
-- The private `website-onboarding-assets` Storage bucket (10 MB per file; JPG, PNG, WebP and PDF).
-- Admin-only RLS policies for reading onboarding data and files.
-- An admin-only invite-generation RPC and service-role-only RPCs for token validation and saving onboarding data.
-
-The migration does not modify the original request tables or delete existing requests/assets.
-
-## Deploy the onboarding Edge Function
-
-From the project root:
+Then deploy both updated Edge Functions:
 
 ```powershell
-npx.cmd supabase functions deploy client-onboarding --use-api --remote=otfxqesrvpmabxwsblqb
+npx.cmd supabase functions deploy submit-website-request --remote=otfxqesrvpmabxwsblqb --use-api
 ```
 
-The function is configured with `verify_jwt = false` because customer access uses a separate high-entropy invitation token rather than a Supabase Auth account. The function validates the public publishable key, request origin, invitation hash and expiry on every action. It uses server-side Supabase credentials only inside the Edge Function.
+```powershell
+npx.cmd supabase functions deploy client-onboarding --remote=otfxqesrvpmabxwsblqb --use-api
+```
 
-For local tests, the default allowed origins include `http://localhost:8000` and `http://127.0.0.1:8000`. Before production, set the `ALLOWED_ORIGINS` Edge Function secret to the exact deployed origin(s), for example `https://www.pimenta.group`, without a path or trailing slash. If multiple origins are required, separate them with commas.
+Review the target project and migration list in the CLI before confirming. Do not bypass confirmation.
 
-No new secrets are required for the onboarding portal. It uses the Supabase server credentials already provisioned to Edge Functions. Brevo is still not required to generate/copy onboarding links; the admin can share the link manually until email is configured.
+Required Edge Function secrets are described in `supabase/functions/.env.example`. Do not commit a real `.env` file, service-role key, Brevo API key, n8n secret or database password.
 
-## Create and send an onboarding link
+## Local development
 
-1. Run the project locally or open the deployed admin URL.
-2. Sign in at `/admin/` with an active account in `private.webconcierge_admins`.
-3. Open a request.
-4. Find **Kunden-Onboarding** and click **Onboarding-Link erstellen (30 Tage)**.
-5. Copy the generated link and send it to that customer. Do not post it publicly; anyone with the link can edit that customer's onboarding data until it expires or is revoked.
-6. Creating another invite for the same request revokes the previous active invite.
-
-The generated link points to `/onboarding/#token=...` on the same origin. The bearer token is stored in the URL fragment, then removed from the visible address after the portal opens. For local development, run the static server from this project root:
+From the project root:
 
 ```powershell
 python -m http.server 8000
 ```
 
-Admin: `http://localhost:8000/admin/`
+- Configurator: `http://localhost:8000/`
+- Admin: `http://localhost:8000/admin/`
+- Customer onboarding: `http://localhost:8000/onboarding/`
 
-Customer onboarding route: `http://localhost:8000/onboarding/` (the invite token is appended by the admin panel).
+The public frontend uses the Supabase publishable key. All privileged operations and private Storage downloads are performed through Edge Functions or authenticated admin access with RLS.
 
-## Onboarding fields
+## Production boundary
 
-- Company name, street, postal code, city and country.
-- Public contact email, phone, website and opening hours.
-- About the salon, specialties and target audience.
-- Services/prices/duration (one service per line) and team information (one person per line).
-- Desired style, languages and optional brand colors.
-- Additional notes.
-- Logo/brand files, team photos, work/gallery photos and PDF documents.
-
-Text limits are enforced by the Edge Function. Upload limits are calculated from the original request configuration: up to 50 image files without the shop feature or 500 image files when the shop feature is selected; up to 15 PDF documents in either case; 10 MB per file; 200 MB total without shop or 750 MB total with shop. JPG, PNG, WebP and PDF are accepted. The server checks project-wide counts and sizes before issuing upload links and verifies each uploaded file signature before registering its metadata.
-
-The per-project size budgets are not the same as the Supabase organization's total quota. Supabase Free currently includes 1 GB Storage for the entire organization; several customers can use that shared quota together. Check Storage usage and upgrade the plan before production if many salons will upload large image libraries.
-
-## Current limitations
-
-- Email invitations are not automated yet because Brevo sender-domain setup is pending. Copy and send the generated link manually.
-- This is an information and material collection portal, not yet a visual website editor.
-- Submitted details are stored in structured JSON for the future website generator; the generator itself is a later milestone.
-- The onboarding link is a bearer credential. Share it privately and create a new one if it is forwarded to the wrong person.
-
-## Existing systems preserved
-
-- Existing configurator and request intake endpoint `submit-website-request` remain unchanged.
-- Existing request table, price snapshot and automation outbox remain unchanged.
-- Existing admin authentication, allow-list and request status workflow remain in place.
-- Existing team photographs, stock-photo licence register and `.git` directory are preserved.
-
-
-## Onboarding upload limits (v35)
-
-The client onboarding portal calculates upload limits from the features saved in the original website request:
-
-- With the `shop` feature: up to 500 image files.
-- Without the `shop` feature: up to 50 image files.
-- PDF documents: up to 15 per project (separate from the photo count).
-- Maximum individual file size: 10 MB.
-- Aggregate material budget: 750 MB with shop; 200 MB without shop.
-- Uploads are prepared and registered in batches of up to 20 files, with up to four parallel file transfers.
-
-Limits are enforced in the Edge Function as well as in the browser. The feature entitlement is read from `website_requests.configuration`, so the client cannot choose a larger quota by changing browser-side values.
-
-To activate v35 on the existing Supabase project, deploy the updated function from the project root:
-
-```powershell
-npx.cmd supabase functions deploy client-onboarding --use-api --remote=otfxqesrvpmabxwsblqb
-```
-
-No database migration is required for this upload-limit change.
+The manual ChatGPT Free workflow is not an unattended production generator. It does not automatically receive requests, process Supabase events, call n8n, provision hosting or publish sites. Generated websites remain drafts until pimentaGROUP reviews factual content, assets/rights, legal pages, security and real production integrations. Demo booking, checkout, newsletter, social, reviews and chat behaviour must never be represented as real production integrations unless a real provider/backend has been configured and tested.

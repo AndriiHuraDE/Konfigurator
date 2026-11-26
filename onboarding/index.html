@@ -9,7 +9,7 @@
   <title>Ihre Salon-Informationen · pimentaGROUP</title>
   <link rel="stylesheet" href="./onboarding.css">
   <script src="../js/backend-config.js"></script>
-  <script type="module" src="./onboarding.js"></script>
+  <script type="module" src="./onboarding.js?v=37"></script>
 </head>
 <body>
   <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
@@ -56,7 +56,9 @@
         <section class="form-card">
           <div class="section-heading"><span class="step">03</span><div><h2>Leistungen & Team</h2><p>Fügen Sie Ihre wichtigsten Angebote und Mitarbeitenden hinzu. Unvollständige Angaben können später ergänzt werden.</p></div></div>
           <label class="field full"><span>Ihre Leistungen und Preise</span><textarea name="services" id="services" rows="6" maxlength="7000" placeholder="Bitte möglichst eine Leistung pro Zeile:&#10;Damenhaarschnitt | ab 45 € | 45 Min.&#10;Herrenhaarschnitt | 32 € | 30 Min.&#10;Balayage | ab 120 € | 180 Min."></textarea><small>Preise und Dauer können Sie als Richtwerte angeben. Wir stimmen Details vor der Veröffentlichung mit Ihnen ab.</small></label>
-          <label class="field full gap-top"><span>Ihr Team</span><textarea name="team" id="team" rows="5" maxlength="7000" placeholder="Eine Person pro Zeile:&#10;Anna | Friseurmeisterin | Farbe und Balayage&#10;Lukas | Barber | Herrenhaarschnitte und Bartpflege"></textarea><small>Wenn Sie möchten, können Sie anschließend für jede Person ein Foto hochladen.</small></label>
+          <label class="field full gap-top"><span>Ihr Team</span><textarea name="team" id="team" rows="5" maxlength="7000" placeholder="Eine Person pro Zeile:&#10;Anna | Friseurmeisterin | Farbe und Balayage | anna.jpg&#10;Lukas | Barber | Herrenhaarschnitte und Bartpflege | lukas.jpg"></textarea><small>Format: Name | Position | Spezialisierungen | Dateiname des Teamfotos (optional). Wenn Sie möchten, können Sie anschließend Fotos hochladen.</small></label>
+          <label class="field full gap-top"><span>Produkte & Gutscheine (nur bei ausgewähltem Shop)</span><textarea name="products" id="products" rows="5" maxlength="12000" placeholder="Ein Produkt pro Zeile:&#10;Shampoo 250 ml | 19,90 € | Pflege für trockenes Haar | SKU-001 | shampoo.jpg&#10;Geschenkgutschein 50 € | 50,00 € | Digitaler Gutschein | | gutschein.jpg"></textarea><small>Format: Name | Preis | Beschreibung | SKU/Variante (optional) | Dateiname des Produktbilds (optional). Bitte nur tatsächlich angebotene Produkte angeben.</small></label>
+          <label class="field full gap-top"><span>Häufige Fragen (optional)</span><textarea name="faqs" id="faqs" rows="4" maxlength="7000" placeholder="Eine Frage pro Zeile, getrennt durch |:&#10;Wie kann ich einen Termin absagen? | Bitte kontaktieren Sie uns telefonisch.&#10;Kann ich mit Karte zahlen? | Ja, Kartenzahlung ist möglich."></textarea><small>Format: Frage | Antwort. Nur bestätigte Informationen angeben.</small></label>
         </section>
 
         <section class="form-card">
@@ -64,6 +66,7 @@
           <div class="form-grid">
             <label class="field"><span>Gewünschter Stil</span><select name="brandStyle" id="brandStyle"><option value="">Noch offen</option><option value="Elegant & luxuriös">Elegant & luxuriös</option><option value="Modern & minimalistisch">Modern & minimalistisch</option><option value="Natürlich & warm">Natürlich & warm</option><option value="Klassisch & zeitlos">Klassisch & zeitlos</option><option value="Kreativ & auffällig">Kreativ & auffällig</option></select></label>
             <label class="field"><span>Website-Sprachen</span><input name="languages" id="languages" maxlength="120" placeholder="Deutsch, Englisch"></label>
+            <label class="field full"><span>Social-Media-Profile (optional)</span><textarea name="socialLinks" id="socialLinks" rows="3" maxlength="2500" placeholder="Ein Profil pro Zeile:&#10;Instagram | https://instagram.com/ihr-salon&#10;Facebook | https://facebook.com/ihr-salon&#10;TikTok | https://tiktok.com/@ihr-salon"></textarea><small>Nur die ausgewählten und tatsächlich vorhandenen Profile verlinken.</small></label>
             <label class="field"><span>Bevorzugte Hauptfarbe</span><div class="color-field"><input name="primaryColor" id="primaryColor" type="color" value="#2f8a69"><input class="color-text" id="primaryColorText" type="text" value="#2f8a69" maxlength="20" aria-label="Hauptfarbe als Hexwert"></div></label>
             <label class="field"><span>Weitere Farbe (optional)</span><div class="color-field"><input name="secondaryColor" id="secondaryColor" type="color" value="#f6f5f2"><input class="color-text" id="secondaryColorText" type="text" value="#f6f5f2" maxlength="20" aria-label="Weitere Farbe als Hexwert"></div></label>
           </div>
@@ -75,17 +78,42 @@
             <label class="upload-box"><span class="upload-icon">▧</span><strong>Logo & Marke</strong><small>Logo, Farbvorlagen, Schriftbeispiele</small><input type="file" data-category="logo" accept="image/jpeg,image/png,image/webp,application/pdf" multiple></label>
             <label class="upload-box"><span class="upload-icon">♙</span><strong>Teamfotos</strong><small>Fotos von Ihnen und Ihren Mitarbeitenden</small><input type="file" data-category="team" accept="image/jpeg,image/png,image/webp,application/pdf" multiple></label>
             <label class="upload-box"><span class="upload-icon">▣</span><strong>Arbeiten & Galerie</strong><small>Ergebnisse, Salon, Einrichtung und Atmosphäre</small><input type="file" data-category="gallery" accept="image/jpeg,image/png,image/webp,application/pdf" multiple></label>
+            <label class="upload-box"><span class="upload-icon">◇</span><strong>Shop-Produkte</strong><small>Produkt- und Gutscheinbilder (nur bei ausgewähltem Shop)</small><input type="file" data-category="products" accept="image/jpeg,image/png,image/webp" multiple></label>
             <label class="upload-box"><span class="upload-icon">▤</span><strong>Weitere Dokumente</strong><small>Preisliste oder Informations-PDF</small><input type="file" data-category="documents" accept="image/jpeg,image/png,image/webp,application/pdf" multiple></label>
           </div>
           <div id="uploadRules" class="upload-rules">Upload-Limits werden geladen …</div>
           <div id="uploadUsage" class="upload-usage" aria-live="polite"></div>
-          <label class="rights-check"><input type="checkbox" id="assetRightsConfirmed"><span>Ich bestätige, dass ich die erforderlichen Nutzungsrechte für die hochgeladenen Bilder und Dokumente habe und die abgebildeten Personen mit der Verwendung auf unserer Website einverstanden sind.</span></label>
+          <label class="rights-check"><input type="checkbox" id="assetRightsConfirmed"><span>Ich bestätige, dass ich die erforderlichen Nutzungsrechte für alle bereits hochgeladenen und künftig eingereichten Bilder und Dokumente habe und die abgebildeten Personen mit der Verwendung auf unserer Website einverstanden sind.</span></label>
           <div id="selectedFiles" class="selected-files" hidden></div>
           <div id="existingAssets" class="existing-assets" hidden></div>
         </section>
 
         <section class="form-card">
-          <div class="section-heading"><span class="step">06</span><div><h2>Weitere Wünsche</h2><p>Gibt es etwas, das wir bei der Erstellung berücksichtigen sollen?</p></div></div>
+          <div class="section-heading"><span class="step">06</span><div><h2>Integrationen & Profile</h2><p>Nur ausfüllen, wenn die entsprechende Funktion ausgewählt wurde. Fehlende technische Anbindungen werden vor der Veröffentlichung abgestimmt.</p></div></div>
+          <div class="form-grid">
+            <label class="field"><span>Buchungssystem (optional)</span><input name="bookingProvider" id="bookingProvider" maxlength="120" placeholder="z. B. Treatwell, Planity, Shore"></label>
+            <label class="field"><span>Link zum Buchungssystem (optional)</span><input name="bookingUrl" id="bookingUrl" type="url" maxlength="300" placeholder="https://…"></label>
+            <label class="field"><span>Bewertungsprofil (optional)</span><input name="reviewProfileUrl" id="reviewProfileUrl" type="url" maxlength="300" placeholder="Google-Unternehmensprofil-URL"></label>
+            <label class="field"><span>Zahlungsanbieter für den Shop (optional)</span><input name="shopPaymentProvider" id="shopPaymentProvider" maxlength="120" placeholder="z. B. Stripe, PayPal – noch nicht eingerichtet"></label>
+            <label class="field full"><span>Newsletter-Dienst (optional)</span><input name="newsletterProvider" id="newsletterProvider" maxlength="120" placeholder="z. B. Brevo, Mailchimp oder noch offen"></label>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading"><span class="step">07</span><div><h2>Rechtliche Angaben</h2><p>Diese Informationen helfen bei der Vorbereitung von Impressum und Datenschutz. Fehlende Angaben werden ausdrücklich zur Prüfung markiert und nicht erfunden.</p></div></div>
+          <div class="form-grid">
+            <label class="field full"><span>Vollständiger rechtlicher Unternehmensname</span><input name="legalName" id="legalName" maxlength="180" placeholder="Falls abweichend vom Salon-Namen"></label>
+            <label class="field"><span>Rechtsform (optional)</span><input name="legalForm" id="legalForm" maxlength="100" placeholder="z. B. Einzelunternehmen, GmbH"></label>
+            <label class="field"><span>Vertretungsberechtigte Person (optional)</span><input name="legalRepresentative" id="legalRepresentative" maxlength="180" placeholder="Vor- und Nachname"></label>
+            <label class="field"><span>Registergericht (falls eingetragen)</span><input name="registerCourt" id="registerCourt" maxlength="160"></label>
+            <label class="field"><span>Registernummer (falls eingetragen)</span><input name="registerNumber" id="registerNumber" maxlength="100"></label>
+            <label class="field"><span>USt-IdNr. (falls vorhanden)</span><input name="vatId" id="vatId" maxlength="40" placeholder="DE…"></label>
+            <label class="field"><span>Verantwortliche Person für Inhalte (falls erforderlich)</span><input name="responsiblePerson" id="responsiblePerson" maxlength="180" placeholder="Vor- und Nachname"></label>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="section-heading"><span class="step">08</span><div><h2>Weitere Wünsche</h2><p>Gibt es etwas, das wir bei der Erstellung berücksichtigen sollen?</p></div></div>
           <label class="field full"><span>Zusätzliche Hinweise</span><textarea name="notes" id="notes" rows="4" maxlength="3000" placeholder="Besondere Wünsche, Beispiele anderer Websites, Dinge, die Ihnen wichtig sind …"></textarea></label>
         </section>
 

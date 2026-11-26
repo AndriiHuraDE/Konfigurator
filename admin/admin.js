@@ -246,6 +246,11 @@ async function renderDetail(item) {
       <div id="onboardingInviteResult" style="margin-top:10px"></div>
       <div id="onboardingContainer" style="margin-top:14px"><div class="muted" style="font-size:11px">Onboarding-Status wird geladen …</div></div>
     </section>
+    <section class="detail-section"><h3 class="section-title">AI Website Generator</h3>
+      <p class="muted" style="font-size:11px;margin:-4px 0 12px">Erstellt ein ChatGPT-fertiges Paket aus Konfigurator-Auswahl, eingereichten Unternehmensangaben und freigegebenen Kundenmaterialien. Private Anfragedaten und interne Notizen werden nicht exportiert.</p>
+      <button id="downloadAIJobPackage" class="button button-primary button-small" type="button">AI-Website-Paket herunterladen (ZIP)</button>
+      <div id="aiJobPackageStatus" class="muted" role="status" aria-live="polite" style="font-size:11px;margin-top:9px"></div>
+    </section>
     <section class="detail-section"><h3 class="section-title">Bearbeitung</h3>
       <div class="status-editor">
         <label>Status<select id="editStatus">${Object.entries(STATUS).map(([value,info]) => `<option value="${value}" ${item.status===value?'selected':''}>${escapeHtml(info[0])}</option>`).join('')}</select></label>
@@ -263,6 +268,7 @@ async function renderDetail(item) {
     <section class="detail-section"><h3 class="section-title">Statusverlauf</h3><div id="historyContainer" class="timeline"><div class="muted">Verlauf wird geladen …</div></div></section>
   </div>`;
   $('saveChanges').addEventListener('click', () => saveRequestChanges(item.id));
+  $('downloadAIJobPackage').addEventListener('click', () => exportAIJobPackage(item));
   $('createOnboardingInvite').addEventListener('click', () => createOnboardingInvite(item.id));
   await Promise.all([loadAssets(item.id), loadOnboarding(item.id), loadOutbox(item.id), loadHistory(item.id)]);
 }
@@ -345,7 +351,11 @@ async function loadOnboarding(requestId) {
       businessName:'Salon / Unternehmen', street:'Straße', postalCode:'Postleitzahl', city:'Stadt', country:'Land',
       publicEmail:'Öffentliche E-Mail', publicPhone:'Telefon', publicWebsite:'Website', openingHours:'Öffnungszeiten',
       aboutBusiness:'Über den Salon', specialties:'Spezialisierungen', targetAudience:'Zielgruppe', brandStyle:'Gewünschter Stil',
-      primaryColor:'Hauptfarbe', secondaryColor:'Weitere Farbe', languages:'Sprachen', services:'Leistungen & Preise', team:'Team', notes:'Weitere Wünsche',
+      primaryColor:'Hauptfarbe', secondaryColor:'Weitere Farbe', languages:'Sprachen', services:'Leistungen & Preise', team:'Team',
+      products:'Produkte & Gutscheine', faqs:'Häufige Fragen', socialLinks:'Social-Media-Links', bookingProvider:'Buchungssystem', bookingUrl:'Buchungslink',
+      reviewProfileUrl:'Bewertungsprofil', shopPaymentProvider:'Shop-Zahlungsanbieter', newsletterProvider:'Newsletter-Dienst',
+      legalName:'Rechtlicher Unternehmensname', legalForm:'Rechtsform', legalRepresentative:'Vertretungsberechtigte Person',
+      registerCourt:'Registergericht', registerNumber:'Registernummer', vatId:'USt-IdNr.', responsiblePerson:'Verantwortliche Person', notes:'Weitere Wünsche',
       assetRightsConfirmed:'Nutzungsrechte bestätigt', assetRightsConfirmedAt:'Bestätigung am',
     };
     const data = profile?.data || {};
@@ -363,6 +373,450 @@ async function loadOnboarding(requestId) {
     container.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">${status}<span class="muted" style="font-size:10px">${profile?.updated_at ? `Aktualisiert: ${escapeHtml(dateTime(profile.updated_at))}` : ''}</span></div>${summary}${assetCards.length ? `<h4 class="section-title" style="margin-top:14px">Weitere Kunden-Dateien (${assetCards.length})</h4><div class="asset-grid">${assetCards.join('')}</div>` : ''}`;
   } catch (error) {
     container.innerHTML = `<div class="muted" style="font-size:11px;color:#a54848">Onboarding-Daten konnten nicht geladen werden. Bitte prüfen Sie, ob die Onboarding-Migration angewendet wurde. (${escapeHtml(error.message)})</div>`;
+  }
+}
+
+const CHATGPT_JOB_MAX_PART_BYTES = 400 * 1024 * 1024;
+const CHATGPT_JOB_MAX_TOTAL_BYTES = 470 * 1024 * 1024;
+const GENERATION_REFERENCE = { id: 'pimentaGROUP-ai-reference-kit', version: '2.0.0' };
+
+function parsePipeRows(value, keys) {
+  return String(value || '').split(/\r?\n/).map(line => line.trim()).filter(Boolean).map(line => {
+    const parts = line.split('|').map(part => part.trim());
+    const record = { sourceLine: line, parseStatus: parts.length > 1 ? 'structured' : 'needs_review' };
+    keys.forEach((key, index) => { record[key] = parts[index] || ''; });
+    return record;
+  });
+}
+
+function parseLanguageList(value) {
+  const names = String(value || '').split(/[,;\n]/).map(item => item.trim()).filter(Boolean);
+  const languageMap = new Map([
+    ['deutsch', 'de'], ['german', 'de'], ['de', 'de'],
+    ['englisch', 'en'], ['english', 'en'], ['en', 'en'],
+    ['niederländisch', 'nl'], ['dutch', 'nl'], ['nl', 'nl'],
+    ['französisch', 'fr'], ['french', 'fr'], ['fr', 'fr'],
+    ['spanisch', 'es'], ['spanish', 'es'], ['es', 'es'],
+    ['italienisch', 'it'], ['italian', 'it'], ['it', 'it'],
+    ['polnisch', 'pl'], ['polish', 'pl'], ['pl', 'pl'],
+  ]);
+  const parsed = names.map(name => ({ label: name, code: languageMap.get(name.toLocaleLowerCase('de-DE')) || null }));
+  if (!parsed.length) return { primary: 'de', additional: [], labels: ['Deutsch'], defaultedFromTargetMarket: true };
+  const known = parsed.filter(item => item.code);
+  const primary = known[0]?.code || 'de';
+  return {
+    primary,
+    additional: [...new Set(known.slice(1).map(item => item.code))],
+    labels: names,
+    unknownLabels: parsed.filter(item => !item.code).map(item => item.label),
+    defaultedFromTargetMarket: false,
+  };
+}
+
+function parseSocialLinks(value) {
+  return parsePipeRows(value, ['platform', 'url']).map(item => {
+    let normalizedUrl = '';
+    try {
+      const url = new URL(item.url);
+      if (['https:', 'http:'].includes(url.protocol)) normalizedUrl = url.toString();
+    } catch { /* The source line is retained and flagged for review. */ }
+    return { platform: item.platform, url: normalizedUrl, sourceLine: item.sourceLine, parseStatus: normalizedUrl ? item.parseStatus : 'needs_review' };
+  });
+}
+
+function parseFeatureFlags(configuration) {
+  const generation = configuration?.websiteGenerationRequest || {};
+  if (generation.features && typeof generation.features === 'object') return generation.features;
+  const ids = new Set((configuration?.project?.features || []).map(feature => feature?.id).filter(Boolean));
+  const keys = {
+    baseService:'baseWebsite', mobileOptimization:'responsiveDesign', booking:'booking', employeeManagement:'employeeManagement',
+    whatsapp:'whatsappContact', contactPlus:'contactForm', gallery:'gallery', instagramFeed:'instagramFeed', reviews:'reviews',
+    maps:'mapAndOpeningHours', faq:'faq', blog:'blog', shop:'shop', newsletter:'newsletter', whatsappBot:'whatsappBot',
+    chatbot:'websiteChatbot', leadAssistant:'leadAssistant', emailAssistant:'emailAssistant', crm:'crmIntegration',
+    voice:'voiceAssistant', automation:'workflowAutomation', localSEO:'localSEO', multilingual:'multilingual',
+  };
+  return Object.fromEntries(Object.entries(keys).map(([id, key]) => [key, ids.has(id)]));
+}
+
+function buildWebsiteGenerationSpec(request, profile, assets, excludedAssets = []) {
+  const configuration = request.configuration || {};
+  const project = configuration.project || {};
+  const onboarding = profile?.data || {};
+  const selected = Array.isArray(project.features) ? project.features : [];
+  const selectedIds = selected.map(feature => feature?.id).filter(Boolean);
+  const flags = parseFeatureFlags(configuration);
+  const isEnabled = key => flags[key] === true;
+  const hasShop = isEnabled('shop');
+  const hasBooking = isEnabled('booking');
+  const services = parsePipeRows(onboarding.services, ['name', 'priceText', 'durationText', 'description']);
+  const team = parsePipeRows(onboarding.team, ['name', 'role', 'specialties', 'photoFilename']);
+  const products = parsePipeRows(onboarding.products, ['name', 'priceText', 'description', 'skuOrVariant', 'imageFilename']);
+  const faqs = parsePipeRows(onboarding.faqs, ['question', 'answer']);
+  const socialLinks = parseSocialLinks(onboarding.socialLinks);
+  const languages = parseLanguageList(onboarding.languages);
+  const businessName = String(onboarding.businessName || request.business_name || '').trim();
+  const address = {
+    street: onboarding.street || '', postalCode: onboarding.postalCode || '', city: onboarding.city || '', country: onboarding.country || 'Deutschland',
+  };
+  const missingInformation = [];
+  if (profile?.status !== 'submitted') missingInformation.push({ field: 'onboarding.status', reason: 'Customer onboarding has not been submitted.' });
+  if (!businessName) missingInformation.push({ field: 'business.name', reason: 'Business name is missing.' });
+  if (!address.street) missingInformation.push({ field: 'business.address.street', reason: 'Street and building number are missing; verify the legal/contact address.' });
+  if (!address.postalCode) missingInformation.push({ field: 'business.address.postalCode', reason: 'Postal code is missing; verify the legal/contact address.' });
+  if (!address.city) missingInformation.push({ field: 'business.address.city', reason: 'Business city is missing.' });
+  if (!onboarding.publicEmail) missingInformation.push({ field: 'business.publicContact.email', reason: 'Public business email is missing.' });
+  if (hasBooking && !services.length) missingInformation.push({ field: 'content.services', reason: 'Booking is selected but no service list was supplied.' });
+  if (services.some(item => item.parseStatus === 'needs_review')) missingInformation.push({ field: 'content.services.format', reason: 'One or more service lines need manual review; expected Name | price | duration | optional description.' });
+  if (team.some(item => item.parseStatus === 'needs_review')) missingInformation.push({ field: 'content.team.format', reason: 'One or more team lines need manual review; expected Name | role | specialities | optional photo filename.' });
+  if (products.some(item => item.parseStatus === 'needs_review')) missingInformation.push({ field: 'content.products.format', reason: 'One or more product lines need manual review; expected Name | price | description | optional SKU/variant | optional image filename.' });
+  if (faqs.some(item => item.parseStatus === 'needs_review')) missingInformation.push({ field: 'content.faqs.format', reason: 'One or more FAQ lines need manual review; expected Question | answer.' });
+  if (socialLinks.some(item => item.parseStatus === 'needs_review')) missingInformation.push({ field: 'brand.socialLinks.format', reason: 'One or more social profile lines need review; expected Platform | valid public URL.' });
+  if (hasShop && !products.length) missingInformation.push({ field: 'content.products', reason: 'Shop is selected but no product catalogue was supplied.' });
+  if (hasBooking && !onboarding.bookingProvider && !onboarding.bookingUrl) missingInformation.push({ field: 'integrations.booking', reason: 'No booking provider or booking URL supplied; production integration must be clarified.' });
+  if (isEnabled('shop') && !onboarding.shopPaymentProvider) missingInformation.push({ field: 'integrations.shopPaymentProvider', reason: 'No payment provider supplied; checkout cannot be treated as production-ready.' });
+  if (isEnabled('newsletter') && !onboarding.newsletterProvider) missingInformation.push({ field: 'integrations.newsletterProvider', reason: 'No newsletter provider supplied; subscription flow must remain inactive until configured.' });
+  if (isEnabled('reviews') && !onboarding.reviewProfileUrl) missingInformation.push({ field: 'content.reviewProfileUrl', reason: 'No verified review profile URL supplied; do not invent ratings or testimonials.' });
+  if (isEnabled('instagramFeed') && !socialLinks.some(item => item.platform.toLowerCase() === 'instagram' && item.url)) missingInformation.push({ field: 'brand.socialLinks.instagram', reason: 'Instagram feed is selected but no valid Instagram profile URL was supplied.' });
+  if (isEnabled('whatsappContact') && !onboarding.publicPhone) missingInformation.push({ field: 'business.publicContact.phone', reason: 'WhatsApp contact is selected but no public phone number was supplied.' });
+  if (isEnabled('multilingual') && !onboarding.languages) missingInformation.push({ field: 'brand.languages', reason: 'Multilingual feature is selected but no target languages were supplied.' });
+  if (project.socialProfiles?.length && !socialLinks.length) missingInformation.push({ field: 'brand.socialLinks', reason: 'Social profiles were selected for setup but no public profile URLs were supplied.' });
+  if (assets.length && (onboarding.assetRightsConfirmed !== 'true' || onboarding.assetRightsConfirmationVersion !== 'v2')) missingInformation.push({ field: 'assets.rights', reason: 'The updated v2 consent covering both initial-request and onboarding uploads has not been confirmed.' });
+  if (excludedAssets.length) missingInformation.push({ field: 'assets.excluded', reason: `${excludedAssets.length} customer asset(s) were not included in the ChatGPT Free package because of its safe file/storage size budget. See assetsExcluded; do not assume those files are available.` });
+  if (!onboarding.legalName) missingInformation.push({ field: 'legal.legalName', reason: 'Legal entity name is missing; legal pages require review.' });
+  if (!onboarding.responsiblePerson) missingInformation.push({ field: 'legal.responsiblePerson', reason: 'Responsible person details may be required; verify with pimentaGROUP.' });
+
+  const pages = [
+    { id: 'home', required: true, reason: 'Every business website needs a homepage.' },
+    ...(hasShop ? [{ id: 'shop', required: true, reason: 'The shop feature was selected.' }] : []),
+    { id: 'impressum', required: true, legalReviewRequired: true },
+    { id: 'datenschutz', required: true, legalReviewRequired: true },
+  ];
+  const sections = [
+    'hero', 'intro',
+    ...(services.length ? ['services'] : []),
+    ...(team.length ? ['team'] : []),
+    ...(hasBooking ? ['booking'] : []),
+    ...(isEnabled('gallery') ? ['gallery'] : []),
+    ...(isEnabled('instagramFeed') ? ['instagram'] : []),
+    ...(isEnabled('reviews') ? ['reviews'] : []),
+    ...(isEnabled('mapAndOpeningHours') ? ['location_opening_hours'] : []),
+    ...(isEnabled('faq') && faqs.length ? ['faq'] : []),
+    ...(isEnabled('blog') ? ['blog'] : []),
+    ...(isEnabled('whatsappContact') ? ['whatsapp_contact'] : []),
+    ...(isEnabled('contactForm') ? ['contact_form'] : []),
+  ];
+
+  const featureRequirements = [];
+  const integrationNotes = {
+    booking: 'Use a real booking provider or an explicitly approved backend integration. Do not present a local-only demo booking as a real reservation.',
+    contactForm: 'Requires a secure server-side form handler, verified recipient, spam protection and privacy/consent review; do not expose secrets in browser code.',
+    employeeManagement: 'Internal staff/schedule management requires a confirmed booking backend and role permissions; it is not a public team section.',
+    shop: 'Use a real product/order backend and a confirmed payment provider. Never collect card details in a static demo form.',
+    newsletter: 'Require a confirmed provider and compliant double opt-in before activating subscriptions.',
+    instagramFeed: 'Use an approved Instagram integration or clearly label a static visual preview.',
+    reviews: 'Use verified customer-provided reviews or a confirmed provider integration. Never invent testimonials or ratings.',
+    mapAndOpeningHours: 'Use the supplied address and opening hours; assess map provider privacy requirements.',
+    whatsappBot: 'Requires a real WhatsApp Business integration and an agreed automation flow.',
+    websiteChatbot: 'Requires an approved AI provider, scoped knowledge source and human handoff.',
+    crmIntegration: 'Requires a named CRM and approved credentials configured server-side.',
+    voiceAssistant: 'Requires a confirmed telephony provider, phone number and usage-cost approval.',
+    workflowAutomation: 'Requires an explicit workflow specification and connected services.',
+    leadAssistant: 'Requires an approved AI provider, a defined data scope and human handoff.',
+    emailAssistant: 'Requires an approved mail provider and explicit human approval before sending.',
+  };
+  for (const [feature, note] of Object.entries(integrationNotes)) {
+    if (isEnabled(feature)) featureRequirements.push({ feature, status: 'integration_required', note });
+  }
+
+  return {
+    contract: 'pimentaGROUP.WebsiteGenerationSpec',
+    schemaVersion: '1.0.0',
+    job: {
+      requestId: request.id,
+      referenceCode: request.reference_code,
+      requestCreatedAt: request.created_at,
+      packageCreatedAt: new Date().toISOString(),
+      requestStatus: request.status,
+    },
+    project: {
+      type: project.type || request.project_type || '',
+      projectKey: project.projectKey || '',
+      industry: {
+        id: project.industryKey || configuration.websiteGenerationRequest?.project?.industry?.id || ({
+          'Friseursalon / Barbershop': 'hair_salon_barbershop',
+          'Nagelstudio': 'nail_studio',
+          'Massage / Wellness': 'massage_wellness',
+          'Sonstiges': 'other',
+        }[project.industry || request.industry] || 'other'),
+        label: project.industry || request.industry || '',
+      },
+      websiteStatus: project.websiteStatus || request.website_status || '',
+      existingWebsite: request.current_website || null,
+      targetMarket: 'DE',
+    },
+    business: {
+      name: businessName,
+      legal: {
+        legalName: onboarding.legalName || '', legalForm: onboarding.legalForm || '', legalRepresentative: onboarding.legalRepresentative || '',
+        registerCourt: onboarding.registerCourt || '', registerNumber: onboarding.registerNumber || '', vatId: onboarding.vatId || '',
+        responsiblePerson: onboarding.responsiblePerson || '', reviewStatus: 'requires_human_legal_review',
+      },
+      address,
+      publicContact: { email: onboarding.publicEmail || '', phone: onboarding.publicPhone || '', website: onboarding.publicWebsite || '' },
+      openingHours: onboarding.openingHours || '',
+    },
+    brand: {
+      requestedStyle: onboarding.brandStyle || '',
+      colors: { primary: onboarding.primaryColor || '', secondary: onboarding.secondaryColor || '' },
+      languages,
+      socialLinks,
+    },
+    pages,
+    sections,
+    features: flags,
+    selectedFeatureIds: selectedIds,
+    selectedFeatures: selected.map(feature => ({ id: feature.id, name: feature.name, category: feature.category || '' })),
+    selectedSocialProfiles: (project.socialProfiles || []).map(profile => ({ id: profile.id, name: profile.name })),
+    content: {
+      aboutBusiness: onboarding.aboutBusiness || '', specialties: onboarding.specialties || '', targetAudience: onboarding.targetAudience || '',
+      services, servicesRaw: onboarding.services || '', team, teamRaw: onboarding.team || '',
+      products, productsRaw: onboarding.products || '', faqs, faqsRaw: onboarding.faqs || '',
+      reviewProfileUrl: onboarding.reviewProfileUrl || '', notes: onboarding.notes || '',
+      integrationPreferences: {
+        bookingProvider: onboarding.bookingProvider || '', bookingUrl: onboarding.bookingUrl || '',
+        shopPaymentProvider: onboarding.shopPaymentProvider || '', newsletterProvider: onboarding.newsletterProvider || '',
+      },
+    },
+    assets,
+    assetsExcluded: excludedAssets,
+    reference: {
+      kitId: GENERATION_REFERENCE.id,
+      kitVersion: GENERATION_REFERENCE.version,
+      usage: 'Use as a design and verified-component reference. Create a distinct site for this customer; do not copy the demo identity or fictitious content.',
+    },
+    generationRules: {
+      createAnIndividualDesign: true,
+      reuseReferencePatternsAndVerifiedModules: true,
+      doNotCopyReferenceBrandOrContent: true,
+      doNotInventMissingFactsOrTestimonials: true,
+      generateOnlySelectedOptionalFeatures: true,
+      clearlyFlagUnavailableProductionIntegrations: true,
+      legalPagesRequireHumanReview: true,
+      doNotPublishWithoutHumanApproval: true,
+      doNotAssumeExcludedAssetsAreAvailable: true,
+    },
+    productionRequirements: featureRequirements,
+    readiness: {
+      status: missingInformation.length ? 'needs_input_or_review' : 'ready_for_draft',
+      missingInformation,
+      canGenerateDraft: true,
+      canPublish: false,
+      humanApprovalRequired: true,
+    },
+    sourceSnapshots: {
+      configurator: {
+        schemaVersion: request.schema_version,
+        configuration: {
+          schemaVersion: configuration.schemaVersion || request.schema_version,
+          source: configuration.source || 'pimentaGROUP Website-Konfigurator',
+          creationMode: configuration.creationMode || 'simple',
+          project: {
+            type: project.type || '', projectKey: project.projectKey || '', industry: project.industry || '',
+            industryKey: project.industryKey || '', businessName: project.businessName || '', websiteStatus: project.websiteStatus || '',
+            selectedFeatureIds: selectedIds,
+            features: selected.map(feature => ({ id: feature.id, name: feature.name, category: feature.category || '' })),
+            featureGroups: Object.fromEntries(Object.entries(project.featureGroups || {}).map(([group, items]) => [
+              group, (Array.isArray(items) ? items : []).map(feature => ({ id: feature.id, name: feature.name, category: feature.category || group })),
+            ])),
+            socialProfiles: (project.socialProfiles || []).map(profile => ({ id: profile.id, name: profile.name })),
+            selectedSocialProfileIds: project.selectedSocialProfileIds || [],
+            editorMode: project.editorMode || 'simple',
+          },
+          websiteGenerationRequest: configuration.websiteGenerationRequest || {},
+        },
+      },
+      onboarding: { status: profile?.status || 'not_started', submittedAt: profile?.submitted_at || null, data: onboarding },
+    },
+  };
+}
+
+async function loadZipLibrary() {
+  if (window.JSZip) return window.JSZip;
+  throw new Error('ZIP-Bibliothek konnte nicht geladen werden. Bitte laden Sie die Admin-Seite neu und prüfen Sie die Internetverbindung.');
+}
+
+function safeArchiveName(value) {
+  return String(value || 'datei').normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 90) || 'datei';
+}
+
+async function exportAIJobPackage(request) {
+  const button = $('downloadAIJobPackage');
+  const status = $('aiJobPackageStatus');
+  if (!button || button.disabled) return;
+  button.disabled = true;
+  status.querySelectorAll('a[data-blob-url]').forEach(link => URL.revokeObjectURL(link.href));
+  status.replaceChildren();
+  status.textContent = 'Onboarding und Dateiliste werden geladen …';
+  try {
+    const JSZip = await loadZipLibrary();
+    const [{ data: profile, error: profileError }, { data: onboardingAssets, error: onboardingAssetsError }, { data: requestAssets, error: requestAssetsError }] = await Promise.all([
+      supabase.from('website_onboarding_profiles').select('status,data,submitted_at,updated_at').eq('request_id', request.id).maybeSingle(),
+      supabase.from('website_onboarding_assets').select('id,category,original_filename,storage_path,mime_type,size_bytes,created_at').eq('request_id', request.id).order('created_at', { ascending: true }),
+      supabase.from('website_request_assets').select('id,original_filename,storage_path,mime_type,size_bytes,created_at').eq('request_id', request.id).order('created_at', { ascending: true }),
+    ]);
+    if (profileError) throw profileError;
+    if (onboardingAssetsError) throw onboardingAssetsError;
+    if (requestAssetsError) throw requestAssetsError;
+    const onboarding = profile?.data || {};
+    const assets = [
+      ...(requestAssets || []).map(asset => ({ ...asset, source: 'initial_request', category: 'initial_request', bucket: BUCKET })),
+      ...(onboardingAssets || []).map(asset => ({ ...asset, source: 'client_onboarding', bucket: ONBOARDING_BUCKET })),
+    ];
+    const totalBytes = assets.reduce((sum, asset) => sum + Number(asset.size_bytes || 0), 0);
+    if (assets.length && (onboarding.assetRightsConfirmed !== 'true' || onboarding.assetRightsConfirmationVersion !== 'v2')) {
+      throw new Error('Der Kunde muss die aktualisierte Rechtebestätigung (Version v2) im Onboarding erneut aktiv bestätigen. Sie umfasst auch Bilder aus der ursprünglichen Anfrage.');
+    }
+
+    // Keep the package within the manual ChatGPT Free file/storage budget. Prefer brand/legal/team assets,
+    // then product images, then gallery/other images. Any omitted items are explicitly listed in the spec.
+    const categoryPriority = { logo: 0, documents: 1, team: 2, initial_request: 3, products: 4, gallery: 5, other: 6 };
+    const orderedAssets = [...assets].sort((a, b) => {
+      const priorityDifference = (categoryPriority[a.category] ?? 6) - (categoryPriority[b.category] ?? 6);
+      if (priorityDifference) return priorityDifference;
+      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    });
+    const selectedMetadata = [];
+    const excludedMetadata = [];
+    let selectedBytes = 0;
+    for (const asset of orderedAssets) {
+      const size = Number(asset.size_bytes || 0);
+      if (size > 0 && selectedBytes + size <= CHATGPT_JOB_MAX_TOTAL_BYTES) {
+        selectedMetadata.push(asset);
+        selectedBytes += size;
+      } else {
+        excludedMetadata.push(asset);
+      }
+    }
+    const excludedAssets = excludedMetadata.map(asset => ({
+      id: asset.id,
+      category: asset.category || 'other',
+      source: asset.source,
+      originalFilename: asset.original_filename,
+      mimeType: asset.mime_type,
+      sizeBytes: Number(asset.size_bytes || 0),
+      reason: 'chatgpt_free_package_size_cap',
+    }));
+
+    const downloaded = [];
+    let downloadedBytes = 0;
+    for (let index = 0; index < selectedMetadata.length; index++) {
+      const asset = selectedMetadata[index];
+      status.textContent = `Dateien werden sicher geladen: ${index + 1} von ${selectedMetadata.length} …`;
+      const { data: blob, error } = await supabase.storage.from(asset.bucket).download(asset.storage_path);
+      if (error || !blob) throw new Error(`Datei konnte nicht geladen werden: ${asset.original_filename}`);
+      if (blob.size !== Number(asset.size_bytes)) throw new Error(`Dateigröße stimmt nicht überein: ${asset.original_filename}`);
+      const category = safeArchiveName(asset.category || 'other');
+      const filename = safeArchiveName(asset.original_filename || `asset-${index + 1}`);
+      const archivePath = `assets/${String(index + 1).padStart(3, '0')}_${category}/${filename}`;
+      downloaded.push({ ...asset, blob, archivePath, sizeBytes: blob.size });
+      downloadedBytes += blob.size;
+    }
+
+    // ChatGPT Free allows three uploads per day: the reference kit plus at most two job-package parts.
+    // Split binary assets into two ZIPs so a large customer upload can still fit that workflow.
+    const parts = [{ assets: [], bytes: 0 }, { assets: [], bytes: 0 }];
+    for (const asset of downloaded) {
+      let partIndex = parts[0].bytes + asset.sizeBytes <= CHATGPT_JOB_MAX_PART_BYTES ? 0 : 1;
+      if (parts[partIndex].bytes + asset.sizeBytes > CHATGPT_JOB_MAX_PART_BYTES) {
+        throw new Error('Die Kundenmaterialien lassen sich nicht in höchstens zwei ChatGPT-Dateipakete aufteilen. Bitte reduzieren Sie die Dateiauswahl.');
+      }
+      parts[partIndex].assets.push(asset);
+      parts[partIndex].bytes += asset.sizeBytes;
+    }
+    const partCount = parts[1].assets.length ? 2 : 1;
+    const referenceCode = safeArchiveName(request.reference_code || request.id);
+    const packageNames = partCount === 1
+      ? [`pimenta-client-job-${referenceCode}.zip`]
+      : [`pimenta-client-job-${referenceCode}-part-01.zip`, `pimenta-client-job-${referenceCode}-part-02.zip`];
+    const specAssets = downloaded.map(asset => {
+      const partNumber = parts[0].assets.includes(asset) ? 1 : 2;
+      return {
+        id: asset.id,
+        category: asset.category,
+        source: asset.source,
+        originalFilename: asset.original_filename,
+        mimeType: asset.mime_type,
+        sizeBytes: asset.sizeBytes,
+        archivePath: `${packageNames[partNumber - 1]}!/${asset.archivePath}`,
+        rightsConfirmed: onboarding.assetRightsConfirmed === 'true' && onboarding.assetRightsConfirmationVersion === 'v2',
+        rightsConfirmedAt: onboarding.assetRightsConfirmedAt || null,
+      };
+    });
+    const spec = buildWebsiteGenerationSpec(request, profile, specAssets, excludedAssets);
+    spec.job.packageParts = partCount;
+    spec.job.assetCount = specAssets.length;
+    spec.job.assetBytes = downloadedBytes;
+    spec.job.totalAssetCount = assets.length;
+    spec.job.totalAssetBytes = totalBytes;
+
+    const promptText = [
+      'pimentaGROUP WEB CONCIERGE — CUSTOMER WEBSITE GENERATION',
+      '',
+      'Attach the current pimentaGROUP AI Reference Kit ZIP in the same ChatGPT conversation.',
+      'Read WebsiteGenerationSpec.json and the asset manifest(s) before implementation.',
+      'Use only verified customer facts and rights-confirmed assets. Do not invent content, reviews, legal details or integrations.',
+      'Check assetsExcluded: omitted assets are NOT inside the ZIP; do not reference them as available. Prioritize included logo, team and product assets.',
+      'Create a new independent website project. Never modify the reference site or the configurator.',
+      'Use the selected features and requested pages from the spec. Complex production integrations must be clearly identified and must not be faked.',
+      'Run available checks and distinguish tests actually executed from tests not executed.',
+      '',
+      `Reference: ${request.reference_code}`,
+      `Onboarding status: ${profile?.status || 'not started'}`,
+      `Asset parts: ${partCount}`,
+      `Assets included: ${specAssets.length}; omitted for size: ${excludedAssets.length}`,
+    ].join('\n');
+
+    const makeZip = async (part, partNumber, includeSpec) => {
+      const zip = new JSZip();
+      zip.file('CHATGPT_TASK.txt', promptText);
+      if (includeSpec) {
+        zip.file('WebsiteGenerationSpec.json', JSON.stringify(spec, null, 2));
+        zip.file('ASSET_MANIFEST.json', JSON.stringify({ referenceCode: request.reference_code, partNumber, partCount, assets: specAssets, assetsExcluded: excludedAssets }, null, 2));
+      } else {
+        zip.file(`ASSET_PART_${String(partNumber).padStart(2, '0')}_MANIFEST.json`, JSON.stringify({ referenceCode: request.reference_code, partNumber, partCount, assets: specAssets.filter(asset => asset.archivePath.startsWith(`${packageNames[partNumber - 1]}!/`)) }, null, 2));
+      }
+      part.assets.forEach(asset => zip.file(asset.archivePath, asset.blob));
+      return zip.generateAsync({ type: 'blob', compression: 'STORE' }, metadata => {
+        status.textContent = `ZIP-Paket ${partNumber}/${partCount} wird erstellt: ${Math.round(metadata.percent)} % …`;
+      });
+    };
+
+    const downloadLinks = [];
+    for (let index = 0; index < partCount; index++) {
+      status.textContent = `ZIP-Paket ${index + 1} von ${partCount} wird erstellt …`;
+      const blob = await makeZip(parts[index], index + 1, index === 0);
+      if (blob.size > CHATGPT_JOB_MAX_PART_BYTES + 5 * 1024 * 1024) {
+        throw new Error(`ZIP-Paket ${index + 1} ist größer als das sichere ChatGPT-Uploadlimit. Bitte reduzieren Sie die Materialauswahl.`);
+      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = packageNames[index];
+      link.className = 'button button-secondary button-small';
+      link.textContent = partCount === 1 ? 'ZIP-Paket herunterladen' : `ZIP-Teil ${index + 1} herunterladen`;
+      link.dataset.blobUrl = 'true';
+      downloadLinks.push(link);
+    }
+    const warnings = spec.readiness.missingInformation.length;
+    status.textContent = `Fertig: ${partCount} ZIP-Datei(en), ${specAssets.length} Materialdatei(en) enthalten, ${excludedAssets.length} ausgelassen. ${warnings ? `${warnings} Hinweis(e) zu fehlenden Angaben sind im Spec enthalten.` : 'Die erforderlichen Basisangaben sind vorhanden.'}`;
+    for (const link of downloadLinks) { status.append(document.createTextNode(' ')); status.append(link); }
+    showAppMessage(`AI-Website-Paket für ${request.reference_code} wurde erstellt.`);
+  } catch (error) {
+    status.textContent = error.message || 'AI-Website-Paket konnte nicht erstellt werden.';
+    showAppMessage(error.message || 'AI-Website-Paket konnte nicht erstellt werden.', true);
+  } finally {
+    const current = $('downloadAIJobPackage');
+    if (current) current.disabled = false;
   }
 }
 

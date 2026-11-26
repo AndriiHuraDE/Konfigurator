@@ -11,7 +11,7 @@ const MAX_TOTAL_SIZE_WITHOUT_SHOP = 200 * 1024 * 1024;
 const MAX_TOTAL_SIZE_WITH_SHOP = 750 * 1024 * 1024;
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
 const IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const ALLOWED_CATEGORIES = new Set(['logo', 'team', 'gallery', 'documents', 'other']);
+const ALLOWED_CATEGORIES = new Set(['logo', 'team', 'gallery', 'products', 'documents', 'other']);
 
 function parseJsonObject(value: string | undefined): Record<string, string> {
   if (!value) return {};
@@ -101,8 +101,24 @@ function normalizeOnboardingData(input: unknown): Record<string, string> {
     languages: cleanText(raw.languages, 120),
     services: cleanText(raw.services, 7000),
     team: cleanText(raw.team, 7000),
+    products: cleanText(raw.products, 12000),
+    faqs: cleanText(raw.faqs, 7000),
+    socialLinks: cleanText(raw.socialLinks, 2500),
+    bookingProvider: cleanText(raw.bookingProvider, 120),
+    bookingUrl: normalizePublicWebsite(cleanText(raw.bookingUrl, 300)),
+    reviewProfileUrl: normalizePublicWebsite(cleanText(raw.reviewProfileUrl, 300)),
+    shopPaymentProvider: cleanText(raw.shopPaymentProvider, 120),
+    newsletterProvider: cleanText(raw.newsletterProvider, 120),
+    legalName: cleanText(raw.legalName, 180),
+    legalForm: cleanText(raw.legalForm, 100),
+    legalRepresentative: cleanText(raw.legalRepresentative, 180),
+    registerCourt: cleanText(raw.registerCourt, 160),
+    registerNumber: cleanText(raw.registerNumber, 100),
+    vatId: cleanText(raw.vatId, 40),
+    responsiblePerson: cleanText(raw.responsiblePerson, 180),
     notes: cleanText(raw.notes, 3000),
     assetRightsConfirmed: raw.assetRightsConfirmed === 'true' ? 'true' : 'false',
+    assetRightsConfirmationVersion: raw.assetRightsConfirmed === 'true' ? 'v2' : '',
     assetRightsConfirmedAt: raw.assetRightsConfirmed === 'true' ? new Date().toISOString() : '',
   };
 }
@@ -233,6 +249,11 @@ Deno.serve(async (request: Request) => {
       if (cleanText(rawData.publicWebsite, 300) && !data.publicWebsite) {
         return jsonResponse({ ok: false, error: 'Bitte geben Sie eine gültige Website-Adresse mit http:// oder https:// ein.' }, 400, origin);
       }
+      for (const field of ['bookingUrl', 'reviewProfileUrl']) {
+        if (cleanText(rawData[field], 300) && !data[field]) {
+          return jsonResponse({ ok: false, error: 'Bitte geben Sie gültige Profil- und Integrationslinks mit http:// oder https:// ein.' }, 400, origin);
+        }
+      }
       if ((cleanText(rawData.primaryColor, 20) && !data.primaryColor) || (cleanText(rawData.secondaryColor, 20) && !data.secondaryColor)) {
         return jsonResponse({ ok: false, error: 'Bitte verwenden Sie für Farben einen gültigen Hexwert, zum Beispiel #2F8A69.' }, 400, origin);
       }
@@ -241,13 +262,14 @@ Deno.serve(async (request: Request) => {
           return jsonResponse({ ok: false, error: 'Bitte geben Sie mindestens den Salon-Namen, den Ort und eine gültige öffentliche Kontakt-E-Mail-Adresse an.' }, 400, origin);
         }
         if (data.assetRightsConfirmed !== 'true') {
-          const { count, error: countError } = await supabase
-            .from('website_onboarding_assets')
-            .select('id', { count: 'exact', head: true })
-            .eq('request_id', context.requestId);
-          if (countError) throw countError;
-          if ((count || 0) > 0) {
-            return jsonResponse({ ok: false, error: 'Bitte bestätigen Sie die Nutzungsrechte für die bereits hochgeladenen Materialien.' }, 400, origin);
+          const [{ count: onboardingCount, error: onboardingCountError }, { count: requestCount, error: requestCountError }] = await Promise.all([
+            supabase.from('website_onboarding_assets').select('id', { count: 'exact', head: true }).eq('request_id', context.requestId),
+            supabase.from('website_request_assets').select('id', { count: 'exact', head: true }).eq('request_id', context.requestId),
+          ]);
+          if (onboardingCountError) throw onboardingCountError;
+          if (requestCountError) throw requestCountError;
+          if (Number(onboardingCount || 0) + Number(requestCount || 0) > 0) {
+            return jsonResponse({ ok: false, error: 'Bitte bestätigen Sie die Nutzungsrechte für alle bisher hochgeladenen Materialien, einschließlich der Dateien aus der ursprünglichen Anfrage.' }, 400, origin);
           }
         }
       }
